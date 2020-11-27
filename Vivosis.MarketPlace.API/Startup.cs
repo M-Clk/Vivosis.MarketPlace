@@ -1,15 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using Vivosis.MarketPlace.Data;
+using Vivosis.MarketPlace.Data.AbstractRepositories;
+using Vivosis.MarketPlace.Data.ConcreteRepositories;
+using Vivosis.MarketPlace.Service.Abstract;
+using Vivosis.MarketPlace.Service.Concrete;
 
 namespace Vivosis.MarketPlace.API
 {
@@ -26,6 +26,12 @@ namespace Vivosis.MarketPlace.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddMvc();
+            services.AddScoped<IProductRepositoryAdo, ProductRepositoryAdo>();
+            services.AddScoped<IProductRepositoryEf, ProductRepositoryEf>();
+            services.AddScoped<IGlobalService, GlobalService>();
+            services.AddIdentityCore<IdentityUser>().AddEntityFrameworkStores<MarketPlaceDbContext>();
+            services.AddDbContext<MarketPlaceDbContext>(options => options.UseMySql(Configuration.GetConnectionString("MarketPlaceDatabase"), b=>b.MigrationsAssembly("Vivosis.MarketPlace.API")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

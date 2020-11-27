@@ -3,9 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30621.155
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vivosis.MarketPlace.API", "Vivosis.MarketPlace.API\Vivosis.MarketPlace.API.csproj", "{7C3CDA79-E10E-45DA-A3D1-BCDC63756E7F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vivosis.MarketPlace.API", "Vivosis.MarketPlace.API\Vivosis.MarketPlace.API.csproj", "{7C3CDA79-E10E-45DA-A3D1-BCDC63756E7F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vivosis.MarketPlace.Data", "Vivosis.MarketPlace.Data\Vivosis.MarketPlace.Data.csproj", "{2F48D332-06B9-44EE-BE95-014ADC661225}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vivosis.MarketPlace.Data", "Vivosis.MarketPlace.Data\Vivosis.MarketPlace.Data.csproj", "{2F48D332-06B9-44EE-BE95-014ADC661225}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vivosis.MarketPlace.Service", "Vivosis.MarketPlace.Service\Vivosis.MarketPlace.Service.csproj", "{E97B51C5-1530-4C15-968F-D6D0A5C02161}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vivosis.MarketPlace.Web", "Vivosis.MarketPlace.Web\Vivosis.MarketPlace.Web.csproj", "{F01E7BF5-7EA3-44F2-B19A-E5B8681FB6D2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +25,14 @@ Global
 		{2F48D332-06B9-44EE-BE95-014ADC661225}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2F48D332-06B9-44EE-BE95-014ADC661225}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2F48D332-06B9-44EE-BE95-014ADC661225}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E97B51C5-1530-4C15-968F-D6D0A5C02161}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E97B51C5-1530-4C15-968F-D6D0A5C02161}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E97B51C5-1530-4C15-968F-D6D0A5C02161}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E97B51C5-1530-4C15-968F-D6D0A5C02161}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F01E7BF5-7EA3-44F2-B19A-E5B8681FB6D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F01E7BF5-7EA3-44F2-B19A-E5B8681FB6D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F01E7BF5-7EA3-44F2-B19A-E5B8681FB6D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F01E7BF5-7EA3-44F2-B19A-E5B8681FB6D2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
