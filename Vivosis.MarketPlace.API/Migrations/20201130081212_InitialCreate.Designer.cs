@@ -9,7 +9,7 @@ using Vivosis.MarketPlace.Data;
 namespace Vivosis.MarketPlace.API.Migrations
 {
     [DbContext(typeof(MarketPlaceDbContext))]
-    [Migration("20201127071003_InitialCreate")]
+    [Migration("20201130081212_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -273,9 +273,12 @@ namespace Vivosis.MarketPlace.API.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("api_key")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
                     b.Property<string>("name")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<string>("secret_key")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<string>("ssl")
@@ -286,7 +289,10 @@ namespace Vivosis.MarketPlace.API.Migrations
 
                     b.HasKey("store_id");
 
-                    b.ToTable("Store");
+                    b.HasIndex("api_key")
+                        .IsUnique();
+
+                    b.ToTable("Stores");
                 });
 
             modelBuilder.Entity("Vivosis.MarketPlace.Data.Entities.StoreCategory", b =>

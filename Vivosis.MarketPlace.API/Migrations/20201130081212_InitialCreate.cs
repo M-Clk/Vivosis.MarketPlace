@@ -78,7 +78,7 @@ namespace Vivosis.MarketPlace.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Store",
+                name: "Stores",
                 columns: table => new
                 {
                     store_id = table.Column<int>(nullable: false)
@@ -86,11 +86,12 @@ namespace Vivosis.MarketPlace.API.Migrations
                     name = table.Column<string>(nullable: true),
                     url = table.Column<string>(nullable: true),
                     ssl = table.Column<string>(nullable: true),
-                    api_key = table.Column<string>(nullable: true)
+                    api_key = table.Column<string>(nullable: true),
+                    secret_key = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Store", x => x.store_id);
+                    table.PrimaryKey("PK_Stores", x => x.store_id);
                 });
 
             migrationBuilder.CreateTable(
@@ -240,9 +241,9 @@ namespace Vivosis.MarketPlace.API.Migrations
                         principalColumn: "category_id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_StoreCategory_Store_store_id",
+                        name: "FK_StoreCategory_Stores_store_id",
                         column: x => x.store_id,
-                        principalTable: "Store",
+                        principalTable: "Stores",
                         principalColumn: "store_id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -264,9 +265,9 @@ namespace Vivosis.MarketPlace.API.Migrations
                         principalColumn: "product_id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_StoreProduct_Store_store_id",
+                        name: "FK_StoreProduct_Stores_store_id",
                         column: x => x.store_id,
-                        principalTable: "Store",
+                        principalTable: "Stores",
                         principalColumn: "store_id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -322,6 +323,12 @@ namespace Vivosis.MarketPlace.API.Migrations
                 name: "IX_StoreProduct_product_id",
                 table: "StoreProduct",
                 column: "product_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Stores_api_key",
+                table: "Stores",
+                column: "api_key",
+                unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -363,7 +370,7 @@ namespace Vivosis.MarketPlace.API.Migrations
                 name: "Products");
 
             migrationBuilder.DropTable(
-                name: "Store");
+                name: "Stores");
         }
     }
 }
