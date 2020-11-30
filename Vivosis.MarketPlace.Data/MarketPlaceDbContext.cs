@@ -10,6 +10,7 @@ namespace Vivosis.MarketPlace.Data
         public MarketPlaceDbContext(DbContextOptions options) : base(options) { }
         public DbSet<Product> Products { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<Store> Stores { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -46,6 +47,7 @@ namespace Vivosis.MarketPlace.Data
                 .HasOne(x => x.Store)
                 .WithMany(e => e.StoreProducts)
                 .HasForeignKey(x => x.store_id);
+            builder.Entity<Store>().HasIndex(s => s.api_key).IsUnique();
         }
     }
 }

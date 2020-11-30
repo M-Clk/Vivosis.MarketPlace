@@ -13,12 +13,23 @@ namespace Vivosis.MarketPlace.Data.ConcreteRepositories
         {
             _dbContext = dbContext;
         }
-        public IEnumerable<Product> GetAll()
+
+        public IEnumerable<Category> GetAllCategories()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<Product> GetAllProducts()
         {
             return _dbContext.Products;
         }
 
-        public IEnumerable<Product> GetByIdList(IEnumerable<int> idList)
+        public IEnumerable<Category> GetCategories(IEnumerable<int> idList)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<Product> GetProducts(IEnumerable<int> idList)
         {
             throw new NotImplementedException();
         }

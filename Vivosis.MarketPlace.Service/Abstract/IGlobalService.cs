@@ -7,7 +7,7 @@ namespace Vivosis.MarketPlace.Service.Abstract
 {
     public interface IGlobalService
     {
-        IEnumerable<Product> GetAllProducts();
-        IEnumerable<Product> GetProductsByIdList(IEnumerable<int> productIdList);
+        IEnumerable<Product> GetProducts(IEnumerable<int> productIdList = null);
+        IEnumerable<Category> GetCategories(IEnumerable<int> categoryIdList = null);
     }
 }

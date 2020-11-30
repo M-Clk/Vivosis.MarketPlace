@@ -15,8 +15,7 @@ namespace Vivosis.MarketPlace.Service.Concrete
         {
             _productRepository = productRepository;
         }
-        public IEnumerable<Product> GetProductsByIdList(IEnumerable<int> productIdList) => _productRepository.GetByIdList(productIdList);
-
-        public IEnumerable<Product> GetAllProducts() => _productRepository.GetAll();
+        public IEnumerable<Product> GetProducts(IEnumerable<int> productIdList = null) => _productRepository.GetProducts(productIdList);
+        public IEnumerable<Category> GetCategories(IEnumerable<int> categoryIdList = null) => _productRepository.GetCategories(categoryIdList);
     }
 }

@@ -24,24 +24,23 @@ namespace Vivosis.MarketPlace.API.Controllers
         }
 
         // GET: api/Products
-        [HttpGet]
+        [HttpGet("Products")]
         public ActionResult<IEnumerable<Product>> GetProduct()
         {
-            var products = _globalService.GetAllProducts();
+            var products = _globalService.GetProducts();
             return Ok(products);
         }
-        [HttpGet("Test")]
-        public ActionResult Test()
+        [HttpPatch("Products")]
+        public ActionResult<IEnumerable<Product>> GetProduct(IEnumerable<int> idList)
         {
-            var idList = new List<int> { 28, 29, 32 };
-            var products = _globalService.GetProductsByIdList(idList);
+            var products = _globalService.GetProducts(idList);
             return Ok(products);
         }
         // GET: api/Products/5
-        [HttpGet("{id}")]
+        [HttpGet("Products/{id}")]
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
-            var product = _globalService.GetProductsByIdList(new List<int> {id});
+            var product = _globalService.GetProducts(new List<int> {id});
 
             if (product == null)
             {
@@ -50,85 +49,31 @@ namespace Vivosis.MarketPlace.API.Controllers
 
             return Ok(product);
         }
-
-        // PUT: api/Products/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutProduct(int id, Product product)
+        // GET: api/Categories
+        [HttpGet("Categories")]
+        public ActionResult<IEnumerable<Category>> GetCategory()
         {
-            if (id != product.product_id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(product).State = EntityState.Modified;
-
-            try
-            {
-
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ProductExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            var products = _globalService.GetCategories();
+            return Ok(products);
         }
-
-        // POST: api/Products
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPost]
-        public async Task<ActionResult<Product>> PostProduct(Product product)
+        [HttpPatch("Categories")]
+        public ActionResult<IEnumerable<Category>> GetCategory(IEnumerable<int> idList)
         {
-            _context.Products.Add(product);
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (ProductExists(product.product_id))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return CreatedAtAction("GetProduct", new { id = product.product_id }, product);
+            var products = _globalService.GetCategories(idList);
+            return Ok(products);
         }
-
-        // DELETE: api/Products/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<Product>> DeleteProduct(string id)
+        // GET: api/Categories/5
+        [HttpGet("Categories/{id}")]
+        public async Task<ActionResult<Category>> GetCategory(int id)
         {
-            var product = await _context.Products.FindAsync(id);
-            if (product == null)
+            var product = _globalService.GetCategories(new List<int> { id });
+
+            if(product == null)
             {
                 return NotFound();
             }
 
-            _context.Products.Remove(product);
-            await _context.SaveChangesAsync();
-
-            return product;
-        }
-
-        private bool ProductExists(int id)
-        {
-            return _context.Products.Any(e => e.product_id == id);
+            return Ok(product);
         }
     }
 }

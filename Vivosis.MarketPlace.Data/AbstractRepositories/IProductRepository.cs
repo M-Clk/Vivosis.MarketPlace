@@ -7,8 +7,8 @@ namespace Vivosis.MarketPlace.Data.AbstractRepositories
 {
     public interface IProductRepository
     {
-        IEnumerable<Product> GetAll();
-        IEnumerable<Product> GetByIdList(IEnumerable<int> idList);
+        IEnumerable<Product> GetProducts(IEnumerable<int> idList);
+        IEnumerable<Category> GetCategories(IEnumerable<int> idList);
         int Update(IEnumerable<Product> products);
     }
 }

@@ -13,7 +13,8 @@ namespace Vivosis.MarketPlace.Data.Entities
         public string name { get; set; } 
         public string url { get; set; }
         public string ssl { get; set; }
-        public string api_key { get; set; } //Daha fazla bilgi lazimsa girilecek
+        public string api_key { get; set; }
+        public string secret_key { get; set; }
         public virtual IList<StoreCategory> StoreCategories { get; set; }
         public virtual IList<StoreProduct> StoreProducts{ get; set; }
     }
