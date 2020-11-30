@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Vivosis.MarketPlace.API.Middleware;
 using Vivosis.MarketPlace.Data;
 using Vivosis.MarketPlace.Data.AbstractRepositories;
 using Vivosis.MarketPlace.Data.ConcreteRepositories;
@@ -29,6 +30,8 @@ namespace Vivosis.MarketPlace.API
             services.AddMvc();
             services.AddScoped<IProductRepositoryAdo, ProductRepositoryAdo>();
             services.AddScoped<IProductRepositoryEf, ProductRepositoryEf>();
+            services.AddScoped<IN11Service, N11Service>();
+            services.AddScoped<IStoreService, StoreService>();
             services.AddScoped<IGlobalService, GlobalService>();
             services.AddIdentityCore<IdentityUser>().AddEntityFrameworkStores<MarketPlaceDbContext>();
             services.AddDbContext<MarketPlaceDbContext>(options => options.UseMySql(Configuration.GetConnectionString("MarketPlaceDatabase"), b=>b.MigrationsAssembly("Vivosis.MarketPlace.API")));
@@ -41,9 +44,8 @@ namespace Vivosis.MarketPlace.API
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            app.UseGlobalExceptionHandling();
             app.UseHttpsRedirection();
-
             app.UseRouting();
 
             app.UseAuthorization();
