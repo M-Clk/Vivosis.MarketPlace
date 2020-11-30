@@ -15,6 +15,9 @@ namespace Vivosis.MarketPlace.Data.Entities
         public string ssl { get; set; }
         public string api_key { get; set; }
         public string secret_key { get; set; }
+        public int user_id { get; set; }
+        [ForeignKey("user_id")]
+        public virtual SystemUser User { get; set; }
         public virtual IList<StoreCategory> StoreCategories { get; set; }
         public virtual IList<StoreProduct> StoreProducts{ get; set; }
     }

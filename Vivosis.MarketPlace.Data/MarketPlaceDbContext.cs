@@ -1,11 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Vivosis.MarketPlace.Data.Entities;
 
 namespace Vivosis.MarketPlace.Data
 {
-    public class MarketPlaceDbContext :IdentityDbContext
+    public class MarketPlaceDbContext :IdentityDbContext<SystemUser, SystemRole, int>
     {
         public MarketPlaceDbContext(DbContextOptions options) : base(options) { }
         public DbSet<Product> Products { get; set; }
@@ -25,7 +24,7 @@ namespace Vivosis.MarketPlace.Data
                 .HasOne(x => x.Product)
                 .WithMany(e => e.ProductCategories)
                 .HasForeignKey(x => x.product_id);
-            
+
             builder.Entity<StoreCategory>()
                 .HasKey(x => new { x.store_id, x.category_id });
             builder.Entity<StoreCategory>()
@@ -36,7 +35,7 @@ namespace Vivosis.MarketPlace.Data
                 .HasOne(x => x.Store)
                 .WithMany(e => e.StoreCategories)
                 .HasForeignKey(x => x.store_id);
-            
+
             builder.Entity<StoreProduct>()
                 .HasKey(x => new { x.store_id, x.product_id });
             builder.Entity<StoreProduct>()
@@ -47,7 +46,9 @@ namespace Vivosis.MarketPlace.Data
                 .HasOne(x => x.Store)
                 .WithMany(e => e.StoreProducts)
                 .HasForeignKey(x => x.store_id);
+
             builder.Entity<Store>().HasIndex(s => s.api_key).IsUnique();
+            builder.Entity<SystemUser>().HasIndex(s => s.Server).IsUnique();
         }
     }
 }
