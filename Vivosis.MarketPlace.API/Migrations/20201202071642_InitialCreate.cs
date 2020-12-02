@@ -45,10 +45,10 @@ namespace Vivosis.MarketPlace.API.Migrations
                     AccessFailedCount = table.Column<int>(nullable: false),
                     ExpireTime = table.Column<DateTime>(nullable: false),
                     Status = table.Column<bool>(nullable: false),
-                    DbName = table.Column<string>(nullable: true),
-                    DbUserName = table.Column<string>(nullable: true),
+                    DbName = table.Column<string>(nullable: false),
+                    DbUserName = table.Column<string>(nullable: false),
                     DbPassword = table.Column<string>(nullable: true),
-                    Server = table.Column<string>(nullable: true)
+                    Server = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -63,7 +63,8 @@ namespace Vivosis.MarketPlace.API.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     status = table.Column<bool>(nullable: false),
                     date_added = table.Column<DateTime>(nullable: false),
-                    date_modified = table.Column<DateTime>(nullable: false)
+                    date_modified = table.Column<DateTime>(nullable: false),
+                    name = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -78,7 +79,8 @@ namespace Vivosis.MarketPlace.API.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     status = table.Column<bool>(nullable: false),
                     date_added = table.Column<DateTime>(nullable: false),
-                    date_modified = table.Column<DateTime>(nullable: false)
+                    date_modified = table.Column<DateTime>(nullable: false),
+                    name = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -314,24 +316,6 @@ namespace Vivosis.MarketPlace.API.Migrations
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetUsers_DbName",
-                table: "AspNetUsers",
-                column: "DbName",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AspNetUsers_DbPassword",
-                table: "AspNetUsers",
-                column: "DbPassword",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AspNetUsers_DbUserName",
-                table: "AspNetUsers",
-                column: "DbUserName",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "EmailIndex",
                 table: "AspNetUsers",
                 column: "NormalizedEmail");
@@ -340,12 +324,6 @@ namespace Vivosis.MarketPlace.API.Migrations
                 name: "UserNameIndex",
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AspNetUsers_Server",
-                table: "AspNetUsers",
-                column: "Server",
                 unique: true);
 
             migrationBuilder.CreateIndex(

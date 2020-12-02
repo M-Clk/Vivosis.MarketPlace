@@ -128,6 +128,9 @@ namespace Vivosis.MarketPlace.API.Migrations
                     b.Property<DateTime>("date_modified")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<string>("name")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
                     b.Property<bool>("status")
                         .HasColumnType("tinyint(1)");
 
@@ -147,6 +150,9 @@ namespace Vivosis.MarketPlace.API.Migrations
 
                     b.Property<DateTime>("date_modified")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<string>("name")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<bool>("status")
                         .HasColumnType("tinyint(1)");
@@ -276,13 +282,15 @@ namespace Vivosis.MarketPlace.API.Migrations
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<string>("DbName")
-                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+                        .IsRequired()
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<string>("DbPassword")
-                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<string>("DbUserName")
-                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+                        .IsRequired()
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<string>("Email")
                         .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
@@ -321,7 +329,8 @@ namespace Vivosis.MarketPlace.API.Migrations
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<string>("Server")
-                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+                        .IsRequired()
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<bool>("Status")
                         .HasColumnType("tinyint(1)");
@@ -335,24 +344,12 @@ namespace Vivosis.MarketPlace.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DbName")
-                        .IsUnique();
-
-                    b.HasIndex("DbPassword")
-                        .IsUnique();
-
-                    b.HasIndex("DbUserName")
-                        .IsUnique();
-
                     b.HasIndex("NormalizedEmail")
                         .HasName("EmailIndex");
 
                     b.HasIndex("NormalizedUserName")
                         .IsUnique()
                         .HasName("UserNameIndex");
-
-                    b.HasIndex("Server")
-                        .IsUnique();
 
                     b.ToTable("AspNetUsers");
                 });

@@ -128,6 +128,9 @@ namespace Vivosis.MarketPlace.Web.Migrations
                     b.Property<DateTime>("date_modified")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<string>("name")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
                     b.Property<bool>("status")
                         .HasColumnType("tinyint(1)");
 
@@ -147,6 +150,9 @@ namespace Vivosis.MarketPlace.Web.Migrations
 
                     b.Property<DateTime>("date_modified")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<string>("name")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<bool>("status")
                         .HasColumnType("tinyint(1)");

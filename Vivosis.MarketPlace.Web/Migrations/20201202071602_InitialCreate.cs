@@ -63,7 +63,8 @@ namespace Vivosis.MarketPlace.Web.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     status = table.Column<bool>(nullable: false),
                     date_added = table.Column<DateTime>(nullable: false),
-                    date_modified = table.Column<DateTime>(nullable: false)
+                    date_modified = table.Column<DateTime>(nullable: false),
+                    name = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -78,7 +79,8 @@ namespace Vivosis.MarketPlace.Web.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     status = table.Column<bool>(nullable: false),
                     date_added = table.Column<DateTime>(nullable: false),
-                    date_modified = table.Column<DateTime>(nullable: false)
+                    date_modified = table.Column<DateTime>(nullable: false),
+                    name = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {

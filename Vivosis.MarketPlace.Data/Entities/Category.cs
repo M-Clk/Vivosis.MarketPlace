@@ -10,7 +10,6 @@ namespace Vivosis.MarketPlace.Data.Entities
     {
         [Key]
         public int category_id { get; set; }
-        [NotMapped]
         public string name { get; set; }
         [NotMapped]
         public string description { get; set; }

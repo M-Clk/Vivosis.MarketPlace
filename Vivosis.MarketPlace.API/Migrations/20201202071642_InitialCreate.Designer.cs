@@ -6,10 +6,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Vivosis.MarketPlace.Data;
 
-namespace Vivosis.MarketPlace.Web.Migrations
+namespace Vivosis.MarketPlace.API.Migrations
 {
     [DbContext(typeof(MarketPlaceDbContext))]
-    [Migration("20201201134623_InitialCreate")]
+    [Migration("20201202071642_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -130,6 +130,9 @@ namespace Vivosis.MarketPlace.Web.Migrations
                     b.Property<DateTime>("date_modified")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<string>("name")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
                     b.Property<bool>("status")
                         .HasColumnType("tinyint(1)");
 
@@ -149,6 +152,9 @@ namespace Vivosis.MarketPlace.Web.Migrations
 
                     b.Property<DateTime>("date_modified")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<string>("name")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<bool>("status")
                         .HasColumnType("tinyint(1)");
