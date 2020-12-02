@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Vivosis.MarketPlace.Data;
 using Vivosis.MarketPlace.Data.Entities;
 using Vivosis.MarketPlace.Service.Abstract;
