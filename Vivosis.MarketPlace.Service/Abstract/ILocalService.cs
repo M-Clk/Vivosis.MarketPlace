@@ -13,8 +13,5 @@ namespace Vivosis.MarketPlace.Service.Abstract
         int UpdateProducts(IEnumerable<Product> products);
         int AddCategories(IEnumerable<Category> categories);
         int UpdateCategories(IEnumerable<Category> categories);
-        bool SendProductsToMarket(Store store, IEnumerable<int> productIdList);
-        bool SendCategoriesToMarket(Store store, IEnumerable<int> categoryIdList);
-        IEnumerable<Product> GetProductsFromMarket();
     }
 }

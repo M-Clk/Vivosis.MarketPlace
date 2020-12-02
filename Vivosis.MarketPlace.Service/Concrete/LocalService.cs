@@ -42,28 +42,10 @@ namespace Vivosis.MarketPlace.Service
                 return _dbContext.Categories;
         }
 
-        public IEnumerable<Product> GetProductsFromMarket()
-        {
-            throw new NotImplementedException();
-        }
-        public bool RefreshProducts()
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool SendCategoriesToMarket(Store store, IEnumerable<int> categoryIdList)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool SendProductsToMarket(Store store, IEnumerable<int> productIdList)
-        {
-            throw new NotImplementedException();
-        }
-
         public int UpdateCategories(IEnumerable<Category> categories)
         {
-            throw new NotImplementedException();
+            _dbContext.Categories.UpdateRange(categories);
+            return _dbContext.SaveChanges();
         }
 
         public int UpdateProducts(IEnumerable<Product> products)
