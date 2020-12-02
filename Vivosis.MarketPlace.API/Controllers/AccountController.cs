@@ -22,7 +22,7 @@ namespace Vivosis.MarketPlace.API.Controllers
         [HttpPost("Login")]
         public IActionResult Login([FromBody]LoginModel loginModel)
         {
-            var result = _accountService.Login(loginModel.UserName, loginModel.Password);
+            var result = _accountService.Login(loginModel.UserName, loginModel.Password, true);
             if(result)
                 return Ok();
             else

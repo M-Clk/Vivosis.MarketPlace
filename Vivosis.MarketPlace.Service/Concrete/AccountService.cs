@@ -19,18 +19,19 @@ namespace Vivosis.MarketPlace.Service.Concrete
             _signInManager = signInManager;
             _userManager = userManager;
         }
-        public bool Login(string userName, string password)
+        public bool Login(string userName, string password, bool rememberMe)
         {
             var user = _userManager.FindByNameAsync(userName).Result;
             if(user == null)
                 return false;
-            var result = _signInManager.PasswordSignInAsync(user, password, true, true).Result;
+            _signInManager.SignOutAsync().Wait();
+            var result = _signInManager.PasswordSignInAsync(user, password, rememberMe, true).Result;
             return result.Succeeded;
         }
         public IdentityResult AddUser(SystemUser user)
         {
             if(!CheckDbConnection(user.Server, user.DbName, user.DbUserName, user.DbPassword))
-                throw new InvalidOperationException("Hedef veritabanina baglanilamadi. Lutfen bilgilerinizi kontorl edin. Veritabaninizin uzaktan erisilebilir olduguna emin olun.");
+                throw new DBConcurrencyException("Hedef veritabanina baglanilamadi. Lutfen bilgilerinizi kontorl edin. Veritabaninizin uzaktan erisilebilir olduguna emin olun.");
             var pass = user.PasswordHash;
             user.PasswordHash = null;
             return _userManager.CreateAsync(user, pass).Result;
@@ -38,7 +39,7 @@ namespace Vivosis.MarketPlace.Service.Concrete
         public IdentityResult UpdateUser(SystemUser user)
         {
             if(!CheckDbConnection(user.Server, user.DbName, user.DbUserName, user.DbPassword))
-                throw new InvalidOperationException("Hedef veritabanina baglanilamadi. Lutfen bilgilerinizi kontorl edin. Veritabaninizin uzaktan erisilebilir olduguna emin olun.");
+                throw new DBConcurrencyException("Hedef veritabanina baglanilamadi. Lutfen bilgilerinizi kontorl edin. Veritabaninizin uzaktan erisilebilir olduguna emin olun.");
             return _userManager.UpdateAsync(user).Result;
         }
         public IdentityResult DeleteUser(int userId)

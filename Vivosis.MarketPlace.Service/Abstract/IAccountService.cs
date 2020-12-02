@@ -8,7 +8,7 @@ namespace Vivosis.MarketPlace.Service.Abstract
 {
     public interface IAccountService
     {
-        bool Login(string userName, string password);
+        bool Login(string userName, string password, bool rememberMe);
         IdentityResult AddUser(SystemUser user);
         IdentityResult UpdateUser(SystemUser user);
         IdentityResult DeleteUser(int userId);
