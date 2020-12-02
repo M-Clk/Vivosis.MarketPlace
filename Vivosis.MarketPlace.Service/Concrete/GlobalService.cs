@@ -14,9 +14,7 @@ namespace Vivosis.MarketPlace.Service.Concrete
         MySqlConnection _connection;
         public GlobalService(IHttpContextAccessor httpContextAccessor)
         {
-            var userName = httpContextAccessor.HttpContext.User.Identity.Name;
-            var connectionString = UserConnectionStringPairs.UserConnectionString[userName];
-            _connection = new MySqlConnection(connectionString);
+            _connection = new MySqlConnection(httpContextAccessor.HttpContext.Request.Cookies["VivosisConnectionString"]);
         }
         public IEnumerable<Product> GetProducts(IEnumerable<int> idList = null)
         {

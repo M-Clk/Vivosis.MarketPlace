@@ -16,9 +16,7 @@ namespace Vivosis.MarketPlace.Service.Concrete
         public CommonService(MarketPlaceDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         {
             _dbContext = dbContext;
-            var userName = httpContextAccessor.HttpContext.User.Identity.Name;
-            var connectionString = UserConnectionStringPairs.UserConnectionString[userName];
-            _connection = new MySqlConnection(connectionString);
+            _connection = new MySqlConnection(httpContextAccessor.HttpContext.Request.Cookies["VivosisConnectionString"]);
         }
         public void SyncLocalProducts()
         {

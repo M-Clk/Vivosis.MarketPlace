@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using MySql.Data.MySqlClient;
 using System;
 using System.Data;
@@ -13,11 +14,13 @@ namespace Vivosis.MarketPlace.Service.Concrete
         MarketPlaceDbContext _dbContext;
         UserManager<SystemUser> _userManager;
         SignInManager<SystemUser> _signInManager;
-        public AccountService(MarketPlaceDbContext dbContext, UserManager<SystemUser> userManager, SignInManager<SystemUser> signInManager)
+        IHttpContextAccessor _httpContextAccessor;
+        public AccountService(MarketPlaceDbContext dbContext, UserManager<SystemUser> userManager, SignInManager<SystemUser> signInManager, IHttpContextAccessor httpContextAccessor)
         {
             _dbContext = dbContext;
             _signInManager = signInManager;
             _userManager = userManager;
+            _httpContextAccessor = httpContextAccessor;
         }
         public bool Login(string userName, string password, bool rememberMe)
         {
@@ -28,11 +31,9 @@ namespace Vivosis.MarketPlace.Service.Concrete
             var result = _signInManager.PasswordSignInAsync(user, password, rememberMe, true).Result;
             if(result.Succeeded)
             {
-                if(!UserConnectionStringPairs.UserConnectionString.ContainsKey(user.UserName))
-                {
-                    var connectionString = $"Server={user.Server}; Database={user.DbName}; Uid={user.DbUserName}; Pwd={user.DbPassword};";
-                    UserConnectionStringPairs.UserConnectionString.Add(user.UserName, connectionString);
-                }
+                var connectionString = $"Server={user.Server}; Database={user.DbName}; Uid={user.DbUserName}; Pwd={user.DbPassword};";
+                CookieOptions option = new CookieOptions {Expires = DateTime.Now.AddDays(1), IsEssential = true };
+                _httpContextAccessor.HttpContext.Response.Cookies.Append("VivosisConnectionString", connectionString, option);
             }
             return result.Succeeded;
         }
@@ -49,11 +50,9 @@ namespace Vivosis.MarketPlace.Service.Concrete
             if(!CheckDbConnection(user.Server, user.DbName, user.DbUserName, user.DbPassword))
                 throw new DBConcurrencyException("Hedef veritabanina baglanilamadi. Lutfen bilgilerinizi kontorl edin. Veritabaninizin uzaktan erisilebilir olduguna emin olun.");
             var result = _userManager.UpdateAsync(user).Result;
-            if(result.Succeeded && !UserConnectionStringPairs.UserConnectionString.ContainsKey(user.UserName))
-            {
-                var connectionString = $"Server={user.Server}; Database={user.DbName}; Uid={user.DbUserName}; Pwd={user.DbPassword};";
-                UserConnectionStringPairs.UserConnectionString[user.UserName] = connectionString;
-            }
+            var connectionString = $"Server={user.Server}; Database={user.DbName}; Uid={user.DbUserName}; Pwd={user.DbPassword};";
+            CookieOptions option = new CookieOptions { Expires = DateTime.Now.AddDays(1), IsEssential = true };
+            _httpContextAccessor.HttpContext.Response.Cookies.Append("VivosisConnectionString", connectionString, option);
             return result;
         }
         public IdentityResult DeleteUser(int userId)

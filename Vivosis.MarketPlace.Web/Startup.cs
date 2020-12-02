@@ -23,6 +23,7 @@ namespace Vivosis.MarketPlace.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddCommonVivosisServices();
+            services.AddHttpContextAccessor();
             services.AddDbContext<MarketPlaceDbContext>(options => options.UseMySql(Configuration.GetConnectionString("MarketPlaceDatabase"), b => b.MigrationsAssembly("Vivosis.MarketPlace.Web")));
             services.AddMvc(options =>
             {
@@ -52,6 +53,9 @@ namespace Vivosis.MarketPlace.Web
             app.UseStaticFiles();
             app.UseCookiePolicy();
             app.UseAuthentication();
+            CookiePolicyOptions options = new CookiePolicyOptions();
+            options.Secure = CookieSecurePolicy.Always;
+            app.UseCookiePolicy(options);
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
