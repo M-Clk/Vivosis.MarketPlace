@@ -151,8 +151,17 @@ namespace Vivosis.MarketPlace.API.Migrations
                     b.Property<DateTime>("date_modified")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<string>("image_url")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
                     b.Property<string>("name")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<decimal>("price")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal>("quantity")
+                        .HasColumnType("decimal(65,30)");
 
                     b.Property<bool>("status")
                         .HasColumnType("tinyint(1)");

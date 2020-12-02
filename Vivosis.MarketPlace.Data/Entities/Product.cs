@@ -13,13 +13,10 @@ namespace Vivosis.MarketPlace.Data.Entities
         public string name { get; set; }
         [NotMapped]
         public string description { get; set; }
-        [NotMapped]
         public string image_url { get; set; }
         [NotMapped]
         public string model { get; set; }
-        [NotMapped]
         public decimal price { get; set; }
-        [NotMapped]
         public decimal quantity{ get; set; }
         public virtual IList<ProductCategory> ProductCategories { get; set; }
         public virtual IList<StoreProduct> ProductStores { get; set; }

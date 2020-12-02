@@ -80,7 +80,10 @@ namespace Vivosis.MarketPlace.API.Migrations
                     status = table.Column<bool>(nullable: false),
                     date_added = table.Column<DateTime>(nullable: false),
                     date_modified = table.Column<DateTime>(nullable: false),
-                    name = table.Column<string>(nullable: true)
+                    name = table.Column<string>(nullable: true),
+                    image_url = table.Column<string>(nullable: true),
+                    price = table.Column<decimal>(nullable: false),
+                    quantity = table.Column<decimal>(nullable: false)
                 },
                 constraints: table =>
                 {
