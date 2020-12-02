@@ -1,17 +1,12 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
 using Vivosis.MarketPlace.API.Middleware;
 using Vivosis.MarketPlace.Data;
-using Vivosis.MarketPlace.Data.Entities;
 using Vivosis.MarketPlace.Service;
-using Vivosis.MarketPlace.Service.Abstract;
-using Vivosis.MarketPlace.Service.Concrete;
 
 namespace Vivosis.MarketPlace.API
 {

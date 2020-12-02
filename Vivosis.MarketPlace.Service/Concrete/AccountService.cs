@@ -26,6 +26,14 @@ namespace Vivosis.MarketPlace.Service.Concrete
                 return false;
             _signInManager.SignOutAsync().Wait();
             var result = _signInManager.PasswordSignInAsync(user, password, rememberMe, true).Result;
+            if(result.Succeeded)
+            {
+                if(!UserConnectionStringPairs.UserConnectionString.ContainsKey(user.UserName))
+                {
+                    var connectionString = $"Server={user.Server}; Database={user.DbName}; Uid={user.DbUserName}; Pwd={user.DbPassword};";
+                    UserConnectionStringPairs.UserConnectionString.Add(user.UserName, connectionString);
+                }
+            }
             return result.Succeeded;
         }
         public IdentityResult AddUser(SystemUser user)
@@ -40,7 +48,13 @@ namespace Vivosis.MarketPlace.Service.Concrete
         {
             if(!CheckDbConnection(user.Server, user.DbName, user.DbUserName, user.DbPassword))
                 throw new DBConcurrencyException("Hedef veritabanina baglanilamadi. Lutfen bilgilerinizi kontorl edin. Veritabaninizin uzaktan erisilebilir olduguna emin olun.");
-            return _userManager.UpdateAsync(user).Result;
+            var result = _userManager.UpdateAsync(user).Result;
+            if(result.Succeeded && !UserConnectionStringPairs.UserConnectionString.ContainsKey(user.UserName))
+            {
+                var connectionString = $"Server={user.Server}; Database={user.DbName}; Uid={user.DbUserName}; Pwd={user.DbPassword};";
+                UserConnectionStringPairs.UserConnectionString[user.UserName] = connectionString;
+            }
+            return result;
         }
         public IdentityResult DeleteUser(int userId)
         {

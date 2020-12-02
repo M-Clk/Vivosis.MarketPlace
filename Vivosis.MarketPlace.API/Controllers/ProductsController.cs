@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Vivosis.MarketPlace.Data;
 using Vivosis.MarketPlace.Data.Entities;
 using Vivosis.MarketPlace.Service.Abstract;
@@ -19,10 +15,12 @@ namespace Vivosis.MarketPlace.API.Controllers
     {
         private readonly MarketPlaceDbContext _context;
         IGlobalService _globalService;
-        public ProductsController(MarketPlaceDbContext context, IGlobalService globalService)
+        ICommonService _commonService;
+        public ProductsController(MarketPlaceDbContext context, IGlobalService globalService, ICommonService commonService)
         {
             _context = context;
             _globalService = globalService;
+            _commonService = commonService;
         }
 
         // GET: api/Products
@@ -48,7 +46,6 @@ namespace Vivosis.MarketPlace.API.Controllers
             {
                 return NotFound();
             }
-
             return Ok(product);
         }
         // GET: api/Categories
@@ -76,6 +73,12 @@ namespace Vivosis.MarketPlace.API.Controllers
             }
 
             return Ok(product);
+        }
+        [HttpGet("Sync")]
+        public ActionResult SyncProducts()
+        {
+            _commonService.SyncLocalProducts();
+            return Ok();
         }
     }
 }

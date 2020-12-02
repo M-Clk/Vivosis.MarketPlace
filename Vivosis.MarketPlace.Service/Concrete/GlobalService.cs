@@ -1,9 +1,8 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Http;
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Vivosis.MarketPlace.Data;
 using Vivosis.MarketPlace.Data.Entities;
 using Vivosis.MarketPlace.Service.Abstract;
@@ -13,9 +12,10 @@ namespace Vivosis.MarketPlace.Service.Concrete
     public class GlobalService :IGlobalService
     {
         MySqlConnection _connection;
-        public GlobalService(IConfiguration configuration)
+        public GlobalService(IHttpContextAccessor httpContextAccessor)
         {
-            var connectionString = configuration.GetConnectionString("RemoteDatabase");
+            var userName = httpContextAccessor.HttpContext.User.Identity.Name;
+            var connectionString = UserConnectionStringPairs.UserConnectionString[userName];
             _connection = new MySqlConnection(connectionString);
         }
         public IEnumerable<Product> GetProducts(IEnumerable<int> idList = null)
