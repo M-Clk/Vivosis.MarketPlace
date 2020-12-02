@@ -9,6 +9,7 @@ using System;
 using Vivosis.MarketPlace.API.Middleware;
 using Vivosis.MarketPlace.Data;
 using Vivosis.MarketPlace.Data.Entities;
+using Vivosis.MarketPlace.Service;
 using Vivosis.MarketPlace.Service.Abstract;
 using Vivosis.MarketPlace.Service.Concrete;
 
@@ -28,25 +29,8 @@ namespace Vivosis.MarketPlace.API
         {
             services.AddControllers();
             services.AddMvc();
-            services.AddScoped<IN11Service, N11Service>();
-            services.AddScoped<IStoreService, StoreService>();
-            services.AddScoped<IAccountService, AccountService>();
-            services.AddScoped<IGlobalService, GlobalService>();
-            services.AddIdentity<SystemUser, SystemRole>(setupAction =>
-            {
-                setupAction.Lockout.DefaultLockoutTimeSpan = new TimeSpan(3, 1, 0);
-                setupAction.Lockout.MaxFailedAccessAttempts = 5;
-                setupAction.User.RequireUniqueEmail = false;
-                setupAction.Password.RequireDigit = false;
-                setupAction.Password.RequiredLength = 1;
-                setupAction.Password.RequireLowercase = false;
-                setupAction.Password.RequireNonAlphanumeric = false;
-                setupAction.Password.RequireUppercase = false;
-                setupAction.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_";
-            })
-                .AddEntityFrameworkStores<MarketPlaceDbContext>()
-                .AddDefaultTokenProviders();
-            services.AddDbContext<MarketPlaceDbContext>(options => options.UseMySql(Configuration.GetConnectionString("MarketPlaceDatabase"), b=>b.MigrationsAssembly("Vivosis.MarketPlace.API")));
+            services.AddCommonVivosisServices();
+            services.AddDbContext<MarketPlaceDbContext>(options => options.UseMySql(Configuration.GetConnectionString("MarketPlaceDatabase"), b => b.MigrationsAssembly("Vivosis.MarketPlace.API")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
