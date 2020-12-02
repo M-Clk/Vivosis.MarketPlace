@@ -8,8 +8,6 @@ using Microsoft.Extensions.Hosting;
 using System;
 using Vivosis.MarketPlace.API.Middleware;
 using Vivosis.MarketPlace.Data;
-using Vivosis.MarketPlace.Data.AbstractRepositories;
-using Vivosis.MarketPlace.Data.ConcreteRepositories;
 using Vivosis.MarketPlace.Data.Entities;
 using Vivosis.MarketPlace.Service.Abstract;
 using Vivosis.MarketPlace.Service.Concrete;
@@ -30,8 +28,6 @@ namespace Vivosis.MarketPlace.API
         {
             services.AddControllers();
             services.AddMvc();
-            services.AddScoped<IProductRepositoryAdo, ProductRepositoryAdo>();
-            services.AddScoped<IProductRepositoryEf, ProductRepositoryEf>();
             services.AddScoped<IN11Service, N11Service>();
             services.AddScoped<IStoreService, StoreService>();
             services.AddScoped<IAccountService, AccountService>();

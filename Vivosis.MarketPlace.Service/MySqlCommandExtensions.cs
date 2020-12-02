@@ -2,9 +2,9 @@
 using System;
 using System.IO;
 
-namespace Vivosis.MarketPlace.Data
+namespace Vivosis.MarketPlace.Service
 {
-    public static class RepositoryAdoExtensions
+    public static class MySqlCommandExtensions
     {
         public static void LoadScript(this MySqlCommand command, string scriptFileName, params string[] arguments)
         {

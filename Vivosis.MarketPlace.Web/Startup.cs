@@ -28,8 +28,6 @@ namespace Vivosis.MarketPlace.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddScoped<IProductRepositoryAdo, ProductRepositoryAdo>();
-            services.AddScoped<IProductRepositoryEf, ProductRepositoryEf>();
             services.AddScoped<IN11Service, N11Service>();
             services.AddScoped<IStoreService, StoreService>();
             services.AddScoped<IAccountService, AccountService>();

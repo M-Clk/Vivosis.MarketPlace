@@ -7,7 +7,12 @@ namespace Vivosis.MarketPlace.Service.Abstract
 {
     public interface ILocalService
     {
-        IEnumerable<Product> GetAllProducts(); // TODO : productservice degisecek sitedeki veritabaniyla islem yapan servis ile n11 ile islem yapan iki servis olacak. Bu ikisini kullanan bir servis de gerekiyorsa olabilir.
+        IEnumerable<Product> GetProducts(IEnumerable<int> productIdList = null);
+        IEnumerable<Category> GetCategories(IEnumerable<int> categoryIdList = null);
+        int AddProducts(IEnumerable<Product> products);
+        int UpdateProducts(IEnumerable<Product> products);
+        int AddCategories(IEnumerable<Category> categories);
+        int UpdateCategories(IEnumerable<Category> categories);
         bool SendProductsToMarket(Store store, IEnumerable<int> productIdList);
         bool SendCategoriesToMarket(Store store, IEnumerable<int> categoryIdList);
         IEnumerable<Product> GetProductsFromMarket();
