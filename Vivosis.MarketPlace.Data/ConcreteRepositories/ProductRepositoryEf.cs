@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Vivosis.MarketPlace.Data.AbstractRepositories;
 using Vivosis.MarketPlace.Data.Entities;
@@ -13,25 +14,20 @@ namespace Vivosis.MarketPlace.Data.ConcreteRepositories
         {
             _dbContext = dbContext;
         }
-
-        public IEnumerable<Category> GetAllCategories()
+        public IEnumerable<Category> GetCategories(IEnumerable<int> idList = null)
         {
-            throw new NotImplementedException();
+            if(idList?.Any() ?? false)
+                return _dbContext.Categories.Where(c => idList.Contains(c.category_id));
+            else
+                return _dbContext.Categories;
         }
 
-        public IEnumerable<Product> GetAllProducts()
+        public IEnumerable<Product> GetProducts(IEnumerable<int> idList = null)
         {
-            return _dbContext.Products;
-        }
-
-        public IEnumerable<Category> GetCategories(IEnumerable<int> idList)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IEnumerable<Product> GetProducts(IEnumerable<int> idList)
-        {
-            throw new NotImplementedException();
+            if(idList?.Any() ?? false)
+                return _dbContext.Products.Where(p => idList.Contains(p.product_id));
+            else
+                return _dbContext.Products;
         }
 
         public int Update(IEnumerable<Product> products)

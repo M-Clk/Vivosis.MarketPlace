@@ -48,7 +48,6 @@ namespace Vivosis.MarketPlace.Data
                 .HasForeignKey(x => x.store_id);
 
             builder.Entity<Store>().HasIndex(s => s.api_key).IsUnique();
-            builder.Entity<SystemUser>().HasIndex(s => s.Server).IsUnique();
         }
     }
 }
