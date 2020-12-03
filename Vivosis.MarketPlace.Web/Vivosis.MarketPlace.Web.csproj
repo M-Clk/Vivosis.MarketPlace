@@ -19,4 +19,8 @@
     <ProjectReference Include="..\Vivosis.MarketPlace.Service\Vivosis.MarketPlace.Service.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\img\stores\" />
+  </ItemGroup>
+
 </Project>
