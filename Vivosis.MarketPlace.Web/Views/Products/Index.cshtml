@@ -1,0 +1,95 @@
+﻿@model IEnumerable<Product>
+@{
+    ViewData["Title"] = "Ürünler";
+}
+<div class="page-header mb-2" style="background-color:transparent">
+    <div class="container-fluid">
+        <ul class="breadcrumb" style="background-color:transparent">
+            <li><a asp-controller="Home" asp-action="Index">Anasayfa</a></li>
+            <li><a asp-controller="Products" asp-action="Index">Ürünler</a></li>
+        </ul>
+    </div>
+</div>
+<hr />
+<table id="mytable" class="display" style="width: 100%;" role="grid"
+       aria-describedby="example_info">
+    <thead>
+        <tr role="row">
+            <td style="width: 1px;">
+                <input type="checkbox" onclick="checkAll(this)">
+            </td>
+            <td>Resim</td>
+            <td>Ürün Adı</td>
+            <td>Varyant</td>
+            <td>Fiyatı</td>
+            <td>Adet</td>
+            <td>Ayarlar</td>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            foreach(var product in Model)
+            {
+                <tr id="tr_@product.product_id" onclick="selectSingleCheckbox(chck_@product.product_id)">
+                    <td>
+                        <input type="checkbox" name="selected[]" id="chck_@product.product_id" value="@product.product_id">
+                    </td>
+                    <td>
+                        <img src="@product.image_url" class="img-thumbnail">
+                    </td>
+                    <td>
+                        <p> @product.name</p>
+                    </td>
+                    <td>
+                        <button name="@product.name" product_id="@product.product_id" title="Seçenekli Ürün" class="btn btn-outline-primary">
+                            <i class="fa fa-list"></i>
+                        </button>
+                    </td>
+                    <td>
+                        @product.price.ToString("0.##") TL
+                    </td>
+                    <td>
+                        <span>@product.quantity.ToString("0.##")</span>
+                    </td>
+                    <td>
+                        <button product_id="@product.product_id" name="@product.name" data-toggle="tooltip" title="" class="btn btn-outline-primary btnSetting" data-original-title="Düzenle">
+                            <i class="fa fa-pencil"></i>
+                        </button>
+                    </td>
+                </tr>
+            }
+        }
+
+    </tbody>
+</table>
+<script>
+    $('#mytable').DataTable(
+        {
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.10.22/i18n/Turkish.json'
+
+            },
+            columnDefs: [
+                { orderable: false, targets: 0 }
+            ],
+            order: [[1, 'asc']]
+        });
+    function checkAll(bx) {
+        var cbs = document.getElementsByTagName('input');
+        for (var i = 0; i < cbs.length; i++) {
+            if (cbs[i].type == 'checkbox') {
+                cbs[i].checked = bx.checked;
+            }
+        }
+        function getImage(image_url) {
+            var http = new XMLHttpRequest();
+
+            http.open('HEAD', image_url, false);
+            http.send();
+
+            if (http.status == 404)
+                return '~/images/admin.jpg';
+            return image_url;
+        }
+    }
+</script>
