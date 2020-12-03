@@ -1,0 +1,67 @@
+﻿@model IEnumerable<Category>
+@{
+    ViewData["Title"] = "Kategoriler";
+}
+<div class="page-header mb-2" style="background-color:transparent">
+    <div class="container-fluid">
+        <ul class="breadcrumb" style="background-color:transparent">
+            <li><a asp-controller="Home" asp-action="Index">Anasayfa</a></li>
+            <li><a asp-controller="Categories" asp-action="Index">Kategoriler</a></li>
+        </ul>
+    </div>
+</div>
+<hr />
+<table id="mytable" class="display" style="width: 100%;" role="grid"
+       aria-describedby="example_info">
+    <thead>
+        <tr role="row">
+            <td style="width: 1px;">
+                <input type="checkbox" onclick="checkAll(this)">
+            </td>
+            <td>Kategori Adı</td>
+            <td>Ayarlar</td>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            foreach(var category in Model)
+            {
+                <tr id="tr_@category.category_id" onclick="selectSingleCheckbox(chck_@category.category_id)">
+                    <td>
+                        <input type="checkbox" name="selected[]" id="chck_@category.category_id" value="@category.category_id">
+                    </td>
+                    <td>
+                        <p> @category.name</p>
+                    </td>
+                    <td>
+                        <button product_id="@category.category_id" name="@category.name" data-toggle="tooltip" title="" class="btn btn-outline-primary btnSetting" data-original-title="Düzenle">
+                            <i class="fa fa-pencil"></i>
+                        </button>
+                    </td>
+                </tr>
+            }
+        }
+
+    </tbody>
+</table>
+<script>
+    $('#mytable').DataTable(
+        {
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.10.22/i18n/Turkish.json'
+
+            },
+            columnDefs: [
+                { orderable: false, targets: 0 }
+            ],
+            order: [[1, 'asc']]
+        });
+    function checkAll(bx) {
+        var cbs = document.getElementsByTagName('input');
+        for (var i = 0; i < cbs.length; i++) {
+            if (cbs[i].type == 'checkbox') {
+                cbs[i].checked = bx.checked;
+            }
+        }
+    }
+</script>
