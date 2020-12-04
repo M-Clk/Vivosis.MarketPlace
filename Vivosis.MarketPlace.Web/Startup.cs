@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.Linq;
+using System.Security.Claims;
 using Vivosis.MarketPlace.Data;
 using Vivosis.MarketPlace.Service;
 
@@ -22,9 +24,9 @@ namespace Vivosis.MarketPlace.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCommonVivosisServices();
-            services.AddHttpContextAccessor();
-            services.AddDbContext<MarketPlaceDbContext>(options => options.UseMySql(Configuration.GetConnectionString("MarketPlaceDatabase"), b => b.MigrationsAssembly("Vivosis.MarketPlace.Web")));
+            var unformattedDynamicConnectionString = Configuration.GetConnectionString("DynamicLocalDatabase");
+            var accountConnectionString = Configuration.GetConnectionString("MarketPlaceDatabase");
+            services.AddCommonVivosisServices(accountConnectionString, "Vivosis.MarketPlace.Web", unformattedDynamicConnectionString);
             services.AddMvc(options =>
             {
                 options.EnableEndpointRouting = false;
@@ -52,7 +54,8 @@ namespace Vivosis.MarketPlace.Web
             }
             app.UseStaticFiles();
             app.UseCookiePolicy();
-            app.UseAuthentication();
+            app.UseAuthorization();
+            app.UseCommonMiddlewares();
             CookiePolicyOptions options = new CookiePolicyOptions();
             options.Secure = CookieSecurePolicy.Always;
             app.UseCookiePolicy(options);

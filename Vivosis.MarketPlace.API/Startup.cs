@@ -22,10 +22,11 @@ namespace Vivosis.MarketPlace.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var unformattedDynamicConnectionString = Configuration.GetConnectionString("DynamicLocalDatabase");
+            var accountConnectionString = Configuration.GetConnectionString("MarketPlaceDatabase");
             services.AddControllers();
             services.AddMvc();
-            services.AddCommonVivosisServices();
-            services.AddDbContext<MarketPlaceDbContext>(options => options.UseMySql(Configuration.GetConnectionString("MarketPlaceDatabase"), b => b.MigrationsAssembly("Vivosis.MarketPlace.API")));
+            services.AddCommonVivosisServices(accountConnectionString, "Vivosis.MarketPlace.API", unformattedDynamicConnectionString);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
