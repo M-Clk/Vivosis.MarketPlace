@@ -7,10 +7,10 @@ namespace Vivosis.MarketPlace.Service.Abstract
 {
     public interface IStoreService
     {
-        bool AddStore(Store store);
+        bool AddStore(StoreUser store);
         bool DeleteStore(int storeId);
-        IEnumerable<Store> GetStores();
-        Store GetStoreById(int id);
-        bool UpdateStore(Store store);
+        IEnumerable<StoreUser> GetStores();
+        StoreUser GetStoreById(int id);
+        bool UpdateStore(StoreUser store);
     }
 }

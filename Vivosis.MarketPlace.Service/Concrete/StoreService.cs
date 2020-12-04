@@ -1,5 +1,8 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Vivosis.MarketPlace.Data;
 using Vivosis.MarketPlace.Data.Entities;
@@ -9,16 +12,19 @@ namespace Vivosis.MarketPlace.Service.Concrete
 {
     public class StoreService :IStoreService
     {
-        MarketPlaceDbContext _dbContext;
-        public StoreService(MarketPlaceDbContext dbContext)
+        AccountDbContext _dbContext;
+        SystemUser _customer;
+        public StoreService(AccountDbContext dbContext, IHttpContextAccessor httpContextAccessor, UserManager<SystemUser> userManager)
         {
             _dbContext = dbContext;
+            _customer = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result;
         }
-        public bool AddStore(Store store)
+        public bool AddStore(StoreUser storeUser)
         {
-            if(store == null)
+            if(storeUser == null)
                 return false;
-            _dbContext.Stores.Add(store);
+            //TODO api_key ve api_secret kontrolilp oyle kaydedilecek.
+            _dbContext.StoreUsers.Add(storeUser);
             return _dbContext.SaveChanges() > 0;
         }
 
@@ -31,23 +37,22 @@ namespace Vivosis.MarketPlace.Service.Concrete
             return _dbContext.SaveChanges() > 0;
         }
 
-        public Store GetStoreById(int id) => _dbContext.Stores.Find(id);
+        public StoreUser GetStoreById(int id) => _dbContext.StoreUsers.FirstOrDefault(sU => sU.store_id == id && sU.user_id == _customer.Id);
 
-        public IEnumerable<Store> GetStores() => _dbContext.Stores;
+        public IEnumerable<StoreUser> GetStores() => _dbContext.StoreUsers.Where(sU=>sU.user_id == _customer.Id);
 
-        public bool UpdateStore(Store store)
+        public bool UpdateStore(StoreUser storeUser)
         {
-            if(store == null)
+            if(storeUser == null)
                 return false;
-            var oldStore = _dbContext.Stores.Find(store.store_id);
+            var oldStore = _dbContext.StoreUsers.FirstOrDefault(sU=>sU.store_id == storeUser.store_id && sU.user_id == storeUser.user_id);
             if(oldStore == null)
                 return false;
-            oldStore.api_key = store.api_key;
-            oldStore.name = store.name;
-            oldStore.secret_key = store.secret_key;
-            oldStore.ssl = store.ssl;
+            //TODO api_key ve api_secret kontrolilp oyle kaydedilecek.
+            oldStore.api_key = storeUser.api_key;
+            oldStore.secret_key = storeUser.secret_key;
 
-            _dbContext.Stores.Update(oldStore);
+            _dbContext.StoreUsers.Update(oldStore);
             return _dbContext.SaveChanges() > 0;
         }
     }

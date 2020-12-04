@@ -16,13 +16,14 @@ namespace Vivosis.MarketPlace.Service.Concrete
         Authentication _auth;
         public N11Service(MarketPlaceDbContext dbContex)
         {
+            //TODO burasi hatali
             var store = dbContex.Stores.Where(store => store.name.ToLower().Equals("n11")) ?? throw new InvalidOperationException("N11 sisteminizde kayitli degil.");
             _store = store.Include(s=>s.StoreProducts).Include(s=>s.StoreCategories).First();
-            _auth = new Authentication
-            {
-                appKey = _store.api_key,
-                appSecret = _store.secret_key
-            };
+            //_auth = new Authentication
+            //{
+            //    appKey = _store.api_key,
+            //    appSecret = _store.secret_key
+            //};
         }
         public GetTopLevelCategoriesResponse1 Test()
         {
