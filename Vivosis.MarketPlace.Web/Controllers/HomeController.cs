@@ -13,17 +13,17 @@ namespace Vivosis.MarketPlace.Web.Controllers
     public class HomeController :Controller
     {
         private readonly ILogger<HomeController> _logger;
-        ICommonService _commonService;
+        //ICommonService _commonService;
 
-        public HomeController(ILogger<HomeController> logger, ICommonService commonService)
+        public HomeController(ILogger<HomeController> logger/*, ICommonService commonService*/)
         {
             _logger = logger;
-            _commonService = commonService;
+           //_commonService = commonService;
         }
 
         public IActionResult Index()
         {
-            _commonService.SyncLocalProducts();
+            //_commonService.SyncLocalProducts();
             return View();
         }
 

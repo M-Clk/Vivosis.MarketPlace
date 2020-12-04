@@ -7,7 +7,7 @@ using Vivosis.MarketPlace.Service.Abstract;
 
 namespace Vivosis.MarketPlace.Web.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Customer")]
     public class ProductsController :Controller
     {
         private readonly MarketPlaceDbContext _context;

@@ -31,7 +31,7 @@ namespace Vivosis.MarketPlace.API.Controllers
         [HttpPost]
         public IActionResult AddUser([FromBody]SystemUser user)
         {
-            var result = _accountService.AddUser(user);
+            var result = _accountService.AddUser(user, true);
             if(result.Succeeded)
                 return Ok(result);
             else

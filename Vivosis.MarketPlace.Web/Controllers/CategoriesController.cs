@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Vivosis.MarketPlace.Data;
 using Vivosis.MarketPlace.Service.Abstract;
 
 namespace Vivosis.MarketPlace.Web.Controllers
 {
+    [Authorize(Roles = "Customer")]
     public class CategoriesController :Controller
     {
         private readonly MarketPlaceDbContext _context;

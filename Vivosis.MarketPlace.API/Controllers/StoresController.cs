@@ -23,31 +23,31 @@ namespace Vivosis.MarketPlace.API.Controllers
         }
         // GET: api/<StoresController>
         [HttpGet]
-        public ActionResult<IEnumerable<Store>> Get()
+        public ActionResult<IEnumerable<StoreUser>> Get()
         { 
-            var stores = _storeService.GetStores();
-            if(stores == null)
+            var storeUsers = _storeService.GetStores();
+            if(storeUsers == null)
                 return NoContent();
             else
-                return Ok(stores);
+                return Ok(storeUsers);
         }
 
         // GET api/<StoresController>/5
         [HttpGet("{id}")]
-        public ActionResult<Store> Get(int id)
+        public ActionResult<StoreUser> Get(int id)
         {
-            var store = _storeService.GetStoreById(id);
-            if(store == null)
+            var storeUser = _storeService.GetStoreById(id);
+            if(storeUser == null)
                 return NotFound();
             else
-                return Ok(store);
+                return Ok(storeUser);
         }
 
         // POST api/<StoresController>
         [HttpPost]
-        public IActionResult Post([FromBody] Store store)
+        public IActionResult Post([FromBody] StoreUser storeUser)
         {
-            if(_storeService.AddStore(store))
+            if(_storeService.AddStore(storeUser))
                 return Ok();
             else
                 return BadRequest();
@@ -55,9 +55,9 @@ namespace Vivosis.MarketPlace.API.Controllers
 
         // PUT api/<StoresController>
         [HttpPut]
-        public IActionResult Put([FromBody] Store store)
+        public IActionResult Put([FromBody] StoreUser storeUser)
         {
-            if(_storeService.UpdateStore(store))
+            if(_storeService.UpdateStore(storeUser))
                 return Ok();
             else
                 return BadRequest();
