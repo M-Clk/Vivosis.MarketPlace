@@ -42,6 +42,7 @@ namespace Vivosis.MarketPlace.Service.Concrete
             }
             return result.Succeeded;
         }
+        public void Logout() => _signInManager.SignOutAsync().Wait();
         public IdentityResult AddUser(SystemUser user, bool isAdmin = false)
         {
             if(!isAdmin && !CheckDbConnection(user.Server, user.DbName, user.DbUserName, user.DbPassword))

@@ -47,14 +47,52 @@ namespace Vivosis.MarketPlace.Web.Controllers
             ViewBag.ReturnUrl = returnUrl;
             return View(loginModel);
         }
+        public IActionResult Logout()
+        {
+            _accountService.Logout();
+            return RedirectToAction("Login", "Account");
+        }
+        #region User CUD islemleri
+
+        [HttpGet("[Controller]/Admin/Add")]
         [Authorize(Roles = "Admin")]
-        public IActionResult Add()
+        public IActionResult AddAdmin()
         {
             return View();
         }
-        [HttpPost]
+        [HttpPost("[Controller]/Admin/Add")]
         [Authorize(Roles = "Admin")] //TODO admin icin ayri customer icin ayri bir add ve update sayfasi olacak. O yuzden bunlarin adini degistir ve admin icin bir tane daha ekle.
-        public IActionResult Add([FromForm] SystemUser user)
+        public IActionResult AddAdmin([FromForm] SystemUser user)
+        {
+            if(ModelState.IsValid)
+            {
+                try
+                {
+                    var result = _accountService.AddUser(user, true);
+                    if(result.Succeeded)
+                        return RedirectToAction("Index", "Account");
+                    else
+                    {
+                        foreach(var error in result.Errors)
+                            ModelState.AddModelError(error.Code, error.Description);
+                    }
+                }
+                catch(DBConcurrencyException ex)
+                {
+                    ModelState.AddModelError("DbConnectionResult", ex.Message);
+                }
+            }
+            return View(user);
+        }
+        [HttpGet("[Controller]/Customer/Add")]
+        [Authorize(Roles = "Admin")]
+        public IActionResult AddCustomer()
+        {
+            return View();
+        }
+        [HttpPost("[Controller]/Customer/Add")]
+        [Authorize(Roles = "Admin")] //TODO admin icin ayri customer icin ayri bir add ve update sayfasi olacak. O yuzden bunlarin adini degistir ve admin icin bir tane daha ekle.
+        public IActionResult AddCustomer([FromForm] SystemUser user)
         {
             if(ModelState.IsValid)
             {
@@ -104,5 +142,14 @@ namespace Vivosis.MarketPlace.Web.Controllers
             else
                 return BadRequest(result);
         }
+
+        #endregion
+
+        #region MyRegion
+        public IActionResult AddStore()
+        {
+            return View();
+        }
+        #endregion
     }
 }
