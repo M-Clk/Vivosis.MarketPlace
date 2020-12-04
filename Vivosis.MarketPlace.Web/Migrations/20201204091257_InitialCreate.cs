@@ -45,10 +45,10 @@ namespace Vivosis.MarketPlace.Web.Migrations
                     AccessFailedCount = table.Column<int>(nullable: false),
                     ExpireTime = table.Column<DateTime>(nullable: false),
                     Status = table.Column<bool>(nullable: false),
-                    DbName = table.Column<string>(nullable: false),
-                    DbUserName = table.Column<string>(nullable: false),
+                    DbName = table.Column<string>(nullable: true),
+                    DbUserName = table.Column<string>(nullable: true),
                     DbPassword = table.Column<string>(nullable: true),
-                    Server = table.Column<string>(nullable: false)
+                    Server = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -56,38 +56,19 @@ namespace Vivosis.MarketPlace.Web.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Categories",
+                name: "Stores",
                 columns: table => new
                 {
-                    category_id = table.Column<int>(nullable: false)
+                    store_id = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    status = table.Column<bool>(nullable: false),
-                    date_added = table.Column<DateTime>(nullable: false),
-                    date_modified = table.Column<DateTime>(nullable: false),
-                    name = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Categories", x => x.category_id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Products",
-                columns: table => new
-                {
-                    product_id = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    status = table.Column<bool>(nullable: false),
-                    date_added = table.Column<DateTime>(nullable: false),
-                    date_modified = table.Column<DateTime>(nullable: false),
                     name = table.Column<string>(nullable: true),
-                    image_url = table.Column<string>(nullable: true),
-                    price = table.Column<decimal>(nullable: false),
-                    quantity = table.Column<decimal>(nullable: false)
+                    image = table.Column<string>(nullable: true),
+                    url = table.Column<string>(nullable: true),
+                    ssl = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Products", x => x.product_id);
+                    table.PrimaryKey("PK_Stores", x => x.store_id);
                 });
 
             migrationBuilder.CreateTable(
@@ -197,96 +178,26 @@ namespace Vivosis.MarketPlace.Web.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Stores",
+                name: "StoreUsers",
                 columns: table => new
                 {
-                    store_id = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    name = table.Column<string>(nullable: true),
-                    url = table.Column<string>(nullable: true),
-                    ssl = table.Column<string>(nullable: true),
+                    store_id = table.Column<int>(nullable: false),
+                    user_id = table.Column<int>(nullable: false),
                     api_key = table.Column<string>(nullable: true),
-                    secret_key = table.Column<string>(nullable: true),
-                    user_id = table.Column<int>(nullable: false)
+                    secret_key = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Stores", x => x.store_id);
+                    table.PrimaryKey("PK_StoreUsers", x => new { x.store_id, x.user_id });
                     table.ForeignKey(
-                        name: "FK_Stores_AspNetUsers_user_id",
-                        column: x => x.user_id,
+                        name: "FK_StoreUsers_AspNetUsers_store_id",
+                        column: x => x.store_id,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ProductCategory",
-                columns: table => new
-                {
-                    product_id = table.Column<int>(nullable: false),
-                    category_id = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ProductCategory", x => new { x.product_id, x.category_id });
                     table.ForeignKey(
-                        name: "FK_ProductCategory_Categories_category_id",
-                        column: x => x.category_id,
-                        principalTable: "Categories",
-                        principalColumn: "category_id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ProductCategory_Products_product_id",
-                        column: x => x.product_id,
-                        principalTable: "Products",
-                        principalColumn: "product_id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "StoreCategory",
-                columns: table => new
-                {
-                    store_id = table.Column<int>(nullable: false),
-                    category_id = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_StoreCategory", x => new { x.store_id, x.category_id });
-                    table.ForeignKey(
-                        name: "FK_StoreCategory_Categories_category_id",
-                        column: x => x.category_id,
-                        principalTable: "Categories",
-                        principalColumn: "category_id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_StoreCategory_Stores_store_id",
-                        column: x => x.store_id,
-                        principalTable: "Stores",
-                        principalColumn: "store_id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "StoreProduct",
-                columns: table => new
-                {
-                    store_id = table.Column<int>(nullable: false),
-                    product_id = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_StoreProduct", x => new { x.store_id, x.product_id });
-                    table.ForeignKey(
-                        name: "FK_StoreProduct_Products_product_id",
-                        column: x => x.product_id,
-                        principalTable: "Products",
-                        principalColumn: "product_id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_StoreProduct_Stores_store_id",
-                        column: x => x.store_id,
+                        name: "FK_StoreUsers_Stores_user_id",
+                        column: x => x.user_id,
                         principalTable: "Stores",
                         principalColumn: "store_id",
                         onDelete: ReferentialAction.Cascade);
@@ -330,29 +241,8 @@ namespace Vivosis.MarketPlace.Web.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductCategory_category_id",
-                table: "ProductCategory",
-                column: "category_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_StoreCategory_category_id",
-                table: "StoreCategory",
-                column: "category_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_StoreProduct_product_id",
-                table: "StoreProduct",
-                column: "product_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Stores_api_key",
-                table: "Stores",
-                column: "api_key",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Stores_user_id",
-                table: "Stores",
+                name: "IX_StoreUsers_user_id",
+                table: "StoreUsers",
                 column: "user_id");
         }
 
@@ -374,28 +264,16 @@ namespace Vivosis.MarketPlace.Web.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "ProductCategory");
-
-            migrationBuilder.DropTable(
-                name: "StoreCategory");
-
-            migrationBuilder.DropTable(
-                name: "StoreProduct");
+                name: "StoreUsers");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "Categories");
-
-            migrationBuilder.DropTable(
-                name: "Products");
+                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "Stores");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUsers");
         }
     }
 }
