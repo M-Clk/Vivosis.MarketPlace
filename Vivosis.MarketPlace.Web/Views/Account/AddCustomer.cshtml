@@ -1,0 +1,78 @@
+﻿@model SystemUser
+@{
+    ViewData["Title"] = "Müşteri Ekle";
+}
+<div class="page-header mb-2" style="background-color:transparent">
+    <div class="container-fluid">
+        <div class="pull-right">
+            <button type="submit" form="addCustomer" data-toggle="tooltip" title="" class="btn btn-primary" data-original-title="Kaydet"><i class="fa fa-save"></i></button>
+            <a asp-controller="Account" asp-action="Index" data-toggle="tooltip" title="" class="btn btn-default" data-original-title="İptal"><i class="fa fa-reply"></i></a>
+        </div>
+        <ul class="breadcrumb" style="background-color:transparent">
+            <li><a asp-controller="Home" asp-action="Index">Anasayfa</a></li>
+            <li><a asp-controller="Account" asp-action="Index">Müşteriler</a></li>
+        </ul>
+    </div>
+</div>
+<hr />
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-pencil"></i> Müşteri Ekle</h3>
+    </div>
+    <hr />
+    <div class="panel-body">
+        <form class="form-group p-2"  asp-action="AddCustomer" method="post" id="addCustomer">
+            @{
+                var isLoginFailed = !ViewData.ModelState.IsValid && (ViewData.ModelState["DbConnectionResult"]?.Errors?.Count ?? 0) > 0;
+                var borderColor = "#007bff";
+                if(isLoginFailed)
+                    borderColor = "red";
+            }
+            @if(isLoginFailed)
+            {
+                <div class="input-group mb-3">
+                    <div class="form-group row float-left ml-2" style="color:red">@ViewData.ModelState["DbConnectionResult"].Errors.First().ErrorMessage</div>
+                </div>
+            }
+
+            <div class="input-group mb-3">
+                <label asp-for="UserName" class="sr-only">Username</label>
+                <input type="text" asp-for="UserName" class="form-control" style="border-radius: 5px;" placeholder="Kullanıcı adı girin." required autofocus>
+            </div>
+            <div class="input-group mb-3">
+                <label asp-for="PasswordHash" class="sr-only">Password</label>
+                <input asp-for="PasswordHash" type="text" id="password" class="form-control" style="border-radius: 5px 0px 0px 5px;" placeholder="Şifre girin." required>
+                <div class="input-group-append">
+                    <button id="btnRandomPassword" onclick="generateRandomPass('password')" class="btn btn-outline-primary" style="border-radius: 0px 5px 5px 0px;" type="button">Şifre Üret</button>
+                </div>
+            </div>
+            <div class="input-group mb-3">
+                <label asp-for="Email" class="sr-only">Email</label>
+                <input type="email" asp-for="Email" class="form-control" style="border-radius: 5px;" placeholder="Email adresi girin.">
+            </div>
+            <div class="input-group mb-3">
+                <label asp-for="PhoneNumber" class="sr-only">Telefon Numarası</label>
+                <input id="phone" type="tel" asp-for="PhoneNumber" class="form-control rd" style="border-radius: 5px;" placeholder="Telefon numarası girin.">
+            </div>
+
+            <div class="input-group mb-3">
+                <label asp-for="Server" class="sr-only">Veritabanı Sunucusu</label>
+                <input type="text" asp-for="Server" class="form-control" style="border-radius: 5px;" placeholder="Veritabanı sunucusunun adını veya ip adresini girin." required>
+            </div>
+            <div class="input-group mb-3">
+                <label asp-for="DbName" class="sr-only">Veritabanı Adı</label>
+                <input type="text" asp-for="DbName" class="form-control" style="border-radius: 5px;" placeholder="Veritabanı adını girin." required>
+            </div>
+            <div class="input-group mb-3">
+                <label asp-for="DbUserName" class="sr-only">Veritabanı Kullanıcı Adı</label>
+                <input type="text" asp-for="DbUserName" class="form-control" style="border-radius: 5px;" placeholder="Veritabanına erişim yetkisine sahip kullanıcı adını girin." required>
+            </div>
+            <div class="input-group mb-3">
+                <label asp-for="DbPassword" class="sr-only">Veritabanı Kullanıcı Şifresi</label>
+                <input type="text" asp-for="DbPassword" class="form-control" style="border-radius: 5px;" placeholder="Veritabanı kullanıcısının şifresini girin.">
+            </div>
+        </form>
+    </div>
+</div>
+
+
