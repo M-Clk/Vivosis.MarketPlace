@@ -26,7 +26,7 @@ namespace Vivosis.MarketPlace.API
             var accountConnectionString = Configuration.GetConnectionString("MarketPlaceDatabase");
             services.AddControllers();
             services.AddMvc();
-            services.AddCommonVivosisServices(accountConnectionString, "Vivosis.MarketPlace.API", unformattedDynamicConnectionString);
+            services.AddCommonVivosisServices(accountConnectionString, unformattedDynamicConnectionString);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

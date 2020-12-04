@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Vivosis.MarketPlace.Web.Migrations
+namespace Vivosis.MarketPlace.Service.Migrations
 {
     public partial class InitialCreate : Migration
     {

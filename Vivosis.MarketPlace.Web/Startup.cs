@@ -26,7 +26,7 @@ namespace Vivosis.MarketPlace.Web
         {
             var unformattedDynamicConnectionString = Configuration.GetConnectionString("DynamicLocalDatabase");
             var accountConnectionString = Configuration.GetConnectionString("MarketPlaceDatabase");
-            services.AddCommonVivosisServices(accountConnectionString, "Vivosis.MarketPlace.Web", unformattedDynamicConnectionString);
+            services.AddCommonVivosisServices(accountConnectionString, unformattedDynamicConnectionString);
             services.AddMvc(options =>
             {
                 options.EnableEndpointRouting = false;

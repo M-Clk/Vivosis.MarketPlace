@@ -16,7 +16,7 @@ namespace Vivosis.MarketPlace.Service
 {
     public static class CommonStartupExtensions
     {
-        public static IServiceCollection AddCommonVivosisServices(this IServiceCollection services, string accountConnectionString, string accountDbContextMigrationAssemblyName, string unformattedDynamicConnectionString)
+        public static IServiceCollection AddCommonVivosisServices(this IServiceCollection services, string accountConnectionString, string unformattedDynamicConnectionString)
         {
             services.AddHttpContextAccessor();
             services.AddScoped<IN11Service, N11Service>();
@@ -38,7 +38,7 @@ namespace Vivosis.MarketPlace.Service
             })
                 .AddEntityFrameworkStores<AccountDbContext>()
                 .AddDefaultTokenProviders();
-            services.AddDbContext<AccountDbContext>(options => options.UseMySql(accountConnectionString, b => b.MigrationsAssembly(accountDbContextMigrationAssemblyName)));
+            services.AddDbContext<AccountDbContext>(options => options.UseMySql(accountConnectionString, b => b.MigrationsAssembly("Vivosis.MarketPlace.Service")));
             services.BuildServiceProvider().GetRequiredService<AccountDbContext>().Database.Migrate();
             //Migration tek yerden olmali. Bunu ayarla. Ortak kullanilan bir projede olabilir. /Keyword: how to change migration folder location
             services.AddDbContext<MarketPlaceDbContext>((serviceProvider, options) =>

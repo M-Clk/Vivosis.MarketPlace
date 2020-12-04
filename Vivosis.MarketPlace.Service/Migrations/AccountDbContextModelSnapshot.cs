@@ -2,17 +2,15 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Vivosis.MarketPlace.Data;
 
-namespace Vivosis.MarketPlace.API.Migrations
+namespace Vivosis.MarketPlace.Service.Migrations
 {
     [DbContext(typeof(AccountDbContext))]
-    [Migration("20201204091641_InitialCreate")]
-    partial class InitialCreate
+    partial class AccountDbContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

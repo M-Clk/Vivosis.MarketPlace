@@ -6,10 +6,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Vivosis.MarketPlace.Data;
 
-namespace Vivosis.MarketPlace.Web.Migrations
+namespace Vivosis.MarketPlace.Service.Migrations
 {
     [DbContext(typeof(AccountDbContext))]
-    [Migration("20201204091257_InitialCreate")]
+    [Migration("20201204111755_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
