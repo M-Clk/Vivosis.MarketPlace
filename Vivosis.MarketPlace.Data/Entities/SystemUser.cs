@@ -10,13 +10,10 @@ namespace Vivosis.MarketPlace.Data.Entities
     {
         public DateTime ExpireTime { get; set; }
         public bool Status { get; set; }
-        [Required]
         public string DbName { get; set; }
-        [Required]
         public string DbUserName { get; set; }
         public string DbPassword { get; set; }
-        [Required]
         public string Server { get; set; }
-        public virtual IList<Store> Stores { get; set; }
+        public virtual IList<StoreUser> UserStores { get; set; }
     }
 }

@@ -4,9 +4,9 @@ using Vivosis.MarketPlace.Data.Entities;
 
 namespace Vivosis.MarketPlace.Data
 {
-    public class MarketPlaceDbContext :IdentityDbContext<SystemUser, SystemRole, int>
+    public class MarketPlaceDbContext :DbContext
     {
-        public MarketPlaceDbContext(DbContextOptions options) : base(options) { }
+        public MarketPlaceDbContext(DbContextOptions<MarketPlaceDbContext> options) : base(options) { }
         public DbSet<Product> Products { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Store> Stores { get; set; }
@@ -47,7 +47,19 @@ namespace Vivosis.MarketPlace.Data
                 .WithMany(e => e.StoreProducts)
                 .HasForeignKey(x => x.store_id);
 
-            builder.Entity<Store>().HasIndex(s => s.api_key).IsUnique();
+            builder.Entity<StoreUser>()
+                .HasKey(x => new { x.store_id, x.user_id });
+            builder.Entity<StoreUser>()
+                .HasOne(x => x.User)
+                .WithMany(m => m.UserStores)
+                .HasForeignKey(x => x.store_id);
+            builder.Entity<StoreUser>()
+                .HasOne(x => x.Store)
+                .WithMany(e => e.UserStores)
+                .HasForeignKey(x => x.user_id);
+
+            builder.Entity<Store>().Ignore(s => s.UserStores);
+            builder.Entity<StoreUser>().HasIndex(s => s.api_key).IsUnique();
         }
     }
 }
