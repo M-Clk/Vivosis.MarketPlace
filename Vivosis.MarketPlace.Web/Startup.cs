@@ -56,9 +56,7 @@ namespace Vivosis.MarketPlace.Web
             app.UseCookiePolicy();
             app.UseAuthorization();
             app.UseCommonMiddlewares();
-            CookiePolicyOptions options = new CookiePolicyOptions();
-            options.Secure = CookieSecurePolicy.Always;
-            app.UseCookiePolicy(options);
+            app.UseCookiePolicy(new CookiePolicyOptions { Secure = CookieSecurePolicy.Always });
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
