@@ -45,6 +45,7 @@ namespace Vivosis.MarketPlace.Service.Migrations
                     AccessFailedCount = table.Column<int>(nullable: false),
                     ExpireTime = table.Column<DateTime>(nullable: false),
                     Status = table.Column<bool>(nullable: false),
+                    FullName = table.Column<string>(nullable: true),
                     DbName = table.Column<string>(nullable: true),
                     DbUserName = table.Column<string>(nullable: true),
                     DbPassword = table.Column<string>(nullable: true),
@@ -184,22 +185,25 @@ namespace Vivosis.MarketPlace.Service.Migrations
                     store_id = table.Column<int>(nullable: false),
                     user_id = table.Column<int>(nullable: false),
                     api_key = table.Column<string>(nullable: true),
-                    secret_key = table.Column<string>(nullable: true)
+                    secret_key = table.Column<string>(nullable: true),
+                    is_confirmed = table.Column<bool>(nullable: false),
+                    expire_time = table.Column<DateTime>(nullable: false),
+                    is_active = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_StoreUsers", x => new { x.store_id, x.user_id });
                     table.ForeignKey(
-                        name: "FK_StoreUsers_AspNetUsers_store_id",
+                        name: "FK_StoreUsers_Stores_store_id",
                         column: x => x.store_id,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_StoreUsers_Stores_user_id",
-                        column: x => x.user_id,
                         principalTable: "Stores",
                         principalColumn: "store_id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_StoreUsers_AspNetUsers_user_id",
+                        column: x => x.user_id,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -270,10 +274,10 @@ namespace Vivosis.MarketPlace.Service.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "Stores");
 
             migrationBuilder.DropTable(
-                name: "Stores");
+                name: "AspNetUsers");
         }
     }
 }

@@ -9,7 +9,7 @@ using Vivosis.MarketPlace.Data;
 namespace Vivosis.MarketPlace.Service.Migrations
 {
     [DbContext(typeof(AccountDbContext))]
-    [Migration("20201204111755_InitialCreate")]
+    [Migration("20201207141723_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -152,6 +152,15 @@ namespace Vivosis.MarketPlace.Service.Migrations
                     b.Property<string>("api_key")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
+                    b.Property<DateTime>("expire_time")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<bool>("is_active")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("is_confirmed")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<string>("secret_key")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
@@ -220,6 +229,9 @@ namespace Vivosis.MarketPlace.Service.Migrations
 
                     b.Property<DateTime>("ExpireTime")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<string>("FullName")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("tinyint(1)");
@@ -325,13 +337,13 @@ namespace Vivosis.MarketPlace.Service.Migrations
 
             modelBuilder.Entity("Vivosis.MarketPlace.Data.Entities.StoreUser", b =>
                 {
-                    b.HasOne("Vivosis.MarketPlace.Data.Entities.SystemUser", "User")
+                    b.HasOne("Vivosis.MarketPlace.Data.Entities.Store", "Store")
                         .WithMany("UserStores")
                         .HasForeignKey("store_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Vivosis.MarketPlace.Data.Entities.Store", "Store")
+                    b.HasOne("Vivosis.MarketPlace.Data.Entities.SystemUser", "User")
                         .WithMany("UserStores")
                         .HasForeignKey("user_id")
                         .OnDelete(DeleteBehavior.Cascade)

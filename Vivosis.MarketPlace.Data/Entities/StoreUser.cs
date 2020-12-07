@@ -15,5 +15,8 @@ namespace Vivosis.MarketPlace.Data.Entities
         public virtual SystemUser User { get; set; }
         public int user_id { get; set; }
 
+        public bool is_confirmed { get; set; }
+        public DateTime expire_time { get; set; }
+        public bool is_active { get; set; }
     }
 }
