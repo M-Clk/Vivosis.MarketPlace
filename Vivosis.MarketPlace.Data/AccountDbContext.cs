@@ -18,11 +18,11 @@ namespace Vivosis.MarketPlace.Data
             modelBuilder.Entity<StoreUser>()
                 .HasOne(x => x.User)
                 .WithMany(m => m.UserStores)
-                .HasForeignKey(x => x.store_id);
+                .HasForeignKey(x => x.user_id);
             modelBuilder.Entity< StoreUser> ()
                 .HasOne(x => x.Store)
                 .WithMany(e => e.UserStores)
-                .HasForeignKey(x => x.user_id);
+                .HasForeignKey(x => x.store_id);
 
             modelBuilder.Entity<Store>().Ignore(s => s.StoreCategories);
             modelBuilder.Entity<Store>().Ignore(s => s.StoreProducts);

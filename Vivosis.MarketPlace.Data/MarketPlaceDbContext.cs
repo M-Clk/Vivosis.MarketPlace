@@ -52,11 +52,11 @@ namespace Vivosis.MarketPlace.Data
             builder.Entity<StoreUser>()
                 .HasOne(x => x.User)
                 .WithMany(m => m.UserStores)
-                .HasForeignKey(x => x.store_id);
+                .HasForeignKey(x => x.user_id);
             builder.Entity<StoreUser>()
                 .HasOne(x => x.Store)
                 .WithMany(e => e.UserStores)
-                .HasForeignKey(x => x.user_id);
+                .HasForeignKey(x => x.store_id);
 
             builder.Entity<Store>().Ignore(s => s.UserStores);
             builder.Entity<StoreUser>().HasIndex(s => s.api_key).IsUnique();
