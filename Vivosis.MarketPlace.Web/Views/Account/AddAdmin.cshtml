@@ -40,6 +40,10 @@
                 <input type="text" asp-for="UserName" class="form-control" style="border-radius: 5px;" placeholder="Kullanıcı adı girin." required autofocus>
             </div>
             <div class="input-group mb-3">
+                <label asp-for="FullName" class="sr-only">Ad Soyad</label>
+                <input type="text" asp-for="FullName" class="form-control" style="border-radius: 5px;" placeholder="Ad ve soyadınızı girin." required autofocus>
+            </div>
+            <div class="input-group mb-3">
                 <label asp-for="PasswordHash" class="sr-only">Password</label>
                 <input asp-for="PasswordHash" type="text" id="password" class="form-control" style="border-radius: 5px 0px 0px 5px;" placeholder="Şifre girin." required>
                 <div class="input-group-append">

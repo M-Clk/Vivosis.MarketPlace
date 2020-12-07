@@ -21,7 +21,7 @@
     </div>
     <hr />
     <div class="panel-body">
-        <form class="form-group p-2"  asp-action="AddCustomer" method="post" id="addCustomer">
+        <form class="form-group p-2" asp-action="AddCustomer" method="post" id="addCustomer">
             @{
                 var isLoginFailed = !ViewData.ModelState.IsValid && (ViewData.ModelState["DbConnectionResult"]?.Errors?.Count ?? 0) > 0;
                 var borderColor = "#007bff";
@@ -38,6 +38,10 @@
             <div class="input-group mb-3">
                 <label asp-for="UserName" class="sr-only">Username</label>
                 <input type="text" asp-for="UserName" class="form-control" style="border-radius: 5px;" placeholder="Kullanıcı adı girin." required autofocus>
+            </div>
+            <div class="input-group mb-3">
+                <label asp-for="FullName" class="sr-only">Ad Soyad</label>
+                <input type="text" asp-for="FullName" class="form-control" style="border-radius: 5px;" placeholder="Ad ve soyadınızı girin." required autofocus>
             </div>
             <div class="input-group mb-3">
                 <label asp-for="PasswordHash" class="sr-only">Password</label>
