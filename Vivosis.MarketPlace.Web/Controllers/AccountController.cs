@@ -150,6 +150,11 @@ namespace Vivosis.MarketPlace.Web.Controllers
         {
             return View();
         }
+        public IActionResult AccessDenied(string returnUrl, bool turnBack = false)
+        {
+            return View();
+        }
         #endregion
+        
     }
 }
