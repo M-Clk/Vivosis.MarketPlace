@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +18,9 @@ namespace Vivosis.MarketPlace.Service.Concrete
         public StoreService(AccountDbContext dbContext, IHttpContextAccessor httpContextAccessor, UserManager<SystemUser> userManager)
         {
             _dbContext = dbContext;
-            _customer = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result;
+            var logedInUser = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result;
+            if(userManager.IsInRoleAsync(logedInUser, "Customer").Result)
+                _customer = logedInUser;
         }
         public bool AddStore(StoreUser storeUser)
         {
@@ -25,6 +28,29 @@ namespace Vivosis.MarketPlace.Service.Concrete
                 return false;
             //TODO api_key ve api_secret kontrolilp oyle kaydedilecek.
             _dbContext.StoreUsers.Add(storeUser);
+            return _dbContext.SaveChanges() > 0;
+        }
+
+        public bool AddStoresToUser(List<int> storeIdList)
+        {
+            var newStoreUserList = storeIdList.Select(id => new StoreUser
+            {
+                store_id = id,
+                user_id = _customer.Id
+            });
+            _dbContext.StoreUsers.AddRange(newStoreUserList);
+            return _dbContext.SaveChanges() > 0;
+        }
+
+        public bool AddStoreToUser(int storeId)
+        {
+            var newStoreUser = new StoreUser
+            {
+                Store = null,
+                store_id = storeId,
+                user_id = _customer.Id
+            };
+            _dbContext.StoreUsers.Add(newStoreUser);
             return _dbContext.SaveChanges() > 0;
         }
 
@@ -39,13 +65,14 @@ namespace Vivosis.MarketPlace.Service.Concrete
 
         public StoreUser GetStoreById(int id) => _dbContext.StoreUsers.FirstOrDefault(sU => sU.store_id == id && sU.user_id == _customer.Id);
 
-        public IEnumerable<StoreUser> GetStores() => _dbContext.StoreUsers.Where(sU=>sU.user_id == _customer.Id);
+        public IEnumerable<StoreUser> GetBoughtStores() => _dbContext.StoreUsers.Where(sU => sU.user_id == _customer.Id);
+        public IEnumerable<Store> GetStores() => _dbContext.Stores;
 
         public bool UpdateStore(StoreUser storeUser)
         {
             if(storeUser == null)
                 return false;
-            var oldStore = _dbContext.StoreUsers.FirstOrDefault(sU=>sU.store_id == storeUser.store_id && sU.user_id == storeUser.user_id);
+            var oldStore = _dbContext.StoreUsers.FirstOrDefault(sU => sU.store_id == storeUser.store_id && sU.user_id == storeUser.user_id);
             if(oldStore == null)
                 return false;
             //TODO api_key ve api_secret kontrolilp oyle kaydedilecek.
@@ -53,6 +80,24 @@ namespace Vivosis.MarketPlace.Service.Concrete
             oldStore.secret_key = storeUser.secret_key;
 
             _dbContext.StoreUsers.Update(oldStore);
+            return _dbContext.SaveChanges() > 0;
+        }
+
+        public IEnumerable<StoreUser> GetRequests() => _dbContext.StoreUsers.Where(su => !su.is_confirmed).Include(su => su.User).Include(su => su.Store);
+
+        public bool ConfirmStoreUser(int userId, int storeId)
+        {
+            var storeUser = _dbContext.StoreUsers.FirstOrDefault(us => us.user_id == userId && us.store_id == storeId);
+            storeUser.is_confirmed = true;
+            storeUser.expire_time = DateTime.Now.AddMonths(1);
+            storeUser.is_active = true;
+            _dbContext.StoreUsers.Update(storeUser);
+            return _dbContext.SaveChanges() > 0;
+        }
+        public bool RejectStoreUser(int userId, int storeId)
+        {
+            var storeUser = _dbContext.StoreUsers.FirstOrDefault(us => us.user_id == userId && us.store_id == storeId);
+            _dbContext.StoreUsers.Remove(storeUser);
             return _dbContext.SaveChanges() > 0;
         }
     }

@@ -1,0 +1,70 @@
+﻿@model IEnumerable<StoreUser>
+@{
+    ViewData["Title"] = "Pazaryeri Satın Alma İstekleri";
+}
+<div class="page-header mb-2" style="background-color:transparent">
+    <div class="container-fluid">
+        <ul class="breadcrumb" style="background-color:transparent">
+            <li><a asp-controller="Home" asp-action="Index">Anasayfa</a></li>
+            <li><a asp-controller="Stores" asp-action="Index">Pazaryeri Satın Alma İstekleri</a></li>
+        </ul>
+    </div>
+</div>
+<hr />
+@if((!Model?.Any() ?? false))
+{
+    <div class="input-group mb-3">
+        <div class="form-group row float-left ml-2" style="color:red">Henüz satın alma isteği yok.</div>
+    </div>
+}
+else
+{
+    <table id="mytable" class="display" style="width: 100%;" role="grid"
+           aria-describedby="example_info">
+        <thead>
+            <tr role="row">
+                <td>Adı Soyadı</td>
+                <td>Kullanıcı Adı</td>
+                <td>Istenen Pazaryeri</td>
+                <td>Onay</td>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                foreach(var store in Model)
+                {
+                    <tr id="tr_@store.User.NormalizedUserName">
+                        <td>
+                            @store.User.FullName
+                        </td>
+                        <td>
+                            @store.User.UserName
+                        </td>
+                        <td>
+                            @store.Store.name
+                        </td>
+                        <td>
+                            <a asp-action="StoreRequests" asp-controller="Stores" asp-route-userId="@store.user_id" asp-route-storeId="@store.store_id" class="btn btn-success">Onayla </a>
+                            <a asp-action="StoreRequests" asp-controller="Stores" asp-route-userId="@store.user_id" asp-route-storeId="@store.store_id" asp-route-reject="true" class="btn btn-danger">Reddet</a>
+                        </td>
+                    </tr>
+                }
+            }
+
+        </tbody>
+    </table>
+}
+<script>
+    $('#mytable').DataTable(
+        {
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.10.22/i18n/Turkish.json'
+
+            },
+            columnDefs: [
+                { orderable: false, targets: 0 }
+            ],
+            order: [[1, 'asc']]
+        });
+    }
+</script>

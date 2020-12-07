@@ -25,7 +25,7 @@ namespace Vivosis.MarketPlace.API.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<StoreUser>> Get()
         { 
-            var storeUsers = _storeService.GetStores();
+            var storeUsers = _storeService.GetBoughtStores();
             if(storeUsers == null)
                 return NoContent();
             else

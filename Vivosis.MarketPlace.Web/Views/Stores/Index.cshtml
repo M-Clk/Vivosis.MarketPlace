@@ -1,5 +1,106 @@
-﻿@{
+﻿@model IEnumerable<StoreModel>
+@{
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<div class="page-header mb-2" style="background-color:transparent">
+    <div class="container-fluid">
+        <ul class="breadcrumb" style="background-color:transparent">
+            <li><a asp-controller="Home" asp-action="Index">Anasayfa</a></li>
+            <li><a asp-controller="Stores" asp-action="Index">Pazaryeri Ayarları</a></li>
+        </ul>
+    </div>
+</div>
+<hr />
+<table id="mytable" class="display" style="width: 100%;" role="grid"
+       aria-describedby="example_info">
+    <thead>
+        <tr role="row">
+            <td>Durum</td>
+            <td>Resim</td>
+            <td>İsmi</td>
+            <td>Üyelik</td>
+            <td>Ayarlar</td>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            foreach(var store in Model)
+            {
+                <tr id="tr_@store.StoreId">
+                    <td>
+                        @{
+                            if(store.IsConfirmed)
+                            {
+                                var colorType = "btn-danger off";
+                                if(store.IsActive)
+                                {
+                                    colorType = "btn-success";
+                                }
+                                <div class="toggle btn @colorType" data-toggle="toggle" style="width: 60px; height: 34px;">
+                                    <input type="checkbox" checked data-toggle="toggle" data-on="Aktif" data-off="Pasif" data-onstyle="success" data-offstyle="danger">
+                                    <div class="toggle-group">
+                                        <a asp-action="ChangeStatus" asp-controller="Stores" asp-route-storeId="@store.StoreId" class="btn btn-success toggle-on"><span style="font-size:smaller;">Aktif</span></a>
+                                        <a asp-action="ChangeStatus" asp-controller="Stores" asp-route-storeId="@store.StoreId" class="btn btn-danger active toggle-off"> <span style="font-size:smaller;">Pasif</span></a>
+                                        <span class="toggle-handle btn btn-default"></span>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <p class="text-warning">-</p>
+                            }
+                        }
+                    </td>
+                    <td>
+                        <img src="~/img/stores/@store.Image" class="img-thumbnail" alt="@store.Name" />
+                    </td>
+                    <td>
+                        <p> @store.Name</p>
+                    </td>
+                    <td>
+                        @{
+                            if(store.IsBought && store.IsConfirmed)
+                            {
+                                var colorType = "success";
+                                if(store.RemainingDays < 30)
+                                    colorType = "warning";
+                                if(store.RemainingDays < 15)
+                                    colorType = "danger";
+                                <p class="text-@colorType">@store.RemainingDays.ToString() Gün Kaldı</p>
+                            }
+                            else if(store.IsBought && !store.IsConfirmed)
+                            {
+                                <p class="text-warning">Onay Bekliyor</p>
+                            }
+                            else
+                            {
+                                <a asp-action="AddStoreToUser" asp-controller="Stores" asp-route-id="@store.StoreId" class="btn btn-success">Satın Al</a>
+                            }
+                        }
+                    </td>
+                    <td>
+                        <button name="@store.Name" product_id="@store.StoreId" title="Güncelle" class="btn btn-outline-primary">
+                            <i class="fa fa-pencil"></i>
+                        </button>
+                    </td>
+                </tr>
+            }
+        }
+
+    </tbody>
+</table>
+<script>
+    $('#mytable').DataTable(
+        {
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.10.22/i18n/Turkish.json'
+
+            },
+            columnDefs: [
+                { orderable: false, targets: 0 }
+            ],
+            order: [[1, 'asc']]
+        });
+    }
+</script>
