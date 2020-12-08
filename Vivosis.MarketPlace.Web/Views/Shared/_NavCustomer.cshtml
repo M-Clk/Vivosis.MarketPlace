@@ -1,0 +1,27 @@
+﻿<div id="main-menu" class="main-menu collapse navbar-collapse" onload="activeSelectedItem()">
+    <ul class="nav navbar-nav" id="menu">
+        <li id="home">
+            <a asp-action="Index" asp-controller="Home"><i class="menu-icon fa fa-laptop"></i>Anasayfa</a>
+        </li>
+        <li class="menu-title">Ürün İşlemleri</li><!-- /.menu-title -->
+        <li class="menu-item" id="products">
+            <a asp-action="Index" asp-controller="Products"> <i class="menu-icon fa fa-cogs"></i>Ürünler</a>
+        </li>
+        <li class="menu-item" id="categories">
+            <a asp-action="Index" asp-controller="Categories"> <i class="menu-icon fa fa-cogs"></i>Kategoriler</a>
+        </li>
+        <li class="menu-item" id="orders">
+            <a asp-action="Index" asp-controller="Orders"> <i class="menu-icon fa fa-cogs"></i>Siparişler</a>
+        </li>
+
+        <li class="menu-title">Pazaryeri İşlemleri</li><!-- /.menu-title -->
+        <li class="menu-item" id="stores">
+            <a asp-action="Index" asp-controller="Stores"> <i class="menu-icon fa fa-cogs"></i>Ayarlar</a>
+        </li>
+
+        <li class="menu-title">Genel İşlemeler</li><!-- /.menu-title -->
+        <li class="menu-item" id="reports">
+            <a asp-action="Index" asp-controller="Reports"> <i class="menu-icon fa fa-cogs"></i>Raporlar</a>
+        </li>
+    </ul>
+</div><!-- /.navbar-collapse -->

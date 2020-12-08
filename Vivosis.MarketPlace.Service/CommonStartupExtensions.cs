@@ -40,7 +40,6 @@ namespace Vivosis.MarketPlace.Service
                 .AddDefaultTokenProviders();
             services.AddDbContext<AccountDbContext>(options => options.UseMySql(accountConnectionString, b => b.MigrationsAssembly("Vivosis.MarketPlace.Service")));
             services.BuildServiceProvider().GetRequiredService<AccountDbContext>().Database.Migrate();
-            //Migration tek yerden olmali. Bunu ayarla. Ortak kullanilan bir projede olabilir. /Keyword: how to change migration folder location
             services.AddDbContext<MarketPlaceDbContext>((serviceProvider, options) =>
             {
                 var httpContext = serviceProvider.GetService<IHttpContextAccessor>()?.HttpContext;
@@ -55,7 +54,8 @@ namespace Vivosis.MarketPlace.Service
                 var connectionString = string.Format(unformattedDynamicConnectionString, $"db_{httpContext.User.Identity.Name}");
                 options.UseMySql(connectionString);
             });
-            services.SeedStores().SeedIdentity();
+            services.SeedStores().SeedIdentity();//Migration islemi sirasinda varolmayan db ye veri eklemeye calistigi icin hata veriyor
+            //Update-Database demeden veritabanini kuruyor onu bir arastir bakam
             return services;
         }
         public static IApplicationBuilder UseCommonMiddlewares(this IApplicationBuilder app)

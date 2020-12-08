@@ -34,12 +34,15 @@ namespace Vivosis.MarketPlace.Service.Concrete
                 return false;
             _signInManager.SignOutAsync().Wait();
             var result = _signInManager.PasswordSignInAsync(user, password, rememberMe, true).Result;
-            if(result.Succeeded)
+            if(result.Succeeded && _userManager.IsInRoleAsync(user, "Customer").Result)
             {
                 var connectionString = $"Server={user.Server}; Database={user.DbName}; Uid={user.DbUserName}; Pwd={user.DbPassword};";
                 CookieOptions option = new CookieOptions { Expires = DateTime.Now.AddDays(1), IsEssential = true };
                 _httpContextAccessor.HttpContext.Response.Cookies.Append("VivosisConnectionString", connectionString, option);
+                _httpContextAccessor.HttpContext.Response.Cookies.Append("IsCustomer", "y", option);
             }
+            else
+                _httpContextAccessor.HttpContext.Response.Cookies.Delete("IsCustomer");
             return result.Succeeded;
         }
         public void Logout() => _signInManager.SignOutAsync().Wait();
