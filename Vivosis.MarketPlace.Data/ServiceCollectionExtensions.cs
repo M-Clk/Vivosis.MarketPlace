@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Security.Claims;
+
 using Vivosis.MarketPlace.Data.Entities;
 
 namespace Vivosis.MarketPlace.Data
@@ -66,6 +69,33 @@ namespace Vivosis.MarketPlace.Data
             };
             dbContext.Stores.AddRange(stores);
             dbContext.SaveChanges();
+            return services;
+        }
+        public static IServiceCollection AddAccountDbContext(this IServiceCollection services, string connectionString)
+        {
+            services.AddDbContext<AccountDbContext>(options => options.UseMySql(connectionString));
+            services.BuildServiceProvider().GetRequiredService<AccountDbContext>().Database.Migrate();
+            services.SeedStores().SeedIdentity();//Migration islemi sirasinda varolmayan db ye veri eklemeye calistigi icin hata veriyor
+            //Update-Database demeden veritabanini kuruyor onu bir arastir bakam
+            return services;
+        }
+        public static IServiceCollection AddMarketPlaceDbContext(this IServiceCollection services, string unformatedConnectionString)
+        {
+            services.AddDbContext<MarketPlaceDbContext>((serviceProvider, options) =>
+            {
+                var httpContext = serviceProvider.GetService<IHttpContextAccessor>()?.HttpContext;
+                var httpRequest = httpContext?.Request;
+                if(httpRequest == null)
+                    return;
+                if(string.IsNullOrEmpty(httpContext.User.Identity.Name))
+                    return;
+                var customerClaim = ((ClaimsIdentity)httpContext.User.Identity).Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role && c.Value == "Customer");
+                if(customerClaim == null)
+                    return;
+                var connectionString = string.Format(unformatedConnectionString, $"db_{httpContext.User.Identity.Name}");
+                options.UseMySql(connectionString);
+            });
+            services.AddDbContext<MarketPlaceDbContext>();
             return services;
         }
         private static void SeedUser(UserManager<SystemUser> userManager)

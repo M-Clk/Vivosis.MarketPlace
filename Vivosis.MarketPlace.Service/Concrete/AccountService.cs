@@ -1,5 +1,4 @@
-﻿extern alias MySqlConnectorAlias;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -60,7 +59,7 @@ namespace Vivosis.MarketPlace.Service.Concrete
                 var connectionString = string.Format(_configuration.GetConnectionString("DynamicLocalDatabase"), $"db_{user.UserName.ToLower()}");
                 options.UseMySql(connectionString);
                 dbContext = new MarketPlaceDbContext(options.Options);
-                dbContext.Database.EnsureCreated();
+                dbContext.Database.Migrate();
             }
             var result = _userManager.CreateAsync(user, pass).Result;
             if(result.Succeeded)
