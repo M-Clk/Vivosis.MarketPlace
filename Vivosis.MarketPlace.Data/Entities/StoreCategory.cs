@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Vivosis.MarketPlace.Data.Entities
 {
-    public class StoreCategory
+    public class StoreCategory :StoreRelationBase
     {
         public virtual Store Store { get; set; }
         public int store_id { get; set; }

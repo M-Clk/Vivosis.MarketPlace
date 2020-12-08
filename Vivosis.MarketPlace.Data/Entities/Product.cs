@@ -18,6 +18,7 @@ namespace Vivosis.MarketPlace.Data.Entities
         public string model { get; set; }
         public decimal price { get; set; }
         public decimal quantity{ get; set; }
+        public virtual IList<ProductOption> ProductOptions { get; set; }
         public virtual IList<ProductCategory> ProductCategories { get; set; }
         public virtual IList<StoreProduct> ProductStores { get; set; }
     }

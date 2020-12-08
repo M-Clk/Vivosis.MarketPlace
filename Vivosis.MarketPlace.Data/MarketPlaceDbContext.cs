@@ -1,15 +1,19 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Vivosis.MarketPlace.Data.Entities;
 
 namespace Vivosis.MarketPlace.Data
 {
     public class MarketPlaceDbContext :DbContext
     {
-        public MarketPlaceDbContext(DbContextOptions<MarketPlaceDbContext> options) : base(options) { }
+        public MarketPlaceDbContext() :base() { }
+        public MarketPlaceDbContext(DbContextOptions<MarketPlaceDbContext> options) :base(options) { }
         public DbSet<Product> Products { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Store> Stores { get; set; }
+        public DbSet<Option> Options { get; set; }
+        public DbSet<OptionValue> OptionValues { get; set; }
+        public DbSet<ProductOption> ProductOptions { get; set; }
+        public DbSet<ProductOptionValue> ProductOptionValues { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -58,8 +62,40 @@ namespace Vivosis.MarketPlace.Data
                 .WithMany(e => e.UserStores)
                 .HasForeignKey(x => x.store_id);
 
+            builder.Entity<OptionValue>()
+                .HasOne(x => x.Option)
+                .WithMany(m => m.OptionValues)
+                .HasForeignKey(x => x.option_id);
+
+            builder.Entity<ProductOption>()
+                .HasOne(x => x.Option)
+                .WithMany(m => m.ProductOptions)
+                .HasForeignKey(x => x.option_id);
+            builder.Entity<ProductOption>()
+                .HasOne(x => x.Product)
+                .WithMany(m => m.ProductOptions)
+                .HasForeignKey(x => x.product_id);
+
+            builder.Entity<ProductOptionValue>()
+                .HasOne(x => x.ProductOption)
+                .WithMany(m => m.ProductOptionValues)
+                .HasForeignKey(x => x.product_option_id);
+            builder.Entity<ProductOptionValue>()
+                .HasOne(x => x.OptionValue)
+                .WithMany(m => m.ProductOptionValues)
+                .HasForeignKey(x => x.option_value_id);
+
+            builder.Entity<ProductOptionValue>()
+                .HasIndex(p => new { p.product_option_id, p.option_value_id }).IsUnique();
+
             builder.Entity<Store>().Ignore(s => s.UserStores);
             builder.Entity<StoreUser>().HasIndex(s => s.api_key).IsUnique();
+        }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if(!optionsBuilder.IsConfigured)
+                optionsBuilder.UseMySql("Server=localhost; Database=DefaultMarketPlaceDbForMigrations; Uid=root; Pwd=;");
+            base.OnConfiguring(optionsBuilder);
         }
     }
 }
