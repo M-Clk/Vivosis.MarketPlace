@@ -76,15 +76,8 @@ namespace Vivosis.MarketPlace.Service.Concrete
                     category.category_id = categoryId;
                     category.name = (string)dataReader["name"];
                     category.description = (string)dataReader["description"];
-                }
-                if(dataReader["product_id"] != DBNull.Value)
-                {
-                    var productCategory = new ProductCategory { product_id = (int)dataReader["product_id"], category_id = categoryId };
-                    category.CategoryProducts ??= new List<ProductCategory>();
-                    category.CategoryProducts.Add(productCategory);
-                }
-                if(!isCategoryExist)
                     categories.Add(category);
+                }
             }
             _connection.Close();
             command.Dispose();

@@ -1,4 +1,4 @@
-﻿SELECT * FROM category as c 
-left join category_description as d on d.category_id = c.category_id
-left join product_to_category as pc on pc.category_id = c.category_id
-left join product as p on p.product_id = pc.product_id
+﻿SELECT cp.category_id, group_concat(cd.name separator ' > ') as name, cd.description, c.image FROM opencart.category_path as cp
+left join category_description as cd on cd.category_id = cp.path_id
+left join category as c on c.category_id = cp.path_id
+group by cp.category_id
