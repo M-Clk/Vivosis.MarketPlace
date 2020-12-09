@@ -1,0 +1,89 @@
+﻿@model IEnumerable<SystemUser>
+@{
+    ViewData["Title"] = "Müşteriler";
+}
+<div class="page-header mb-2" style="background-color:transparent">
+    <div class="container-fluid">
+        <ul class="breadcrumb" style="background-color:transparent">
+            <li><a asp-controller="Home" asp-action="Index">Anasayfa</a></li>
+            <li><a asp-controller="Account" asp-action="Customers">Müşteriler</a></li>
+        </ul>
+    </div>
+</div>
+<hr />
+<table id="mytable" class="display" style="width: 100%;" role="grid"
+       aria-describedby="example_info">
+    <thead>
+        <tr role="row">
+            <td style="width: 1px;">
+                <input type="checkbox" onclick="checkAll(this)">
+            </td>
+            <td>Kullanıcı Adı</td>
+            <td>Adı Soyadı</td>
+            <td>Email</td>
+            <td>Telefon</td>
+            <td>Veritabanı Sunucusu</td>
+            <td>Veritabanı Adı</td>
+            <td>Veritabanı Kullanıcı Adı</td>
+            <td>Veritabanı Şifresi</td>
+            <td>Satın Aldığı Pazaryeri Modülleri</td>
+            <td>İşlem</td>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            foreach(var user in Model)
+            {
+                var dbPass = user.DbPassword;
+                var passStyleClass = "";
+                @if(string.IsNullOrEmpty(dbPass))
+                {
+                    passStyleClass = "text-danger";
+                    dbPass = "Tanımlanmamış";
+                }
+                <tr id="tr_@user.Id" onclick="selectSingleCheckbox(chck_@user.Id)">
+                    <td>
+                        <input type="checkbox" name="selected[]" id="chck_@user.Id" value="@user.Id">
+                    </td>
+                    <td>
+                        <p> @user.UserName</p>
+                    </td>
+                    <td>
+                        <p> @user.FullName</p>
+                    </td>
+                    <td>
+                        <p> @user.Email</p>
+                    </td>
+                    <td>
+                        <p> @user.PhoneNumber</p>
+                    </td>
+                    <td>
+                        <p> @user.Server</p>
+                    </td>
+                    <td>
+                        <p> @user.DbName</p>
+                    </td>
+                    <td>
+                        <p> @user.DbUserName</p>
+                    </td>
+                    <td>
+                        <p class="@passStyleClass"> @dbPass</p>
+                    </td>
+                    <td>
+                        <img src="@user.UserStores" class="img-thumbnail">
+                    </td>
+                    <td>
+                        <button product_id="@user.Id" name="@user.UserName" data-toggle="tooltip" title="" class="btn btn-outline-primary btnSetting" data-original-title="Düzenle">
+                            <i class="fa fa-pencil"></i>
+                        </button>
+                        <button product_id="@user.Id" name="@user.UserName" data-toggle="tooltip" title="" class="btn btn-outline-danger btnSetting" data-original-title="Sil">
+                            <i class="fa fa-trash" aria-hidden="true"></i>
+                        </button>
+                    </td>
+                </tr>
+            }
+        }
+
+    </tbody>
+</table>
+

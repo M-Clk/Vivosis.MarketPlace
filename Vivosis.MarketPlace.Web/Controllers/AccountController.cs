@@ -22,6 +22,20 @@ namespace Vivosis.MarketPlace.Web.Controllers
         {
             return View();
         }
+        [HttpGet("[Controller]/Admin/Customers")]
+        [Authorize(Roles = "Admin")]
+        public IActionResult Customers()
+        {
+            var users = _accountService.GetCustomerUsers();
+            return View(users);
+        }
+        [HttpGet("[Controller]/Admin/Users")]
+        [Authorize(Roles = "Admin")]
+        public IActionResult Users()
+        {
+            var users = _accountService.GetAdminUsers();
+            return View(users);
+        }
         [AllowAnonymous]
         public IActionResult Login(string returnUrl)
         {
@@ -155,6 +169,6 @@ namespace Vivosis.MarketPlace.Web.Controllers
             return View();
         }
         #endregion
-        
+
     }
 }

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using Vivosis.MarketPlace.Data;
 using Vivosis.MarketPlace.Data.Entities;
@@ -25,6 +26,18 @@ namespace Vivosis.MarketPlace.Service.Concrete
             _userManager = userManager;
             _httpContextAccessor = httpContextAccessor;
             _configuration = configuration;
+        }
+        public IEnumerable<SystemUser> GetAllUsers()
+        {
+            return _accountDbContext.Users;
+        }
+        public IEnumerable<SystemUser> GetCustomerUsers()
+        {
+            return _userManager.GetUsersInRoleAsync("Customer").Result;
+        }
+        public IEnumerable<SystemUser> GetAdminUsers()
+        {
+            return _userManager.GetUsersInRoleAsync("Admin").Result;
         }
         public bool Login(string userName, string password, bool rememberMe)
         {
