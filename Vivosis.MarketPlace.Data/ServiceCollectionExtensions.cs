@@ -106,6 +106,8 @@ namespace Vivosis.MarketPlace.Data
             {
                 Id = 1,
                 UserName = "admin",
+                FullName = "Muhammed ÇELİK",
+                PhoneNumber = "+90 534 818 31 26",
                 Email = "celikmuhammed21@hotmail.com",
                 ExpireTime = DateTime.MaxValue
             };
