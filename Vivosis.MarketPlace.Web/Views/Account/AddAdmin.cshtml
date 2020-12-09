@@ -10,7 +10,7 @@
         </div>
         <ul class="breadcrumb" style="background-color:transparent">
             <li><a asp-controller="Home" asp-action="Index">Anasayfa</a></li>
-            <li><a asp-controller="Account" asp-action="Index">Yöneticiler</a></li>
+            <li><a asp-controller="Account" asp-action="AddAdmin">Yönetici Ekle</a></li>
         </ul>
     </div>
 </div>
@@ -58,9 +58,12 @@
                 <label asp-for="PhoneNumber" class="sr-only">Telefon Numarası</label>
                 <input type="tel" asp-for="PhoneNumber" class="form-control rd" style="border-radius: 5px;" placeholder="Telefon numarası girin.">
             </div>
-            <script src="~/js/site.js"></script>
+            <script src="~/js/site.js">ScriptProcessorNode</script>
         </form>
     </div>
 </div>
+<script>
+    document.getElementById("addUser").className += " active";
+</script>
 
 

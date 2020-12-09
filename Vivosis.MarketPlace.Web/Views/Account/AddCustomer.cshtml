@@ -10,7 +10,7 @@
         </div>
         <ul class="breadcrumb" style="background-color:transparent">
             <li><a asp-controller="Home" asp-action="Index">Anasayfa</a></li>
-            <li><a asp-controller="Account" asp-action="Index">Müşteriler</a></li>
+            <li><a asp-controller="Account" asp-action="AddCustomer">Müşteri Ekle</a></li>
         </ul>
     </div>
 </div>
@@ -78,5 +78,7 @@
         </form>
     </div>
 </div>
-
+<script>
+    document.getElementById("addCustomer").className += " active";
+</script>
 
