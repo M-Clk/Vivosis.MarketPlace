@@ -160,7 +160,8 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     product_id = table.Column<int>(nullable: false),
                     option_id = table.Column<int>(nullable: false),
-                    is_required = table.Column<bool>(nullable: false)
+                    is_required = table.Column<bool>(nullable: false),
+                    value = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {

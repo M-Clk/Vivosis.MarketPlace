@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Vivosis.MarketPlace.Data.Entities
 {
@@ -13,6 +14,8 @@ namespace Vivosis.MarketPlace.Data.Entities
         public virtual Option Option { get; set; }
 
         public bool is_required { get; set; }
+        public string value { get; set; }
+
         public virtual IList<ProductOptionValue> ProductOptionValues { get; set; }
     }
 }
