@@ -5,7 +5,7 @@
 <div class="page-header mb-2" style="background-color:transparent">
     <div class="container-fluid">
         <div class="pull-right">
-            <button type="submit" form="addCustomer" data-toggle="tooltip" title="" class="btn btn-primary" data-original-title="Kaydet"><i class="fa fa-save"></i></button>
+            <button type="submit" form="addCustomerForm" data-toggle="tooltip" title="" class="btn btn-primary" data-original-title="Kaydet"><i class="fa fa-save"></i></button>
             <a asp-controller="Account" asp-action="Index" data-toggle="tooltip" title="" class="btn btn-default" data-original-title="İptal"><i class="fa fa-reply"></i></a>
         </div>
         <ul class="breadcrumb" style="background-color:transparent">
@@ -21,7 +21,7 @@
     </div>
     <hr />
     <div class="panel-body">
-        <form class="form-group p-2" asp-action="AddAdmin" method="post" id="addCustomer">
+        <form class="form-group p-2" asp-action="AddAdmin" method="post" id="addCustomerForm">
             @{
                 var isLoginFailed = !ViewData.ModelState.IsValid && (ViewData.ModelState["DbConnectionResult"]?.Errors?.Count ?? 0) > 0;
                 var borderColor = "#007bff";
