@@ -225,7 +225,7 @@ namespace Vivosis.MarketPlace.Data.Migrations.AccountDb
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<DateTime>("ExpireTime")
+                    b.Property<DateTime?>("ExpireTime")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("FullName")
@@ -280,6 +280,29 @@ namespace Vivosis.MarketPlace.Data.Migrations.AccountDb
                         .HasName("UserNameIndex");
 
                     b.ToTable("AspNetUsers");
+                });
+
+            modelBuilder.Entity("Vivosis.MarketPlace.Data.Entities.UserSettings", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsSynced")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<DateTime?>("LastSyncTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("UserSettings");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -344,6 +367,15 @@ namespace Vivosis.MarketPlace.Data.Migrations.AccountDb
                     b.HasOne("Vivosis.MarketPlace.Data.Entities.SystemUser", "User")
                         .WithMany("UserStores")
                         .HasForeignKey("user_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Vivosis.MarketPlace.Data.Entities.UserSettings", b =>
+                {
+                    b.HasOne("Vivosis.MarketPlace.Data.Entities.SystemUser", "User")
+                        .WithOne("Settings")
+                        .HasForeignKey("Vivosis.MarketPlace.Data.Entities.UserSettings", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

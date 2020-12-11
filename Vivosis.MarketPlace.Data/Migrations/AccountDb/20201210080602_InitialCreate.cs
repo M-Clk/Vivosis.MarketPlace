@@ -43,7 +43,7 @@ namespace Vivosis.MarketPlace.Data.Migrations.AccountDb
                     LockoutEnd = table.Column<DateTimeOffset>(nullable: true),
                     LockoutEnabled = table.Column<bool>(nullable: false),
                     AccessFailedCount = table.Column<int>(nullable: false),
-                    ExpireTime = table.Column<DateTime>(nullable: false),
+                    ExpireTime = table.Column<DateTime>(nullable: true),
                     Status = table.Column<bool>(nullable: false),
                     FullName = table.Column<string>(nullable: true),
                     DbName = table.Column<string>(nullable: true),
@@ -179,6 +179,27 @@ namespace Vivosis.MarketPlace.Data.Migrations.AccountDb
                 });
 
             migrationBuilder.CreateTable(
+                name: "UserSettings",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    IsSynced = table.Column<bool>(nullable: false),
+                    LastSyncTime = table.Column<DateTime>(nullable: true),
+                    UserId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserSettings", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserSettings_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "StoreUsers",
                 columns: table => new
                 {
@@ -248,6 +269,12 @@ namespace Vivosis.MarketPlace.Data.Migrations.AccountDb
                 name: "IX_StoreUsers_user_id",
                 table: "StoreUsers",
                 column: "user_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserSettings_UserId",
+                table: "UserSettings",
+                column: "UserId",
+                unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -269,6 +296,9 @@ namespace Vivosis.MarketPlace.Data.Migrations.AccountDb
 
             migrationBuilder.DropTable(
                 name: "StoreUsers");
+
+            migrationBuilder.DropTable(
+                name: "UserSettings");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

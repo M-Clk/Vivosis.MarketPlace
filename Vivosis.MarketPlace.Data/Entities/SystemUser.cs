@@ -8,7 +8,7 @@ namespace Vivosis.MarketPlace.Data.Entities
 {
     public class SystemUser:IdentityUser<int>
     {
-        public DateTime ExpireTime { get; set; }
+        public DateTime? ExpireTime { get; set; }
         public bool Status { get; set; }
         public string FullName { get; set; }
         public string DbName { get; set; }
@@ -16,5 +16,6 @@ namespace Vivosis.MarketPlace.Data.Entities
         public string DbPassword { get; set; }
         public string Server { get; set; }
         public virtual IList<StoreUser> UserStores { get; set; }
+        public virtual UserSettings Settings { get; set; }
     }
 }
