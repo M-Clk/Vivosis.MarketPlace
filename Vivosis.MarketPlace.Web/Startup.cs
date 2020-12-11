@@ -42,21 +42,22 @@ namespace Vivosis.MarketPlace.Web
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if(env.IsDevelopment())
-            {
+            //TODO sunu productiona ciktiginda sil.
+            //if(env.IsDevelopment())
+            //{
                 app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
+            //}
+            //else
+            //{
+            //    app.UseExceptionHandler("/Home/Error");
+            //    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+            //    app.UseHsts();
+            //}
             app.UseStaticFiles();
-            app.UseCookiePolicy();
+            //app.UseCookiePolicy();
             app.UseAuthorization();
             app.UseCommonMiddlewares();
-            app.UseCookiePolicy(new CookiePolicyOptions { Secure = CookieSecurePolicy.Always });
+            //app.UseCookiePolicy(new CookiePolicyOptions { Secure = CookieSecurePolicy.Always });
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
