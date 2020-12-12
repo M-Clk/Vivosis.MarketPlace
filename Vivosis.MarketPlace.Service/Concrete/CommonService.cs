@@ -25,8 +25,9 @@ namespace Vivosis.MarketPlace.Service.Concrete
         public void SyncLocalOptions()
         {
             _connection.Open();
+            //Load Options(Values)
             var command = _connection.CreateCommand();
-            command.LoadScript("SelectOptions_Included_OptionValue_ProductOption_ProductOptionValue");
+            command.LoadScript("SelectOptions_Included_OptionValue");
             var dataReader = command.ExecuteReader();
             while(dataReader.Read())
             {
@@ -40,28 +41,6 @@ namespace Vivosis.MarketPlace.Service.Concrete
                     option.type = (string)dataReader["option_type"];
                     option.name = (string)dataReader["option_name"];
                     option.sort_order = (int)dataReader["option_sort_order"];
-                }
-                if(dataReader["product_option_id"] != DBNull.Value)
-                {
-                    var productOption = _dbContext.ProductOptions.FirstOrDefault(po => po.product_option_id == (int)dataReader["product_option_id"]);
-                    if(productOption != null)
-                    {
-                        productOption.is_required = (bool)dataReader["product_option_required"];
-                        productOption.value = (string)dataReader["product_option_value"];
-                        _dbContext.ProductOptions.Update(productOption);
-                    }
-                    else
-                    {
-                        productOption = new ProductOption
-                        {
-                            product_option_id = (int)dataReader["product_option_id"],
-                            option_id = optionId,
-                            product_id = (int)dataReader["product_option_product_id"],
-                            is_required = (bool)dataReader["product_option_required"],
-                            value = (string)dataReader["product_option_value"]
-                        };
-                        _dbContext.ProductOptions.Add(productOption);
-                    }
                 }
                 if(dataReader["option_value_id"] != DBNull.Value)
                 {
@@ -84,17 +63,50 @@ namespace Vivosis.MarketPlace.Service.Concrete
                         _dbContext.OptionValues.Add(optionValue);
                     }
                 }
+                if(isOptionExist)
+                    _dbContext.Options.Update(option);
+                else
+                    _dbContext.Options.Add(option);
+                _dbContext.SaveChanges();
+            }
+            //Load ProductOptions(Values)
+            _connection.Close();
+            _connection.Open();
+            command = _connection.CreateCommand();
+            command.LoadScript("SelectProductOptions_Included_ProductOptionValue");
+            dataReader = command.ExecuteReader();
+            while(dataReader.Read())
+            {
+                var productOptionId = (int)dataReader["product_option_id"];
+                var productOption = _dbContext.ProductOptions.FirstOrDefault(o => o.product_option_id == productOptionId);
+                var isProductOptionExsist = productOption != null;
+                if(!isProductOptionExsist)
+                {
+                    productOption = new ProductOption
+                    {
+                        product_option_id = (int)dataReader["product_option_id"],
+                        option_id = (int)dataReader["product_option_option_id"],
+                        product_id = (int)dataReader["product_option_product_id"],
+                        is_required = (bool)dataReader["product_option_required"],
+                        value = (string)dataReader["product_option_value"]
+                    };
+                }
+                else
+                {
+                    productOption.is_required = (bool)dataReader["product_option_required"];
+                    productOption.value = (string)dataReader["product_option_value"];
+                }
                 if(dataReader["product_option_value_id"] != DBNull.Value)
                 {
                     var productOptionValue = _dbContext.ProductOptionValues.FirstOrDefault(po => po.product_option_value_id == (int)dataReader["product_option_value_id"]);
                     if(productOptionValue != null)
                     {
                         productOptionValue.option_value_id = (int)dataReader["option_value_id"];
-                        productOptionValue.product_option_id = (int)dataReader["product_option_id"];
+                        productOptionValue.product_option_id = productOptionId;
                         productOptionValue.quantity = (int)dataReader["product_option_value_quantity"];
-                        productOptionValue.point = (int)dataReader["product_option_value_points"];
-                        productOptionValue.price = (decimal)dataReader["product_option_value_price"];
-                        productOptionValue.weight = (decimal)dataReader["product_option_value_weight"];
+                        productOptionValue.point = int.Parse((string)dataReader["product_option_value_points"]);
+                        productOptionValue.price = decimal.Parse((string)dataReader["product_option_value_price"]);
+                        productOptionValue.weight = decimal.Parse((string)dataReader["product_option_value_weight"]);
                         _dbContext.ProductOptionValues.Update(productOptionValue);
                     }
                     else
@@ -103,7 +115,7 @@ namespace Vivosis.MarketPlace.Service.Concrete
                         {
                             product_option_value_id = (int)dataReader["product_option_value_id"],
                             option_value_id = (int)dataReader["option_value_id"],
-                            product_option_id = (int)dataReader["product_option_id"],
+                            product_option_id = productOptionId,
                             quantity = (int)dataReader["product_option_value_quantity"],
                             point = int.Parse((string)dataReader["product_option_value_points"]),
                             price = decimal.Parse((string)dataReader["product_option_value_price"]),
@@ -112,10 +124,10 @@ namespace Vivosis.MarketPlace.Service.Concrete
                         _dbContext.ProductOptionValues.Add(productOptionValue);
                     }
                 }
-                if(isOptionExist)
-                    _dbContext.Options.Update(option);
+                if(isProductOptionExsist)
+                    _dbContext.ProductOptions.Update(productOption);
                 else
-                    _dbContext.Options.Add(option);
+                    _dbContext.ProductOptions.Add(productOption);
                 _dbContext.SaveChanges();
             }
             _connection.Close();
