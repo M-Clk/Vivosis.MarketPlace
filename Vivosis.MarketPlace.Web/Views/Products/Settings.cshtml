@@ -1,0 +1,36 @@
+﻿@model UpdateModel
+@{
+    ViewData["Title"] = "Settings";
+}
+<div class="page-header mb-2" style="background-color:transparent">
+    <div class="container-fluid">
+        <ul class="breadcrumb" style="background-color:transparent">
+            <li><a asp-controller="Home" asp-action="Index">Anasayfa</a></li>
+            <li><a asp-controller="Products" asp-action="Settings">Ürün Ayarları</a></li>
+        </ul>
+    </div>
+</div>
+<hr />
+@{
+    if(Model?.IsUpdated??false)
+    {
+        if(Model.IsSucceed)
+        {
+            <div class="alert alert-success" role="alert">
+                @Model.Message
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-danger" role="alert">
+                @Model.Message
+            </div>
+        }
+    }
+}
+<div class="input-group mb-3">
+    <a class="btn btn-outline-primary" asp-controller="Products" asp-action="SyncProducts">Ürünleri Senkronize Et</a>
+</div>
+<div class="input-group mb-3">
+    <a class="btn btn-outline-primary" asp-controller="Products" asp-action="SyncOptions">Varyantları Senkronize Et</a>
+</div>

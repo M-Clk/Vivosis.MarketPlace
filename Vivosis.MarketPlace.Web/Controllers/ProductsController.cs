@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Vivosis.MarketPlace.Data;
 using Vivosis.MarketPlace.Service.Abstract;
+using Vivosis.MarketPlace.Web.Models;
 
 namespace Vivosis.MarketPlace.Web.Controllers
 {
@@ -12,10 +13,12 @@ namespace Vivosis.MarketPlace.Web.Controllers
     {
         private readonly MarketPlaceDbContext _context;
         IGlobalService _globalService;
-        public ProductsController(MarketPlaceDbContext context, IGlobalService globalService)
+        ICommonService _commonService;
+        public ProductsController(MarketPlaceDbContext context, IGlobalService globalService, ICommonService commonService)
         {
             _context = context;
             _globalService = globalService;
+            _commonService = commonService;
         }
         // GET: Products
         public IActionResult Index()
@@ -38,6 +41,34 @@ namespace Vivosis.MarketPlace.Web.Controllers
         {
             var product = _globalService.GetProducts(new List<int> { id });
             return View(product);
+        }
+        public IActionResult Settings()
+        {
+            return View();
+        }
+        [HttpGet("[controller]/Sync")]
+        public IActionResult SyncProducts()
+        {
+            _commonService.SyncLocalProducts();
+            var updateModel = new UpdateModel
+            {
+                IsSucceed = true,
+                IsUpdated = true,
+                Message = "Ürünler başarıyla senkronize edildi."
+            };
+            return View("Settings", updateModel);
+        }
+        [HttpGet("[controller]/Sync/Options")]
+        public IActionResult SyncOptions()
+        {
+            _commonService.SyncLocalOptions();
+            var updateModel = new UpdateModel
+            {
+                IsSucceed = true,
+                IsUpdated = true,
+                Message = "Varyantlar başarıyla senkronize edildi."
+            };
+            return View("Settings", updateModel);
         }
     }
 }
