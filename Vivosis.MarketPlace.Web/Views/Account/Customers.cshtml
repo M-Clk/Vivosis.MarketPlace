@@ -73,12 +73,12 @@
                         <img src="@user.UserStores" class="img-thumbnail">
                     </td>
                     <td>
-                        <button product_id="@user.Id" name="@user.UserName" data-toggle="tooltip" title="" class="btn btn-outline-primary btnSetting" data-original-title="Düzenle">
-                            <i class="fa fa-pencil"></i>
-                        </button>
-                        <button product_id="@user.Id" name="@user.UserName" data-toggle="tooltip" title="" class="btn btn-outline-danger btnSetting" data-original-title="Sil">
+                        <a name="@user.UserName" data-toggle="tooltip" class="btn btn-outline-primary btnSetting" asp-action="Update" data-original-title="Düzenle">
+                            <i class="fa fa-pencil" aria-hidden="true"></i>
+                        </a>
+                        <a name="@user.UserName" data-toggle="tooltip" asp-action="Delete" asp-route-userId="@user.Id" asp-route-returnUrl="@Context.Request.Path" class="btn btn-outline-danger btnSetting" data-original-title="Sil">
                             <i class="fa fa-trash" aria-hidden="true"></i>
-                        </button>
+                        </a>
                     </td>
                 </tr>
             }

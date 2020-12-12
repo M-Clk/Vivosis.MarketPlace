@@ -52,7 +52,7 @@ namespace Vivosis.MarketPlace.Web.Controllers
             _accountService.Logout();
             return RedirectToAction("Login", "Account");
         }
-        
+
         #region User CRUD islemleri
 
         [HttpGet("[Controller]/Admin/Customers")]
@@ -143,19 +143,13 @@ namespace Vivosis.MarketPlace.Web.Controllers
                 return BadRequest(result);
         }
         [Authorize(Roles = "Admin")]
-        public IActionResult Delete()
+        [HttpGet("[Controller]/Delete/{userId}")]
+        public IActionResult Delete(int userId, string returnUrl)
         {
-            return View();
-        }
-        [HttpDelete]
-        [Authorize(Roles = "Admin")]
-        public IActionResult Delete(int userId)
-        {
-            var result = _accountService.DeleteUser(userId);
-            if(result.Succeeded)
-                return Ok(result);
-            else
-                return BadRequest(result);
+            _accountService.DeleteUser(userId);
+            if(string.IsNullOrEmpty(returnUrl))
+                return RedirectToAction("Index");
+            return LocalRedirect(returnUrl);
         }
 
         #endregion
