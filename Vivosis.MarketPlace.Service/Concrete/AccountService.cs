@@ -94,7 +94,9 @@ namespace Vivosis.MarketPlace.Service.Concrete
         public IdentityResult DeleteUser(int userId)
         {
             var user = _accountDbContext.Users.Find(userId);
-            return _userManager.DeleteAsync(null).Result;
+            if(user.UserName == _httpContextAccessor.HttpContext.User.Identity.Name)
+                return null;
+            return _userManager.DeleteAsync(user).Result;
         }
         private bool CheckDbConnection(string server, string dbName, string dbUserName, string dbPassword)
         {
