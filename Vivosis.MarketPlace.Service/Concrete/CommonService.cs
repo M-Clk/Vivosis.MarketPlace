@@ -14,15 +14,18 @@ namespace Vivosis.MarketPlace.Service.Concrete
     {
         MarketPlaceDbContext _dbContext;
         MySqlConnection _connection;
+        SystemUser _user;
+        UserManager<SystemUser> _userManager;
         public CommonService(MarketPlaceDbContext dbContext, IHttpContextAccessor httpContextAccessor, UserManager<SystemUser> userManager)
         {
             _dbContext = dbContext;
-            var user = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result;
-            var connectionString = $"Server={user.Server}; Database={user.DbName}; Uid={user.DbUserName}; Pwd={user.DbPassword};";
+            _userManager = userManager;
+            _user = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result;
+            var connectionString = $"Server={_user.Server}; Database={_user.DbName}; Uid={_user.DbUserName}; Pwd={_user.DbPassword};";
             _connection = new MySqlConnection(connectionString);
         }
 
-        public void SyncLocalOptions()
+        void SyncLocalOptions()
         {
             _connection.Open();
             //Load Options(Values)
@@ -134,19 +137,65 @@ namespace Vivosis.MarketPlace.Service.Concrete
             command.Dispose();
             dataReader.Dispose();
         }
-
-        public void SyncLocalProducts()
+        void SyncLocalCategories()
         {
             _connection.Open();
             var command = _connection.CreateCommand();
-            command.LoadScript("SelectProducts_Included_Description_Category_Description");
+            command.LoadScript("SelectCategories_Included_Description");
+            var dataReader = command.ExecuteReader();
+            while(dataReader.Read())
+            {
+                var categoryId = (int)dataReader["c_id"];
+                var category = _dbContext.Categories.FirstOrDefault(pc => pc.category_id == categoryId); //TODO Optimize et
+                var categoryPathName = (string)dataReader["c_path_name"];
+                var lastIndexOf = categoryPathName.LastIndexOf(" > ") + 3;
+                var categoryName = lastIndexOf == 2 ? categoryPathName : categoryPathName.Substring(lastIndexOf, categoryPathName.Length - lastIndexOf);
+                if(category != null)
+                {
+                    category.path_name = categoryPathName;
+                    category.name = categoryName;
+                    category.date_modified = DateTime.Now;
+                    _dbContext.Categories.Update(category);
+                }
+                else
+                {
+                    category = new Category
+                    {
+                        category_id = categoryId,
+                        name = categoryName,
+                        date_added = DateTime.Now,
+                        path_name = categoryPathName,
+                        status = true
+                    };
+                    _dbContext.Categories.Add(category);
+                }
+            }
+            _dbContext.SaveChanges();
+            _connection.Close();
+            command.Dispose();
+            dataReader.Dispose();
+        }
+        void SyncLocalProducts()
+        {
+            _connection.Open();
+            var command = _connection.CreateCommand();
+            command.LoadScript("SelectProducts_Included_Description_ProductCategory");
             var dataReader = command.ExecuteReader();
             while(dataReader.Read())
             {
                 var productId = (int)dataReader["p_id"];
                 var product = _dbContext.Products.FirstOrDefault(p => p.product_id == productId); //TODO Optimize et
                 var isProductExist = product != null;
-                if(!isProductExist)
+
+                if(isProductExist)
+                {
+                    product.quantity = (int)dataReader["p_quantity"];
+                    product.name = (string)dataReader["p_name"];
+                    product.price = (decimal)dataReader["p_price"];
+                    product.image_url = (string)dataReader["p_image"];
+                    product.date_modified = DateTime.Now;
+                }
+                else
                 {
                     product = new Product();
                     product.product_id = productId;
@@ -156,26 +205,8 @@ namespace Vivosis.MarketPlace.Service.Concrete
                     product.image_url = (string)dataReader["p_image"];
                     product.date_added = DateTime.Now;
                 }
-                if(dataReader["c_id"] != DBNull.Value)
-                {
-                    var category = _dbContext.Categories.Include(c => c.CategoryProducts).FirstOrDefault(pc => pc.category_id == (int)dataReader["c_id"]);
-                    if(category != null)
-                    {
-                        category.name = (string)dataReader["c_name"];
-                        if(!(category.CategoryProducts?.Any(cp => cp.product_id == productId) ?? false))
-                            category.CategoryProducts.Add(new ProductCategory { category_id = (int)dataReader["c_id"], product_id = productId });
-                        _dbContext.Categories.Update(category);
-                    }
-                    else
-                    {
-                        category = new Category
-                        {
-                            category_id = (int)dataReader["c_id"],
-                            name = (string)dataReader["c_name"]
-                        };
-                        _dbContext.Categories.Add(category);
-                    }
-                }
+                if(dataReader["c_id"] != DBNull.Value && !(_dbContext.ProductCategories?.Any(pc => pc.category_id == (int)dataReader["c_id"] && pc.product_id == productId) ?? false))
+                    _dbContext.ProductCategories.Add(new ProductCategory { category_id = (int)dataReader["c_id"], product_id = productId });
                 if(isProductExist)
                     _dbContext.Products.Update(product);
                 else
@@ -185,6 +216,17 @@ namespace Vivosis.MarketPlace.Service.Concrete
             _connection.Close();
             command.Dispose();
             dataReader.Dispose();
+        }
+
+        public void SyncDatabase()
+        {
+            SyncLocalCategories();
+            SyncLocalProducts();
+            SyncLocalOptions();
+            var userSettings = _userManager.Users.Include(u=>u.Settings).First(u=>u.Id == _user.Id);
+            userSettings.Settings.IsSynced = true;
+            userSettings.Settings.LastSyncTime = DateTime.Now;
+            _userManager.UpdateAsync(userSettings).Wait();
         }
     }
 }
