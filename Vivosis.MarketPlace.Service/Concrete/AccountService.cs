@@ -73,6 +73,7 @@ namespace Vivosis.MarketPlace.Service.Concrete
                 options.UseMySql(connectionString);
                 dbContext = new MarketPlaceDbContext(options.Options);
                 dbContext.Database.Migrate();
+                user.Settings = new UserSettings();
             }
             var result = _userManager.CreateAsync(user, pass).Result;
             if(result.Succeeded)
