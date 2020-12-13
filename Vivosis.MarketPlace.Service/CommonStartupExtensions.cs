@@ -18,6 +18,7 @@ namespace Vivosis.MarketPlace.Service
             services.AddScoped<IStoreService, StoreService>();
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IGlobalService, GlobalService>();
+            services.AddScoped<ILocalService, LocalService>();
             services.AddScoped<ICommonService, CommonService>();
             services.AddIdentity<SystemUser, SystemRole>(setupAction =>
             {
