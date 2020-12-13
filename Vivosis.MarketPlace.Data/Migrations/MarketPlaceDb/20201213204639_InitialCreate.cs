@@ -17,7 +17,8 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                     status = table.Column<bool>(nullable: false),
                     date_added = table.Column<DateTime>(nullable: false),
                     date_modified = table.Column<DateTime>(nullable: false),
-                    name = table.Column<string>(nullable: true)
+                    name = table.Column<string>(nullable: true),
+                    path_name = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -94,7 +95,7 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                     LockoutEnd = table.Column<DateTimeOffset>(nullable: true),
                     LockoutEnabled = table.Column<bool>(nullable: false),
                     AccessFailedCount = table.Column<int>(nullable: false),
-                    ExpireTime = table.Column<DateTime>(nullable: false),
+                    ExpireTime = table.Column<DateTime>(nullable: true),
                     Status = table.Column<bool>(nullable: false),
                     FullName = table.Column<string>(nullable: true),
                     DbName = table.Column<string>(nullable: true),
@@ -129,7 +130,7 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                 });
 
             migrationBuilder.CreateTable(
-                name: "ProductCategory",
+                name: "productcategory",
                 columns: table => new
                 {
                     product_id = table.Column<int>(nullable: false),
@@ -137,15 +138,15 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProductCategory", x => new { x.product_id, x.category_id });
+                    table.PrimaryKey("PK_productcategory", x => new { x.product_id, x.category_id });
                     table.ForeignKey(
-                        name: "FK_ProductCategory_Categories_category_id",
+                        name: "FK_productcategory_Categories_category_id",
                         column: x => x.category_id,
                         principalTable: "Categories",
                         principalColumn: "category_id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ProductCategory_Products_product_id",
+                        name: "FK_productcategory_Products_product_id",
                         column: x => x.product_id,
                         principalTable: "Products",
                         principalColumn: "product_id",
@@ -307,8 +308,8 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                 column: "option_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductCategory_category_id",
-                table: "ProductCategory",
+                name: "IX_productcategory_category_id",
+                table: "productcategory",
                 column: "category_id");
 
             migrationBuilder.CreateIndex(
@@ -357,7 +358,7 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "ProductCategory");
+                name: "productcategory");
 
             migrationBuilder.DropTable(
                 name: "ProductOptionValues");

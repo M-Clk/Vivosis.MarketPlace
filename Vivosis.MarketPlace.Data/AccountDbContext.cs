@@ -9,6 +9,7 @@ namespace Vivosis.MarketPlace.Data
         public AccountDbContext(DbContextOptions<AccountDbContext> options) : base(options) { }
         public DbSet<Store> Stores { get; set; }
         public DbSet<StoreUser> StoreUsers { get; set; }
+        public DbSet<UserSettings> UserSettings { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

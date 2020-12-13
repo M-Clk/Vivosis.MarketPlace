@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Vivosis.MarketPlace.Data.Entities
 {
+    [Table("productcategory")]
     public class ProductCategory
     {
         public virtual Product Product { get; set; }

@@ -17,7 +17,4 @@
       </ReferencePath>
     </ItemGroup>
   </Target>
-  <ItemGroup>
-    <Folder Include="Migrations\MarketPlaceDb\" />
-  </ItemGroup>
 </Project>

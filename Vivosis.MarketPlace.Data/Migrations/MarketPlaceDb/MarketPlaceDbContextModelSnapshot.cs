@@ -32,6 +32,9 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                     b.Property<string>("name")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
+                    b.Property<string>("path_name")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
                     b.Property<bool>("status")
                         .HasColumnType("tinyint(1)");
 
@@ -126,7 +129,7 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
 
                     b.HasIndex("category_id");
 
-                    b.ToTable("ProductCategory");
+                    b.ToTable("productcategory");
                 });
 
             modelBuilder.Entity("Vivosis.MarketPlace.Data.Entities.ProductOption", b =>
@@ -345,7 +348,7 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<DateTime>("ExpireTime")
+                    b.Property<DateTime?>("ExpireTime")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("FullName")

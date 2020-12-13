@@ -9,7 +9,7 @@ using Vivosis.MarketPlace.Data;
 namespace Vivosis.MarketPlace.Data.Migrations.AccountDb
 {
     [DbContext(typeof(AccountDbContext))]
-    [Migration("20201210080602_InitialCreate")]
+    [Migration("20201213194921_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

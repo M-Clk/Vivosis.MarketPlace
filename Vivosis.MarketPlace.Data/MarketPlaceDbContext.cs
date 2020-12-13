@@ -13,6 +13,7 @@ namespace Vivosis.MarketPlace.Data
         public DbSet<Option> Options { get; set; }
         public DbSet<OptionValue> OptionValues { get; set; }
         public DbSet<ProductOption> ProductOptions { get; set; }
+        public DbSet<ProductCategory> ProductCategories { get; set; }
         public DbSet<ProductOptionValue> ProductOptionValues { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -89,6 +90,8 @@ namespace Vivosis.MarketPlace.Data
                 .HasIndex(p => new { p.product_option_id, p.option_value_id }).IsUnique();
 
             builder.Entity<Store>().Ignore(s => s.UserStores);
+            builder.Entity<SystemUser>().Ignore(s => s.Settings);
+
             builder.Entity<StoreUser>().HasIndex(s => s.api_key).IsUnique();
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
