@@ -14,17 +14,19 @@ namespace Vivosis.MarketPlace.Web.Controllers
     {
         private readonly MarketPlaceDbContext _context;
         IGlobalService _globalService;
-        public CategoriesController(MarketPlaceDbContext context, IGlobalService globalService)
+        ILocalService _localService;
+        public CategoriesController(MarketPlaceDbContext context, IGlobalService globalService, ILocalService localService)
         {
             _context = context;
             _globalService = globalService;
+            _localService = localService;
         }
         // GET: Categories
         public IActionResult Index()
         {
             if(ModelState.IsValid)
             {
-                var categories = _globalService.GetCategories();
+                var categories = _localService.GetCategories();
                 return View(categories);
             }
             return View();
@@ -34,7 +36,7 @@ namespace Vivosis.MarketPlace.Web.Controllers
         {
             if(ModelState.IsValid)
             {
-                var categories = _globalService.GetCategories(idList);
+                var categories = _localService.GetCategories(idList);
                 return View(categories);
             }
             return View();
@@ -42,7 +44,7 @@ namespace Vivosis.MarketPlace.Web.Controllers
         // GET: Categories/5
         public IActionResult Get(int id)
         {
-            var category = _globalService.GetCategories(new List<int> { id });
+            var category = _localService.GetCategories(new List<int> { id });
             return View(category);
         }
     }

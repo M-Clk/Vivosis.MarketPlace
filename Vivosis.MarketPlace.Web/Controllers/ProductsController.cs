@@ -12,12 +12,12 @@ namespace Vivosis.MarketPlace.Web.Controllers
     public class ProductsController :Controller
     {
         private readonly MarketPlaceDbContext _context;
-        IGlobalService _globalService;
         ICommonService _commonService;
-        public ProductsController(MarketPlaceDbContext context, IGlobalService globalService, ICommonService commonService)
+        ILocalService _localService;
+        public ProductsController(MarketPlaceDbContext context, ICommonService commonService, ILocalService localService)
         {
             _context = context;
-            _globalService = globalService;
+            _localService = localService;
             _commonService = commonService;
         }
         // GET: Products
@@ -25,7 +25,7 @@ namespace Vivosis.MarketPlace.Web.Controllers
         {
             if(ModelState.IsValid)
             {
-                var products = _globalService.GetProducts();
+                var products = _localService.GetProducts();
                 return View(products);
             }
             return View();
@@ -33,42 +33,33 @@ namespace Vivosis.MarketPlace.Web.Controllers
         [HttpPost]
         public IActionResult Selecteds(IEnumerable<int> idList)
         {
-            var products = _globalService.GetProducts(idList);
+            var products = _localService.GetProducts(idList);
             return Ok(products);
         }
         // GET: Products/5
         public IActionResult Get(int id)
         {
-            var product = _globalService.GetProducts(new List<int> { id });
+            var product = _localService.GetProducts(new List<int> { id });
             return View(product);
         }
         public IActionResult Settings()
         {
             return View();
         }
-        [HttpGet("[controller]/Sync")]
-        public IActionResult SyncProducts()
+        public IActionResult Sync()
         {
-            _commonService.SyncLocalProducts();
+            _commonService.SyncDatabase();
             var updateModel = new UpdateModel
             {
                 IsSucceed = true,
                 IsUpdated = true,
-                Message = "Ürünler başarıyla senkronize edildi."
+                Message = "Ürünler ve kategoriler başarıyla senkronize edildi."
             };
             return View("Settings", updateModel);
         }
-        [HttpGet("[controller]/Sync/Options")]
-        public IActionResult SyncOptions()
+        public IActionResult Options()
         {
-            _commonService.SyncLocalOptions();
-            var updateModel = new UpdateModel
-            {
-                IsSucceed = true,
-                IsUpdated = true,
-                Message = "Varyantlar başarıyla senkronize edildi."
-            };
-            return View("Settings", updateModel);
+            return View();
         }
     }
 }

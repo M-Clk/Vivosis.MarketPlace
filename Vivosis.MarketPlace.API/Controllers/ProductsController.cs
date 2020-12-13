@@ -74,10 +74,9 @@ namespace Vivosis.MarketPlace.API.Controllers
 
             return Ok(product);
         }
-        [HttpGet("Sync")]
-        public ActionResult SyncProducts()
+        public ActionResult Sync()
         {
-            _commonService.SyncLocalProducts();
+            _commonService.SyncDatabase();
             return Ok();
         }
     }
