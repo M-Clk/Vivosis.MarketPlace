@@ -11,6 +11,7 @@ namespace Vivosis.MarketPlace.Data.Entities
         [Key]
         public int category_id { get; set; }
         public string name { get; set; }
+        public string path_name { get; set; }
         [NotMapped]
         public string description { get; set; }
         public virtual IList<ProductCategory> CategoryProducts { get; set; }
