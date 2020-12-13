@@ -9,3 +9,15 @@ function generateRandomPass(elementId) {
     document.getElementById(elementId).value = result;
 }
 // Write your JavaScript code.
+showPopup = (url, title) => {
+    $.ajax(
+        {
+            type: "GET",
+            url = url,
+            success: function (res) {
+                $("#form-modal .modal-body").html(res);
+                $("#form-modal .modal-title").html(title);
+                $("#form-modal").modal("show");
+            }
+        });
+}
