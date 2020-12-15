@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Vivosis.MarketPlace.Data;
@@ -52,6 +53,12 @@ namespace Vivosis.MarketPlace.Service
         {
             _dbContext.Products.UpdateRange(products);
             return _dbContext.SaveChanges();
+        }
+
+        public IEnumerable<ProductOption> GetProductOptions(int productId)
+        {
+            var productOptions = _dbContext.ProductOptions.Where(po => po.product_id == productId).Include(po => po.ProductOptionValues).ThenInclude(pov=>pov.OptionValue).Include(po=>po.Option);
+            return productOptions;
         }
     }
 }

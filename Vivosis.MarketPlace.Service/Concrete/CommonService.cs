@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MySql.Data.MySqlClient;
 using System;
+using System.Globalization;
 using System.Linq;
 using Vivosis.MarketPlace.Data;
 using Vivosis.MarketPlace.Data.Entities;
@@ -102,14 +103,15 @@ namespace Vivosis.MarketPlace.Service.Concrete
                 if(dataReader["product_option_value_id"] != DBNull.Value)
                 {
                     var productOptionValue = _dbContext.ProductOptionValues.FirstOrDefault(po => po.product_option_value_id == (int)dataReader["product_option_value_id"]);
-                    if(productOptionValue != null)
+                    if(productOptionValue != null && !productOptionValue.IsChanged)
                     {
                         productOptionValue.option_value_id = (int)dataReader["option_value_id"];
                         productOptionValue.product_option_id = productOptionId;
                         productOptionValue.quantity = (int)dataReader["product_option_value_quantity"];
+                        productOptionValue.subtract = (bool)dataReader["product_option_value_subtract"];
                         productOptionValue.point = int.Parse((string)dataReader["product_option_value_points"]);
-                        productOptionValue.price = decimal.Parse((string)dataReader["product_option_value_price"]);
-                        productOptionValue.weight = decimal.Parse((string)dataReader["product_option_value_weight"]);
+                        productOptionValue.price = decimal.Parse((string)dataReader["product_option_value_price"], CultureInfo.InvariantCulture);
+                        productOptionValue.weight = decimal.Parse((string)dataReader["product_option_value_weight"], CultureInfo.InvariantCulture);
                         _dbContext.ProductOptionValues.Update(productOptionValue);
                     }
                     else
@@ -120,9 +122,10 @@ namespace Vivosis.MarketPlace.Service.Concrete
                             option_value_id = (int)dataReader["option_value_id"],
                             product_option_id = productOptionId,
                             quantity = (int)dataReader["product_option_value_quantity"],
+                            subtract = (bool)dataReader["product_option_value_subtract"],
                             point = int.Parse((string)dataReader["product_option_value_points"]),
-                            price = decimal.Parse((string)dataReader["product_option_value_price"]),
-                            weight = decimal.Parse((string)dataReader["product_option_value_weight"])
+                            price = decimal.Parse((string)dataReader["product_option_value_price"], CultureInfo.InvariantCulture),
+                            weight = decimal.Parse((string)dataReader["product_option_value_weight"], CultureInfo.InvariantCulture)
                         };
                         _dbContext.ProductOptionValues.Add(productOptionValue);
                     }
@@ -223,7 +226,7 @@ namespace Vivosis.MarketPlace.Service.Concrete
             SyncLocalCategories();
             SyncLocalProducts();
             SyncLocalOptions();
-            var userSettings = _userManager.Users.Include(u=>u.Settings).First(u=>u.Id == _user.Id);
+            var userSettings = _userManager.Users.Include(u => u.Settings).First(u => u.Id == _user.Id);
             userSettings.Settings.IsSynced = true;
             userSettings.Settings.LastSyncTime = DateTime.Now;
             _userManager.UpdateAsync(userSettings).Wait();

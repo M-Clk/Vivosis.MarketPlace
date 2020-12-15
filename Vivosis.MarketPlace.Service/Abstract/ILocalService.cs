@@ -13,5 +13,6 @@ namespace Vivosis.MarketPlace.Service.Abstract
         int UpdateProducts(IEnumerable<Product> products);
         int AddCategories(IEnumerable<Category> categories);
         int UpdateCategories(IEnumerable<Category> categories);
+        IEnumerable<ProductOption> GetProductOptions(int productId);
     }
 }
