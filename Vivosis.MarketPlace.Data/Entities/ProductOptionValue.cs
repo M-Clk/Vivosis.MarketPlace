@@ -14,6 +14,7 @@ namespace Vivosis.MarketPlace.Data.Entities
         public decimal price { get; set; }
         public decimal weight { get; set; }
         public int point { get; set; }
-
+        public bool subtract { get; set; }
+        public bool IsChanged { get; set; }
     }
 }
