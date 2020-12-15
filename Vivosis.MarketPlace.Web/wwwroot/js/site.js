@@ -35,3 +35,13 @@ $('#mytable').DataTable(
         ],
         order: [[1, 'asc']]
     });
+jQuery(function () {
+    jQuery('input[name ="storeStatusCheckbox"]').change(function () {
+        var url = jQuery(this).prop("value");
+        jQuery.ajax(
+            {
+                type: "GET",
+                url: url
+            });
+    })
+})

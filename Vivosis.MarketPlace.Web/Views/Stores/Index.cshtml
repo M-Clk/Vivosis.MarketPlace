@@ -32,23 +32,12 @@
                         @{
                             if(store.IsConfirmed)
                             {
-                                var colorType = "btn-danger off";
-                                if(store.IsActive)
-                                {
-                                    colorType = "btn-success";
-                                }
-                                <div class="toggle btn @colorType" data-toggle="toggle" style="width: 60px; height: 34px;">
-                                    <input type="checkbox" checked data-toggle="toggle" data-on="Aktif" data-off="Pasif" data-onstyle="success" data-offstyle="danger">
-                                    <div class="toggle-group">
-                                        <a asp-action="ChangeStatus" asp-controller="Stores" asp-route-storeId="@store.StoreId" class="btn btn-success toggle-on"><span style="font-size:smaller;">Aktif</span></a>
-                                        <a asp-action="ChangeStatus" asp-controller="Stores" asp-route-storeId="@store.StoreId" class="btn btn-danger active toggle-off"> <span style="font-size:smaller;">Pasif</span></a>
-                                        <span class="toggle-handle btn btn-default"></span>
-                                    </div>
-                                </div>
+                                var status = store.IsActive ? "checked" : "";
+                                <input type="checkbox" name="storeStatusCheckbox" @status data-toggle="toggle" data-on="Aktif" data-off="Pasif" data-onstyle="success" data-offstyle="danger" value="@Url.Action("ChangeStatus","Stores",new { storeId = store.StoreId},Context.Request.Scheme)" data-size="sm">
                             }
                             else
                             {
-                                <p class="text-warning">-</p>
+                                <p class="text-xl-left text-warning">-</p>
                             }
                         }
                     </td>
@@ -56,7 +45,7 @@
                         <img src="~/img/stores/@store.Image" class="img-thumbnail" alt="@store.Name" />
                     </td>
                     <td>
-                        <p> @store.Name</p>
+                        <p class="text-md-left text-info">  @store.Name</p>
                     </td>
                     <td>
                         @{
@@ -67,21 +56,21 @@
                                     colorType = "warning";
                                 if(store.RemainingDays < 15)
                                     colorType = "danger";
-                                <p class="text-@colorType">@store.RemainingDays.ToString() Gün Kaldı</p>
+                                <p class="text-md-left text-@colorType">@store.RemainingDays.ToString() Gün Kaldı</p>
                             }
                             else if(store.IsBought && !store.IsConfirmed)
                             {
-                                <p class="text-warning">Onay Bekliyor</p>
+                                <p class="text-md-left text-warning">Onay Bekliyor</p>
                             }
                             else
                             {
-                                <a asp-action="AddStoreToUser" asp-controller="Stores" asp-route-id="@store.StoreId" class="btn btn-success">Satın Al</a>
+                                <a asp-action="AddStoreToUser" asp-controller="Stores" asp-route-id="@store.StoreId" class="btn btn-sm btn-success">Satın Al</a>
                             }
                         }
                     </td>
                     <td>
                         <button name="@store.Name" product_id="@store.StoreId" title="Güncelle" class="btn btn-outline-primary">
-                            <i class="fa fa-pencil-alt"></i>
+                            <i class="fa fa-sm fa-pencil-alt"></i>
                         </button>
                     </td>
                 </tr>
@@ -91,16 +80,5 @@
     </tbody>
 </table>
 <script>
-    $('#mytable').DataTable(
-        {
-            language: {
-                url: '//cdn.datatables.net/plug-ins/1.10.22/i18n/Turkish.json'
-
-            },
-            columnDefs: [
-                { orderable: false, targets: 0 }
-            ],
-            order: [[1, 'asc']]
-        });
     document.getElementById("stores").className += " active";
 </script>
