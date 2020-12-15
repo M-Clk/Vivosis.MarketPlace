@@ -46,16 +46,15 @@
                     </td>
                     <td>
                         <a name="@user.UserName" data-toggle="tooltip" class="btn btn-outline-primary btnSetting" asp-action="Update"  data-original-title="Düzenle">
-                            <i class="fa fa-pencil" aria-hidden="true"></i>
+                            <i class="fa fa-pencil-alt" aria-hidden="true"></i>
                         </a>
                         <a name="@user.UserName" data-toggle="tooltip" asp-action="Delete" asp-route-userId="@user.Id" asp-route-returnUrl="@Context.Request.Path"  class="btn btn-outline-danger btnSetting" data-original-title="Sil">
-                            <i class="fa fa-trash" aria-hidden="true"></i>
+                            <i class="fa fa-trash-alt" aria-hidden="true"></i>
                         </a>
                     </td>
                 </tr>
             }
         }
-
     </tbody>
 </table>
 <script>
