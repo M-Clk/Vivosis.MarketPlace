@@ -14,19 +14,24 @@ namespace Vivosis.MarketPlace.Web.Controllers
         private readonly MarketPlaceDbContext _context;
         ICommonService _commonService;
         ILocalService _localService;
-        public ProductsController(MarketPlaceDbContext context, ICommonService commonService, ILocalService localService)
+        IStoreService _storeService;
+        public ProductsController(MarketPlaceDbContext context, ICommonService commonService, ILocalService localService, IStoreService storeService)
         {
             _context = context;
+            
             _localService = localService;
             _commonService = commonService;
+            _storeService = storeService;
         }
         // GET: Products
         public IActionResult Index()
         {
             if(ModelState.IsValid)
             {
-                var products = _localService.GetProducts();
-                return View(products);
+                var model = new UserStoreProductModel();
+                model.Products = _localService.GetProducts();
+                model.Stores = _storeService.GetBoughtStores();
+                return View(model);
             }
             return View();
         }
