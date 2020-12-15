@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Product>
+﻿@model UserStoreProductModel
 @{
     ViewData["Title"] = "Ürünler";
 }
@@ -23,12 +23,15 @@
             <td>Varyant</td>
             <td>Fiyatı</td>
             <td>Adet</td>
-            <td>Ayarlar</td>
+            @foreach(var store in Model.Stores)
+            {
+                <td>@store.Store.name</td>
+            }
         </tr>
     </thead>
     <tbody>
         @{
-            foreach(var product in Model)
+            foreach(var product in Model.Products)
             {
                 <tr id="tr_@product.product_id" @*onclick="selectSingleCheckbox(chck_@product.product_id)"*@>
                     <td>
@@ -41,7 +44,7 @@
                         <p> @product.name</p>
                     </td>
                     <td>
-                        <button onclick="showPopup('@Url.Action("Options","Products",new { productId = product.product_id },Context.Request.Scheme)', 'Varyantlar')" name="@product.name" product_id="@product.product_id" title="Seçenekli Ürün" class="btn btn-outline-primary">
+                        <button onclick="showPopup('@Url.Action("Options","Products",new { productId = product.product_id },Context.Request.Scheme)', 'Varyantlar')" name="@product.name" title="Seçenekli Ürün" class="btn btn-outline-primary">
                             <i class="fa fa-list"></i>
                         </button>
                     </td>
@@ -51,11 +54,26 @@
                     <td>
                         <span>@product.quantity.ToString("0.##")</span>
                     </td>
-                    <td>
-                        <button product_id="@product.product_id" name="@product.name" data-toggle="tooltip" title="" class="btn btn-outline-primary btnSetting" data-original-title="Düzenle">
-                            <i class="fa fa-pencil-alt"></i>
-                        </button>
-                    </td>
+                    @foreach(var store in Model.Stores)
+                    {
+                        <td>
+                            @{
+                                var productStore = product.ProductStores?.FirstOrDefault(ps => ps.store_id == store.store_id);
+                                if(productStore != null)
+                                {
+                                    var textStyle = productStore.sale_price > product.price ? "success" : productStore.sale_price < product.price ? "danger" : "info";
+                                    <small class="text-sm-left text-@textStyle">@productStore.sale_price TL</small>
+                                }
+                                else
+                                {
+                                    <small class="text-sm-left text-warning">Gönderilmedi</small>
+                                }
+                            }
+                            <button onclick="showPopup('@Url.Action("Options","Products",new { productId = product.product_id },Context.Request.Scheme)', '@store.Store.name Ürün Ayarları')" class="btn btn-outline-primary">
+                                <i class="fa fa-sm fa-pencil-alt"></i>
+                            </button>
+                        </td>
+                    }
                 </tr>
             }
         }
