@@ -65,7 +65,7 @@ namespace Vivosis.MarketPlace.Service.Concrete
 
         public StoreUser GetStoreById(int id) => _dbContext.StoreUsers.FirstOrDefault(sU => sU.store_id == id && sU.user_id == _customer.Id);
 
-        public IEnumerable<StoreUser> GetBoughtStores() => _dbContext.StoreUsers.Where(sU => sU.user_id == _customer.Id);
+        public IEnumerable<StoreUser> GetBoughtStores() => _dbContext.StoreUsers.Include(su=>su.Store).Where(sU => sU.user_id == _customer.Id);
         public IEnumerable<Store> GetStores() => _dbContext.Stores;
 
         public bool UpdateStore(StoreUser storeUser)
