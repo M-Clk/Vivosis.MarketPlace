@@ -1,0 +1,97 @@
+﻿@model IEnumerable<ProductOption>
+@if(!(Model?.Any() ?? false))
+{
+    <span class="text-danger">Bu ürüne ait varyant yok.</span>
+}
+else
+{
+    <div class="row">
+        <div class="col-2">
+            <ul class="nav nav-pills nav-fill" id="option">
+                @foreach(var productOption in Model)
+                {
+                    if(!(productOption.ProductOptionValues?.Any() ?? false))
+                        continue;
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-md-center" href="#tab_option@(productOption.product_option_id)" data-toggle="tab" aria-expanded="true">
+                            <i class="fa fa-minus-circle mr-1" style="display: flex;"></i> @productOption.Option.name
+                        </a>
+                    </li>
+                }
+            </ul>
+        </div>
+        <div class="col-10">
+            <div class="tab-content" id="option-content">
+                @foreach(var productOption in Model)
+                {
+                    if(!(productOption.ProductOptionValues?.Any() ?? false))
+                        continue;
+                    <div class="tab-pane" id="tab_option@(productOption.product_option_id)">
+                        <div class="table-responsive" style="overflow:auto">
+                            <table class="table table-bordered" id="product-option@(productOption.product_option_id)">
+                                <thead>
+                                    <tr>
+                                        <th>Seçenek</th>
+                                        <th>Adet</th>
+                                        <th>
+                                            <div class="row">
+                                                <div class="col-5">
+                                                    <input type="checkbox" checked data-toggle="toggle" data-onstyle="success" data-offstyle="danger" data-on="Evet" data-off="Hayır" data-size="xs">
+                                                </div>
+                                                <div class="col-7">
+                                                    Azalt
+                                                </div>
+                                            </div>
+                                        </th>
+                                        <th> <input id="all-checkbox-price" type="checkbox" checked data-toggle="toggle" data-onstyle="success" data-offstyle="danger" data-on="+" data-off="-" data-size="xs"> Fiyatı</th>
+                                        <th> <input id="all-checkbox-weight" type="checkbox" checked data-toggle="toggle" data-onstyle="success" data-offstyle="danger" data-on="+" data-off="-" data-size="xs"> Ağırlığı</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach(var productOptionValue in productOption.ProductOptionValues)
+                                    {
+                                        var subtract = productOptionValue.subtract ? "Evet" : "Hayır";
+                                        var subtractStyle = productOptionValue.subtract ? "success" : "danger";
+                                        var priceChecked = productOptionValue.price >= 0 ? "checked" : "";
+                                        var weightChecked = productOptionValue.weight >= 0 ? "checked" : "";
+                                        <tr>
+                                            <td>@productOptionValue.OptionValue.name</td>
+                                            <td><input type="text" class="form-control" value="@productOptionValue.quantity" /> </td>
+                                            <td><span class="badge badge-@subtractStyle">@subtract</span></td>
+                                            <td>
+                                                <div class="row align-items-center m-0">
+                                                    <input name="checkbox-price" type="checkbox" @priceChecked data-toggle="toggle" data-onstyle="outline-success" data-offstyle="outline-danger" data-on="+" data-off="-" data-height="38" data-size="xs">
+                                                    <div class="col-9">
+                                                        <input type="text" class="form-control" value="@Math.Abs(productOptionValue.price).ToString("0.##")" />
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="row align-items-center">
+                                                    <div class="row align-items-center m-0 col-3">
+                                                        <input name="checkbox-weight" type="checkbox" @weightChecked data-toggle="toggle" data-onstyle="outline-success" data-offstyle="outline-danger" d data-on="+" data-off="-" data-height="38" data-size="xs">
+                                                    </div>
+                                                    <div class="col-9">
+                                                        <input type="text" class="form-control" value="@Math.Abs(productOptionValue.weight).ToString("0.##")" />
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        @Html.PartialSectionScripts(
+                @<script>
+                     $('#all-checkbox-price').change(function () {
+                         alert("Muhammed");
+                     });
+                </script>
+)
+        @Html.RenderPartialSectionScripts()
+    </div>
+}
