@@ -30,7 +30,7 @@
         @{
             foreach(var product in Model)
             {
-                <tr id="tr_@product.product_id" onclick="selectSingleCheckbox(chck_@product.product_id)">
+                <tr id="tr_@product.product_id" @*onclick="selectSingleCheckbox(chck_@product.product_id)"*@>
                     <td>
                         <input type="checkbox" name="selected[]" id="chck_@product.product_id" value="@product.product_id">
                     </td>
@@ -41,7 +41,7 @@
                         <p> @product.name</p>
                     </td>
                     <td>
-                        <button name="@product.name" product_id="@product.product_id" title="Seçenekli Ürün" class="btn btn-outline-primary">
+                        <button onclick="showPopup('@Url.Action("Options","Products",new { productId = product.product_id },Context.Request.Scheme)', 'Varyantlar')" name="@product.name" product_id="@product.product_id" title="Seçenekli Ürün" class="btn btn-outline-primary">
                             <i class="fa fa-list"></i>
                         </button>
                     </td>
@@ -63,17 +63,6 @@
     </tbody>
 </table>
 <script>
-    $('#mytable').DataTable(
-        {
-            language: {
-                url: '//cdn.datatables.net/plug-ins/1.10.22/i18n/Turkish.json'
-
-            },
-            columnDefs: [
-                { orderable: false, targets: 0 }
-            ],
-            order: [[1, 'asc']]
-        });
     function checkAll(bx) {
         var cbs = document.getElementsByTagName('input');
         for (var i = 0; i < cbs.length; i++) {
