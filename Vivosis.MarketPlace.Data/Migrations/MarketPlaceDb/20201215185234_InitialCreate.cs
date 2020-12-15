@@ -283,7 +283,9 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                     quantity = table.Column<int>(nullable: false),
                     price = table.Column<decimal>(nullable: false),
                     weight = table.Column<decimal>(nullable: false),
-                    point = table.Column<int>(nullable: false)
+                    point = table.Column<int>(nullable: false),
+                    subtract = table.Column<bool>(nullable: false),
+                    IsChanged = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {

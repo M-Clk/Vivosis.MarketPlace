@@ -165,6 +165,9 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    b.Property<bool>("IsChanged")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<int>("option_value_id")
                         .HasColumnType("int");
 
@@ -179,6 +182,9 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
 
                     b.Property<int>("quantity")
                         .HasColumnType("int");
+
+                    b.Property<bool>("subtract")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<decimal>("weight")
                         .HasColumnType("decimal(65,30)");
