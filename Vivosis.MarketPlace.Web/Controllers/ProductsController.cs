@@ -57,9 +57,10 @@ namespace Vivosis.MarketPlace.Web.Controllers
             };
             return View("Settings", updateModel);
         }
-        public IActionResult Options()
+        public IActionResult Options(int productId)
         {
-            return View();
+            var productOptions = _localService.GetProductOptions(productId);
+            return PartialView("Options", productOptions);
         }
     }
 }
