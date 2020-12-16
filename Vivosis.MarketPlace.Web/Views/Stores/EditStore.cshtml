@@ -5,6 +5,9 @@
 }
 else
 {
+<form asp-action="EditStore" onsubmit="return submitStore(this)" autocomplete="off">
+    <input type="hidden" asp-for="store_id" />
+    <input type="hidden" asp-for="user_id" />
     <div class="form-group row">
         <label asp-for="api_key" class="col-sm-2 col-form-label">Api Key</label>
         <div class="col-sm-10">
@@ -21,7 +24,8 @@ else
     </div>
     <div class="form-group row">
         <div class="col-sm-10">
-            <button onclick="submitStore" class="btn btn-primary">Kaydet</button>
+            <button type="submit" class="btn btn-primary">Kaydet</button>
         </div>
     </div>
+</form>
 }

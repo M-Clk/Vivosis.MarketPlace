@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Vivosis.MarketPlace.Data.Entities;
 using Vivosis.MarketPlace.Service.Abstract;
+using Vivosis.MarketPlace.Web.Helpers;
 using Vivosis.MarketPlace.Web.Models;
 
 namespace Vivosis.MarketPlace.Web.Controllers
@@ -20,19 +21,7 @@ namespace Vivosis.MarketPlace.Web.Controllers
         [Authorize(Roles = "Customer")]
         public IActionResult Index()
         {
-            var stores = _storeService.GetStores();
-            var boughtStores = _storeService.GetBoughtStores().ToList();
-            var models = stores.Select(s => new StoreModel
-            {
-                StoreId = s.store_id,
-                Name = s.name,
-                Image = s.image,
-                IsBought = boughtStores?.Any(b => b.store_id == s.store_id) ?? false,
-                IsConfirmed = boughtStores?.Any(b => b.store_id == s.store_id && b.is_confirmed) ?? false,
-                IsActive = boughtStores?.Any(b => b.store_id == s.store_id && b.is_active) ?? false,
-                RemainingDays = (int)((boughtStores.FirstOrDefault(b => b.store_id == s.store_id)?.expire_time ?? DateTime.Now.AddDays(-1)) - DateTime.Now).TotalDays
-            });
-            return View(models);
+            return View(GetStoreUsers());
         }
         [Authorize(Roles = "Customer")]
         public IActionResult AddStoreToUser(int id)
@@ -56,6 +45,17 @@ namespace Vivosis.MarketPlace.Web.Controllers
         {
             var storeUser = _storeService.GetStoreById(storeId);
             return PartialView("EditStore", storeUser);
+        }
+        [Authorize(Roles = "Customer")]
+        [HttpPost]
+        public IActionResult EditStore(StoreUser storeUser)
+        {
+            if(ModelState.IsValid)
+            {
+                if(_storeService.UpdateStore(storeUser))
+                    return Json(new { isValid = true, html = Helper.RenderRazorViewToString(this, "_ListUserStores", GetStoreUsers()) });
+            }
+            return Json(new { isValid = false, html = Helper.RenderRazorViewToString(this, "EditStore", storeUser)});
         }
         [Authorize(Roles = "Customer")]
         public IActionResult ChangeStatus(int storeId)
@@ -102,6 +102,22 @@ namespace Vivosis.MarketPlace.Web.Controllers
                     user.is_confirmed = true;
             }
             return StoreRequests();
+        }
+        private IEnumerable<StoreModel> GetStoreUsers()
+        {
+            var stores = _storeService.GetStores();
+            var boughtStores = _storeService.GetBoughtStores().ToList();
+            var models = stores.Select(s => new StoreModel
+            {
+                StoreId = s.store_id,
+                Name = s.name,
+                Image = s.image,
+                IsBought = boughtStores?.Any(b => b.store_id == s.store_id) ?? false,
+                IsConfirmed = boughtStores?.Any(b => b.store_id == s.store_id && b.is_confirmed) ?? false,
+                IsActive = boughtStores?.Any(b => b.store_id == s.store_id && b.is_active) ?? false,
+                RemainingDays = (int)((boughtStores.FirstOrDefault(b => b.store_id == s.store_id)?.expire_time ?? DateTime.Now.AddDays(-1)) - DateTime.Now).TotalDays
+            });
+            return models;
         }
     }
 }
