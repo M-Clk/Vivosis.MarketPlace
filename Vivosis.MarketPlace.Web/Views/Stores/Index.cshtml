@@ -69,7 +69,16 @@
                         }
                     </td>
                     <td>
-                        <button name="@store.Name" product_id="@store.StoreId" title="Güncelle" class="btn btn-outline-primary">
+                        @{
+                            var buttonStyle = "dark";
+                            var disabled = "disabled";
+                            if(store.IsConfirmed)
+                            {
+                                buttonStyle = "primary";
+                                disabled = "";
+                            }
+                        }
+                        <button name="@store.Name" product_id="@store.StoreId" title="Güncelle" @disabled class="btn btn-outline-@buttonStyle">
                             <i class="fa fa-sm fa-pencil-alt"></i>
                         </button>
                     </td>
