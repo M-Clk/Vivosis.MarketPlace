@@ -52,6 +52,12 @@ namespace Vivosis.MarketPlace.Web.Controllers
             return View(storeIdList);
         }
         [Authorize(Roles = "Customer")]
+        public IActionResult EditStore(int storeId)
+        {
+            var storeUser = _storeService.GetStoreById(storeId);
+            return PartialView("EditStore", storeUser);
+        }
+        [Authorize(Roles = "Customer")]
         public IActionResult ChangeStatus(int storeId)
         {
             if(ModelState.IsValid)

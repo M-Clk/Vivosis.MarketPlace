@@ -78,7 +78,7 @@
                                 disabled = "";
                             }
                         }
-                        <button name="@store.Name" product_id="@store.StoreId" title="Güncelle" @disabled class="btn btn-outline-@buttonStyle">
+                        <button name="@store.Name" onclick="showPopup('@Url.Action("EditStore","Stores",new { storeId = store.StoreId },Context.Request.Scheme)', '@store.Name Ayarları', optionsAfterOpen)" product_id="@store.StoreId" title="Güncelle" @disabled class="btn btn-outline-@buttonStyle">
                             <i class="fa fa-sm fa-pencil-alt"></i>
                         </button>
                     </td>
