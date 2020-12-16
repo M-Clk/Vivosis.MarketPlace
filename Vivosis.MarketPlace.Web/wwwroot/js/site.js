@@ -8,7 +8,7 @@ function generateRandomPass(elementId) {
         result += characters.charAt(Math.floor(Math.random() * charactersLength));
     document.getElementById(elementId).value = result;
 }
-function showPopup(url, title) {
+function showPopup(url, title, afterOpenFunc) {
     jQuery.ajax(
         {
             type: "GET",
@@ -18,25 +18,27 @@ function showPopup(url, title) {
                 jQuery("#form-modal .modal-title").html(title);
                 jQuery("#form-modal").modal("show");
             }
-        }).then(
-            function () {
-                jQuery("#option").children().first().children().addClass("active");
-                jQuery("#option-content").children().first().addClass("active");
-                jQuery("input[data-toggle='toggle']").bootstrapToggle();
-                jQuery("input[name='all-checkbox-weight']").on("change", function () {
-                    var optionId = jQuery(this).prop('id');
-                    jQuery("input[name='checkbox-" + optionId + "']").prop('checked', jQuery(this).prop('checked')).change();
-                });
-                jQuery("input[name='all-checkbox-price']").on("change", function () {
-                    var optionId = jQuery(this).prop('id');
-                    jQuery("input[name='checkbox-" + optionId + "']").prop('checked', jQuery(this).prop('checked')).change();
-                });
-                jQuery("input[name='all-checkbox-substract']").on("change", function () {
-                    var optionId = jQuery(this).prop('id');
-                    jQuery("input[name='checkbox-" + optionId + "']").prop('checked', jQuery(this).prop('checked')).change();
-                });
-            });
+        }).then(afterOpenFunc);
 }
+
+function optionsAfterOpen() {
+    jQuery("#option").children().first().children().addClass("active");
+    jQuery("#option-content").children().first().addClass("active");
+    jQuery("input[data-toggle='toggle']").bootstrapToggle();
+    jQuery("input[name='all-checkbox-weight']").on("change", function () {
+        var optionId = jQuery(this).prop('id');
+        jQuery("input[name='checkbox-" + optionId + "']").prop('checked', jQuery(this).prop('checked')).change();
+    });
+    jQuery("input[name='all-checkbox-price']").on("change", function () {
+        var optionId = jQuery(this).prop('id');
+        jQuery("input[name='checkbox-" + optionId + "']").prop('checked', jQuery(this).prop('checked')).change();
+    });
+    jQuery("input[name='all-checkbox-substract']").on("change", function () {
+        var optionId = jQuery(this).prop('id');
+        jQuery("input[name='checkbox-" + optionId + "']").prop('checked', jQuery(this).prop('checked')).change();
+    });
+}
+
 $('#mytable').DataTable(
     {
         language: {

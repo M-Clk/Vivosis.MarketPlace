@@ -44,7 +44,7 @@
                         <p> @product.name</p>
                     </td>
                     <td>
-                        <button onclick="showPopup('@Url.Action("Options","Products",new { productId = product.product_id },Context.Request.Scheme)', 'Varyantlar')" name="@product.name" title="Seçenekli Ürün" class="btn btn-outline-primary">
+                        <button onclick="showPopup('@Url.Action("Options","Products",new { productId = product.product_id },Context.Request.Scheme)', 'Varyantlar', optionsAfterOpen)" name="@product.name" title="Seçenekli Ürün" class="btn btn-outline-primary">
                             <i class="fa fa-list"></i>
                         </button>
                     </td>
