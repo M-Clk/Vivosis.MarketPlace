@@ -25,7 +25,7 @@
             <td>Adet</td>
             @foreach(var store in Model.Stores)
             {
-                <td>@store.Store.name</td>
+                <td><div class="text-center"> <img class="img-fluid" src="~/img/stores/@store.Store.image" /> @store.Store.name</div> </td>
             }
         </tr>
     </thead>
