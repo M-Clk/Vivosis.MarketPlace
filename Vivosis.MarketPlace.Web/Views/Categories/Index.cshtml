@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Category>
+﻿@model UserStoreCategoryModel
 @{
     ViewData["Title"] = "Kategoriler";
 }
@@ -19,25 +19,41 @@
                 <input type="checkbox" onclick="checkAll(this)">
             </td>
             <td>Kategori Adı</td>
-            <td>Ayarlar</td>
+            @foreach(var store in Model.Stores)
+            {
+                <td><div class="text-center"> <img class="img-fluid" src="~/img/stores/@store.Store.image" /> @store.Store.name</div> </td>
+            }
         </tr>
     </thead>
     <tbody>
         @{
-            foreach(var category in Model)
+            foreach(var category in Model.Categories)
             {
-                <tr id="tr_@category.category_id" onclick="selectSingleCheckbox(chck_@category.category_id)">
+                <tr>
                     <td>
                         <input type="checkbox" name="selected[]" id="chck_@category.category_id" value="@category.category_id">
                     </td>
                     <td>
                         <p> @category.path_name</p>
                     </td>
-                    <td>
-                        <button product_id="@category.category_id" name="@category.name" data-toggle="tooltip" title="" class="btn btn-outline-primary btnSetting" data-original-title="Düzenle">
-                            <i class="fa fa-pencil-alt"></i>
-                        </button>
-                    </td>
+                    @foreach(var store in Model.Stores)
+                    {
+                        <td>
+                            @{
+                                if(category.CategoryStores?.Any(cs => cs.store_id == store.store_id) ?? false)
+                                {
+                                    <small class="text-sm-left text-success">Gönderildi</small>
+                                }
+                                else
+                                {
+                                    <small class="text-sm-left text-warning">Gönderilmedi</small>
+                                }
+                            }
+                            <button onclick="showPopup('@Url.Action("Options","Categories",new { categoryId = category.category_id },Context.Request.Scheme)', '@store.Store.name Ürün Ayarları')" class="btn btn-outline-primary">
+                                <i class="fa fa-sm fa-pencil-alt"></i>
+                            </button>
+                        </td>
+                    }
                 </tr>
             }
         }

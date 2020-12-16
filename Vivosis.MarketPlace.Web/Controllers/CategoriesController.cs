@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Vivosis.MarketPlace.Data;
 using Vivosis.MarketPlace.Service.Abstract;
+using Vivosis.MarketPlace.Web.Models;
 
 namespace Vivosis.MarketPlace.Web.Controllers
 {
@@ -15,19 +16,23 @@ namespace Vivosis.MarketPlace.Web.Controllers
         private readonly MarketPlaceDbContext _context;
         IGlobalService _globalService;
         ILocalService _localService;
-        public CategoriesController(MarketPlaceDbContext context, IGlobalService globalService, ILocalService localService)
+        IStoreService _storeService;
+        public CategoriesController(MarketPlaceDbContext context, IGlobalService globalService, ILocalService localService, IStoreService storeService)
         {
             _context = context;
             _globalService = globalService;
             _localService = localService;
+            _storeService = storeService;
         }
         // GET: Categories
         public IActionResult Index()
         {
             if(ModelState.IsValid)
             {
-                var categories = _localService.GetCategories();
-                return View(categories);
+                var model = new UserStoreCategoryModel();
+                model.Categories = _localService.GetCategories();
+                model.Stores = _storeService.GetBoughtStores();
+                return View(model);
             }
             return View();
         }
