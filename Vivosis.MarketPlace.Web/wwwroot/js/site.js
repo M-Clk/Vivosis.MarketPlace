@@ -23,6 +23,18 @@ function showPopup(url, title) {
                 jQuery("#option").children().first().children().addClass("active");
                 jQuery("#option-content").children().first().addClass("active");
                 jQuery("input[data-size='xs']").bootstrapToggle();
+                jQuery("input[name='all-checkbox-weight']").on("change", function () {
+                    var optionId = jQuery(this).prop('id');
+                    jQuery("input[name='checkbox-weight-" + optionId + "']").prop('checked', jQuery(this).prop('checked')).change();
+                });
+                jQuery("input[name='all-checkbox-price']").on("change", function () {
+                    var optionId = jQuery(this).prop('id');
+                    jQuery("input[name='checkbox-price-" + optionId + "']").prop('checked', jQuery(this).prop('checked')).change();
+                });
+                jQuery("input[name='all-checkbox-substract']").on("change", function () {
+                    var optionId = jQuery(this).prop('id');
+                    jQuery("input[name='checkbox-substract-" + optionId + "']").prop('checked', jQuery(this).prop('checked')).change();
+                });
             });
 }
 $('#mytable').DataTable(
