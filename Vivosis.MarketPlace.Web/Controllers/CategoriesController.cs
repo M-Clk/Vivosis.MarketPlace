@@ -31,7 +31,7 @@ namespace Vivosis.MarketPlace.Web.Controllers
             {
                 var model = new UserStoreCategoryModel();
                 model.Categories = _localService.GetCategories();
-                model.Stores = _storeService.GetBoughtStores();
+                model.Stores = _storeService.GetBoughtStores().Where(us => us.is_confirmed);
                 return View(model);
             }
             return View();

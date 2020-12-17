@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Vivosis.MarketPlace.Data;
 using Vivosis.MarketPlace.Service.Abstract;
@@ -30,7 +31,7 @@ namespace Vivosis.MarketPlace.Web.Controllers
             {
                 var model = new UserStoreProductModel();
                 model.Products = _localService.GetProducts();
-                model.Stores = _storeService.GetBoughtStores();
+                model.Stores = _storeService.GetBoughtStores().Where(us=>us.is_confirmed);
                 return View(model);
             }
             return View();
