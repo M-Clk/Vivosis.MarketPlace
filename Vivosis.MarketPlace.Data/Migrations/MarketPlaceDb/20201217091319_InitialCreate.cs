@@ -189,8 +189,9 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                     category_id = table.Column<int>(nullable: false),
                     commission = table.Column<int>(nullable: false),
                     currency = table.Column<string>(nullable: true),
-                    matched_category = table.Column<string>(nullable: true),
-                    shipping_fee = table.Column<decimal>(nullable: false)
+                    shipping_fee = table.Column<decimal>(nullable: false),
+                    matched_category_name = table.Column<string>(nullable: true),
+                    matched_category_code = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -217,14 +218,14 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                     product_id = table.Column<int>(nullable: false),
                     commission = table.Column<int>(nullable: false),
                     currency = table.Column<string>(nullable: true),
-                    matched_category = table.Column<string>(nullable: true),
                     shipping_fee = table.Column<decimal>(nullable: false),
                     sale_price = table.Column<decimal>(nullable: false),
                     strikethrough_price = table.Column<decimal>(nullable: false),
                     origin = table.Column<string>(nullable: true),
                     description = table.Column<string>(nullable: true),
                     url = table.Column<string>(nullable: true),
-                    is_active = table.Column<bool>(nullable: false)
+                    is_active = table.Column<bool>(nullable: false),
+                    matched_product_code = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {

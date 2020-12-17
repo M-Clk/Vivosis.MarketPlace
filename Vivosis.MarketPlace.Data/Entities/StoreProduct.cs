@@ -14,5 +14,6 @@
         public string description { get; set; }
         public string url { get; set; }
         public bool is_active { get; set; }
+        public string matched_product_code { get; set; }
     }
 }

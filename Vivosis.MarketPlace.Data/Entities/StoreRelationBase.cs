@@ -8,7 +8,6 @@ namespace Vivosis.MarketPlace.Data.Entities
     {
         public int commission { get; set; }
         public string currency { get; set; }
-        public string matched_category { get; set; }
         public decimal shipping_fee { get; set; }
     }
 }

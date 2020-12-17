@@ -11,5 +11,7 @@ namespace Vivosis.MarketPlace.Data.Entities
 
         public virtual Category Category { get; set; }
         public int category_id { get; set; }
+        public string matched_category_name { get; set; }
+        public string matched_category_code { get; set; }
     }
 }

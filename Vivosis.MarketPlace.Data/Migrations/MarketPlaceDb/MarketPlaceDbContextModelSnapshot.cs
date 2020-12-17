@@ -236,7 +236,10 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                     b.Property<string>("currency")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<string>("matched_category")
+                    b.Property<string>("matched_category_code")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<string>("matched_category_name")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<decimal>("shipping_fee")
@@ -269,7 +272,7 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                     b.Property<bool>("is_active")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<string>("matched_category")
+                    b.Property<string>("matched_product_code")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<string>("origin")
