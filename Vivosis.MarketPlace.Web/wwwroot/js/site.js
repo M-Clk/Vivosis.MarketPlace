@@ -21,6 +21,88 @@ function showPopup(url, title, afterOpenFunc) {
         }).then(afterOpenFunc);
 }
 
+function loadCategories(url) {
+    jQuery.ajax(
+        {
+            type: "GET",
+            url: url,
+            success: function (res) {
+                jQuery("#categories-row").append(res);
+                jQuery('select').selectpicker();
+                jQuery('#category-name').attr('disabled', 'disabled');
+                jQuery('#category-code').attr('disabled', 'disabled');
+                jQuery('#currency-option').on('changed.bs.select', function () {
+                    jQuery('#currency').val(jQuery(this).val());
+                });
+                var currency = jQuery('#currency').val();
+                if (currency.length > 0) {
+                    jQuery("#currency-option option[value='" + currency + "']").attr('selected', 'selected');
+                    jQuery("#currency-option").trigger('change');
+                }
+            }
+        }).then(() => loadSelectOptionEvents(1));
+}
+
+function loadSelectOptionEvents(id) {
+    jQuery('select#' + id).on("changed.bs.select", function () {
+        jQuery(this).parent().parent().nextAll().remove();
+        var indexId = parseInt(jQuery(this).attr("id"));
+        var lastId = indexId + 1;
+        var categoryText = '';
+        for (i = 1; i <= indexId; i++) {
+            categoryText += jQuery('select#' + i).children("option:selected").val() + ' > ';
+        }
+        var url = jQuery('option:selected', this).attr("url");
+        var code = jQuery('option:selected', this).attr("id");
+        categoryText = categoryText.substr(0, categoryText.length - 3);
+        jQuery('#category-name').prop('value', categoryText);
+        jQuery('#category-code').prop('value', code);
+
+        jQuery.ajax(
+            {
+                type: "GET",
+                url: url,
+                success: function (res) {
+                    if (res.isEmpty)
+                        return;
+                    res = res.replace(/(select id=[ ]?\"[ ]?)([0-9]+)(\")/, '$1' + lastId + '$3')
+                    jQuery("#categories-row").append(res);
+                    jQuery('select#' + lastId).selectpicker();
+                    loadSelectOptionEvents(lastId);
+                }
+            });
+    });
+}
+function submitStoreCategory(form, infoId) {
+    try {
+        jQuery('#category-name').removeAttr('disabled');
+        jQuery('#category-code').removeAttr('disabled');
+        jQuery.ajax({
+            type: 'POST',
+            url: form.action,
+            data: new FormData(form),
+            contentType: false,
+            processData: false,
+            success: function (res) {
+                if (res.isValid) {
+                    jQuery('#form-modal .modal-body').html('');
+                    jQuery('#form-modal .modal-title').html('');
+                    jQuery('#form-modal').modal('hide');
+                    jQuery('#' + infoId).removeClass('text-warning').addClass('text-success');
+                    jQuery('#' + infoId).html('Gönderildi');
+                }
+                else
+                    jQuery('#form-modal .modal-body').html(res.html);
+            },
+            error: function (err) {
+                console.log(err)
+            }
+        })
+        return false;
+    } catch (ex) {
+        console.log(ex)
+    }
+}
 submitStore = form => {
     try {
         jQuery.ajax({
