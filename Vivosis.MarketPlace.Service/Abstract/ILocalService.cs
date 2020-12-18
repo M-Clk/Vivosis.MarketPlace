@@ -9,6 +9,8 @@ namespace Vivosis.MarketPlace.Service.Abstract
     {
         IEnumerable<Product> GetProducts(IEnumerable<int> productIdList = null);
         IEnumerable<Category> GetCategories(IEnumerable<int> categoryIdList = null);
+        StoreCategory GetStoreCategory(int storeId, int categoryId);
+        bool AddOrUpdateStoreCategory(StoreCategory storeCategory);
         int AddProducts(IEnumerable<Product> products);
         int UpdateProducts(IEnumerable<Product> products);
         int AddCategories(IEnumerable<Category> categories);

@@ -40,16 +40,16 @@
                     {
                         <td>
                             @{
+                                var infoMessage = "Gönderilmedi";
+                                var infoStyle = "warning";
                                 if(category.CategoryStores?.Any(cs => cs.store_id == store.store_id) ?? false)
                                 {
-                                    <small class="text-sm-left text-success">Gönderildi</small>
+                                    infoMessage = "Gönderildi";
+                                    infoStyle = "success";
                                 }
-                                else
-                                {
-                                    <small class="text-sm-left text-warning">Gönderilmedi</small>
-                                }
+                                <small id="info-@(category.category_id)-@(store.store_id)" class="text-sm-left text-@infoStyle">@infoMessage</small>
                             }
-                            <button onclick="showPopup('@Url.Action("Options","Categories",new { categoryId = category.category_id },Context.Request.Scheme)', '@store.Store.name Ürün Ayarları')" class="btn btn-outline-primary">
+                            <button onclick="showPopup('@Url.Action("EditStoreCategory","Categories",new { storeId = store.store_id, categoryId = category.category_id },Context.Request.Scheme)', '@store.Store.name Ürün Ayarları', loadCategories('@Url.Action("GetCategories","Categories", null ,Context.Request.Scheme)'))" class="btn btn-outline-primary">
                                 <i class="fa fa-sm fa-pencil-alt"></i>
                             </button>
                         </td>
@@ -60,25 +60,3 @@
 
     </tbody>
 </table>
-<script>
-    $('#mytable').DataTable(
-        {
-            language: {
-                url: '//cdn.datatables.net/plug-ins/1.10.22/i18n/Turkish.json'
-
-            },
-            columnDefs: [
-                { orderable: false, targets: 0 }
-            ],
-            order: [[1, 'asc']]
-        });
-    function checkAll(bx) {
-        var cbs = document.getElementsByTagName('input');
-        for (var i = 0; i < cbs.length; i++) {
-            if (cbs[i].type == 'checkbox') {
-                cbs[i].checked = bx.checked;
-            }
-        }
-    }
-    document.getElementById("categories").className += " active";
-</script>

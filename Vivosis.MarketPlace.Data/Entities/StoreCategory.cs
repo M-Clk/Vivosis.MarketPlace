@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace Vivosis.MarketPlace.Data.Entities
 {
+    [Table("storecategory")]
     public class StoreCategory :StoreRelationBase
     {
         public virtual Store Store { get; set; }

@@ -1,5 +1,8 @@
-﻿namespace Vivosis.MarketPlace.Data.Entities
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Vivosis.MarketPlace.Data.Entities
 {
+    [Table("storeproduct")]
     public class StoreProduct :StoreRelationBase
     {
         public virtual Store Store { get; set; }

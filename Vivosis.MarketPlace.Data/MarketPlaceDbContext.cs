@@ -15,6 +15,8 @@ namespace Vivosis.MarketPlace.Data
         public DbSet<ProductOption> ProductOptions { get; set; }
         public DbSet<ProductCategory> ProductCategories { get; set; }
         public DbSet<ProductOptionValue> ProductOptionValues { get; set; }
+        public DbSet<StoreCategory> StoreCategories { get; set; }
+        public DbSet<StoreProduct> StoreProducts { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

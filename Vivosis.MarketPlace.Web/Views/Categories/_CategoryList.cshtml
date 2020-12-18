@@ -1,0 +1,12 @@
+﻿@model IEnumerable<StoreCategory>
+<div class="mr-2">
+    <select id="1" class="selectpicker" title="Kategori Seçin">
+        @foreach(var storeCategory in Model)
+        {
+            <option id="@storeCategory.matched_category_code" url="@Url.Action("GetCategories","Categories", new { parentId =
+            storeCategory.matched_category_code } ,Context.Request.Scheme)">
+                @storeCategory.matched_category_name
+            </option>
+        }
+    </select>
+</div>

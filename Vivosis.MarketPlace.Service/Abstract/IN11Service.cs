@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Vivosis.MarketPlace.Data.Entities;
 
 namespace Vivosis.MarketPlace.Service.Abstract
 {
@@ -9,5 +10,7 @@ namespace Vivosis.MarketPlace.Service.Abstract
     {
         GetTopLevelCategoriesResponse1 Test();
         GetSubCategoriesResponse1 Test2();
+        IEnumerable<StoreCategory> GetTopCategories();
+        IEnumerable<StoreCategory> GetSubCategories(int categoryId);
     }
 }

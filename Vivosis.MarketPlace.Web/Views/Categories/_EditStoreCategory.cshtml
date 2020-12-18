@@ -1,0 +1,44 @@
+﻿@model StoreCategory
+<form asp-action="EditStoreCategory" onsubmit="return submitStoreCategory(this,'info-@(Model.category_id)-@(Model.store_id)')" autocomplete="off">
+    <input type="hidden" asp-for="store_id" />
+    <input type="hidden" asp-for="category_id" />
+    <input id="currency" type="hidden" asp-for="currency" />
+    <div class="form-group">
+        <div class="row m-2" id="categories-row">
+            
+        </div>
+        <div class="row">
+            <div class="col-sm-2">
+                <label class="col-form-label">Kategori Kodu</label>
+                <input id="category-code" type="text" asp-for="matched_category_code" class="form-control" style="border-radius: 5px;">
+            </div>
+            <div class="col-sm-10">
+                <label class="col-form-label">Kategori Adı</label>
+                <input id="category-name" type="text" asp-for="matched_category_name" class="form-control" style="border-radius: 5px;">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <label class="col-form-label">Kargo Bedeli</label>
+                <input type="text" asp-for="shipping_fee" class="form-control" style="border-radius: 5px;">
+            </div>
+            <div class="col-sm-4">
+                <label class="col-form-label">Komisyon</label>
+                <input type="text" asp-for="commission" class="form-control" style="border-radius: 5px;">
+            </div>
+            <div class="col-sm-4">
+                <label class="col-form-label">Para Birimi</label>
+                <select id="currency-option" class="form-control selectpicker" title="Para Birimi Seçin">
+                    <option value="₺">₺</option>
+                    <option value="$">$</option>
+                    <option value="€">€</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-sm-10">
+            <button type="submit" class="btn btn-primary justify-content-end">Kaydet</button>
+        </div>
+    </div>
+</form>

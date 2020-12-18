@@ -12,25 +12,31 @@ namespace Vivosis.MarketPlace.Service.Concrete
 {
     public class N11Service :IN11Service
     {
-        Store _store;
+        StoreUser _store;
         Authentication _auth;
-        public N11Service(MarketPlaceDbContext dbContex)
+        public N11Service(MarketPlaceDbContext dbContex, IStoreService storeService)
         {
             //TODO burasi hatali
-            var store = dbContex.Stores.Where(store => store.name.ToLower().Equals("n11")) ?? throw new InvalidOperationException("N11 sisteminizde kayitli degil.");
-            _store = store.Include(s=>s.StoreProducts).Include(s=>s.StoreCategories).First();
-            //_auth = new Authentication
-            //{
-            //    appKey = _store.api_key,
-            //    appSecret = _store.secret_key
-            //};
+            var _store = storeService.GetBoughtStores().FirstOrDefault(su => su.Store.name.ToLower().Equals("n11")) ?? throw new InvalidOperationException("N11 sisteminizde kayitli degil.");
+            _auth = new Authentication
+            {
+                appKey = _store.api_key,
+                appSecret = _store.secret_key
+            };
         }
+
+        public bool CheckApiConnection()
+        {
+            throw new NotImplementedException();
+        }
+
         public GetTopLevelCategoriesResponse1 Test()
         {
             CategoryServicePortClient c = new CategoryServicePortClient();
             GetTopLevelCategoriesRequest req = new GetTopLevelCategoriesRequest();
             req.auth = _auth;
             GetTopLevelCategoriesResponse1 res = c.GetTopLevelCategoriesAsync(req).Result;
+            
             return res;
         }
         public GetSubCategoriesResponse1 Test2()
@@ -42,5 +48,47 @@ namespace Vivosis.MarketPlace.Service.Concrete
             var res = c.GetCategoryAttributesAsync(req).Result;
             return new GetSubCategoriesResponse1();
         }
+        public IEnumerable<StoreCategory> GetTopCategories()
+        {
+            CategoryServicePortClient proxy = new CategoryServicePortClient();
+            var request = new GetTopLevelCategoriesRequest();
+            request.auth = _auth;
+            var categories = proxy.GetTopLevelCategoriesAsync(request).Result;
+            var categoryList = new List<StoreCategory>();
+            foreach(var category in categories.GetTopLevelCategoriesResponse.categoryList)
+            {
+                var newCategory = new StoreCategory
+                {
+                    matched_category_name = category.name,
+                    matched_category_code = category.id.ToString()
+                };
+                categoryList.Add(newCategory);
+            }
+            return categoryList;
+        }     
+        public IEnumerable<StoreCategory> GetSubCategories(int categoryId)
+        {
+            var categoryList = new List<StoreCategory>();
+
+            CategoryServicePortClient proxy = new CategoryServicePortClient();
+            var request = new GetSubCategoriesRequest();
+            request.auth = _auth;
+            request.categoryId = categoryId;
+
+            var subCategories = proxy.GetSubCategoriesAsync(request).Result;
+            if(subCategories.GetSubCategoriesResponse.category?.FirstOrDefault().subCategoryList==null)
+                return categoryList;
+            foreach(var category in subCategories.GetSubCategoriesResponse.category.SelectMany(c=>c.subCategoryList))
+            {
+                var newCategory = new StoreCategory
+                {
+                    matched_category_name = category.name,
+                    matched_category_code = category.id.ToString()
+                };
+                categoryList.Add(newCategory);
+            }
+            return categoryList;
+        }
+        
     }
 }
