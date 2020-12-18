@@ -77,7 +77,10 @@ namespace Vivosis.MarketPlace.Service.Concrete
             }
             var result = _userManager.CreateAsync(user, pass).Result;
             if(result.Succeeded)
+            {
                 _userManager.AddToRoleAsync(user, role).Wait();
+                SeedStores(dbContext);
+            }
             else if(!isAdmin)
                 dbContext?.Database.EnsureDeleted();
             return result;
@@ -113,6 +116,54 @@ namespace Vivosis.MarketPlace.Service.Concrete
             {
                 return false;
             }
+        }
+        private void SeedStores(MarketPlaceDbContext dbContext)
+        {
+            var stores = new List<Store>
+            {
+                new Store
+                {
+                    store_id = 1,
+                    name = "N11",
+                    image = "n11.png",
+                    ssl = "n11_default_ssl",
+                    url = "https://www.n11.com"
+                },
+                new Store
+                {
+                    store_id = 2,
+                    name = "Trendyol",
+                    image = "trendyol.png",
+                    ssl = "trendyol_default_ssl",
+                    url = "https://www.trendyol.com"
+                },
+                new Store
+                {
+                    store_id = 3,
+                    name = "Hepsiburada",
+                    image = "hepsiburada.png",
+                    ssl = "hepsiburada_default_ssl",
+                    url = "https://www.hepsiburada.com"
+                },
+                new Store
+                {
+                    store_id = 4,
+                    name = "Gittigidiyor",
+                    image = "gittigidiyor.png",
+                    ssl = "gittigidiyor_default_ssl",
+                    url = "https://www.gittigidiyor.com"
+                },
+                new Store
+                {
+                    store_id = 5,
+                    name = "Cicek Sepeti",
+                    image = "ciceksepeti.png",
+                    ssl = "ciceksepeti_default_ssl",
+                    url = "https://www.ciceksepeti.com"
+                },
+            };
+            dbContext.Stores.AddRange(stores);
+            dbContext.SaveChanges();
         }
     }
 }
