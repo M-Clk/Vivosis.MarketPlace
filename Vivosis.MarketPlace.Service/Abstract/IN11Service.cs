@@ -12,5 +12,6 @@ namespace Vivosis.MarketPlace.Service.Abstract
         GetSubCategoriesResponse1 Test2();
         IEnumerable<StoreCategory> GetTopCategories();
         IEnumerable<StoreCategory> GetSubCategories(int categoryId);
+        StoreCategory GetCategoryWithParentsName(long categoryId);
     }
 }

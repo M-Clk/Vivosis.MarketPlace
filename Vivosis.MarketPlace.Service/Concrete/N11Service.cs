@@ -12,16 +12,15 @@ namespace Vivosis.MarketPlace.Service.Concrete
 {
     public class N11Service :IN11Service
     {
-        StoreUser _store;
         Authentication _auth;
-        public N11Service(MarketPlaceDbContext dbContex, IStoreService storeService)
+        public N11Service(IStoreService storeService)
         {
             //TODO burasi hatali
-            var _store = storeService.GetBoughtStores().FirstOrDefault(su => su.Store.name.ToLower().Equals("n11")) ?? throw new InvalidOperationException("N11 sisteminizde kayitli degil.");
+            var _store = storeService.GetBoughtStores().FirstOrDefault(su => su.Store.name.ToLower().Equals("n11"))/* ?? throw new InvalidOperationException("N11 sisteminizde kayitli degil.")*/;
             _auth = new Authentication
             {
-                appKey = _store.api_key,
-                appSecret = _store.secret_key
+                appKey = _store?.api_key,
+                appSecret = _store?.secret_key
             };
         }
 
@@ -36,7 +35,7 @@ namespace Vivosis.MarketPlace.Service.Concrete
             GetTopLevelCategoriesRequest req = new GetTopLevelCategoriesRequest();
             req.auth = _auth;
             GetTopLevelCategoriesResponse1 res = c.GetTopLevelCategoriesAsync(req).Result;
-            
+
             return res;
         }
         public GetSubCategoriesResponse1 Test2()
@@ -65,7 +64,7 @@ namespace Vivosis.MarketPlace.Service.Concrete
                 categoryList.Add(newCategory);
             }
             return categoryList;
-        }     
+        }
         public IEnumerable<StoreCategory> GetSubCategories(int categoryId)
         {
             var categoryList = new List<StoreCategory>();
@@ -76,9 +75,9 @@ namespace Vivosis.MarketPlace.Service.Concrete
             request.categoryId = categoryId;
 
             var subCategories = proxy.GetSubCategoriesAsync(request).Result;
-            if(subCategories.GetSubCategoriesResponse.category?.FirstOrDefault().subCategoryList==null)
+            if(subCategories.GetSubCategoriesResponse.category?.FirstOrDefault().subCategoryList == null)
                 return categoryList;
-            foreach(var category in subCategories.GetSubCategoriesResponse.category.SelectMany(c=>c.subCategoryList))
+            foreach(var category in subCategories.GetSubCategoriesResponse.category.SelectMany(c => c.subCategoryList))
             {
                 var newCategory = new StoreCategory
                 {
@@ -89,6 +88,30 @@ namespace Vivosis.MarketPlace.Service.Concrete
             }
             return categoryList;
         }
-        
+
+        public StoreCategory GetCategoryWithParentsName(long categoryId)
+        {
+            var category = new StoreCategory();
+            CategoryServicePortClient proxy = new CategoryServicePortClient();
+            var request = new GetParentCategoryRequest();
+            request.auth = _auth;
+            while(true)
+            {
+                request.categoryId = categoryId;
+                var parentCategory = proxy.GetParentCategoryAsync(request).Result;
+                if(parentCategory.GetParentCategoryResponse.category == null)
+                    return null;
+                if(string.IsNullOrEmpty(category.matched_category_code))
+                {
+                    category.matched_category_code = parentCategory.GetParentCategoryResponse.category.id.ToString();
+                    category.matched_category_name = parentCategory.GetParentCategoryResponse.category.name;
+                }
+                if(parentCategory.GetParentCategoryResponse.category?.parentCategory?.name == null)
+                    break;
+                category.matched_category_name = $"{parentCategory.GetParentCategoryResponse.category.parentCategory.name} > {category.matched_category_name}";
+                categoryId = parentCategory.GetParentCategoryResponse.category.id;
+            }
+            return category;
+        }
     }
 }
