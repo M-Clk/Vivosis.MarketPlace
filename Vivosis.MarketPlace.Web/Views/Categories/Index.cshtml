@@ -40,11 +40,11 @@
                     {
                         <td>
                             @{
-                                var infoMessage = "Gönderilmedi";
+                                var infoMessage = "Eşleştirilmedi";
                                 var infoStyle = "warning";
-                                if(category.CategoryStores?.Any(cs => cs.store_id == store.store_id) ?? false)
+                                if(category.CategoryStores?.Any(cs => cs.store_id == store.store_id && cs.matched_category_code != null) ?? false)
                                 {
-                                    infoMessage = "Gönderildi";
+                                    infoMessage = "Eşleştirildi";
                                     infoStyle = "success";
                                 }
                                 <small id="info-@(category.category_id)-@(store.store_id)" class="text-sm-left text-@infoStyle">@infoMessage</small>

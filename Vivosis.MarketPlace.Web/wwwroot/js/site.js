@@ -89,7 +89,7 @@ function submitStoreCategory(form, infoId) {
                     jQuery('#form-modal .modal-title').html('');
                     jQuery('#form-modal').modal('hide');
                     jQuery('#' + infoId).removeClass('text-warning').addClass('text-success');
-                    jQuery('#' + infoId).html('Gönderildi');
+                    jQuery('#' + infoId).html('Eşleştirildi');
                 }
                 else
                     jQuery('#form-modal .modal-body').html(res.html);
