@@ -225,7 +225,8 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                     description = table.Column<string>(nullable: true),
                     url = table.Column<string>(nullable: true),
                     is_active = table.Column<bool>(nullable: false),
-                    matched_product_code = table.Column<string>(nullable: true)
+                    matched_product_code = table.Column<string>(nullable: true),
+                    is_sent = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {

@@ -272,6 +272,9 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                     b.Property<bool>("is_active")
                         .HasColumnType("tinyint(1)");
 
+                    b.Property<bool>("is_sent")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<string>("matched_product_code")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 

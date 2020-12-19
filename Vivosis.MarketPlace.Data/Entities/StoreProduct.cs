@@ -18,5 +18,6 @@ namespace Vivosis.MarketPlace.Data.Entities
         public string url { get; set; }
         public bool is_active { get; set; }
         public string matched_product_code { get; set; }
+        public bool is_sent { get; set; }
     }
 }
