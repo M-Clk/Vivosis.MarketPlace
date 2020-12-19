@@ -9,7 +9,7 @@ using Vivosis.MarketPlace.Data;
 namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
 {
     [DbContext(typeof(MarketPlaceDbContext))]
-    [Migration("20201217091319_InitialCreate")]
+    [Migration("20201219191741_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -106,10 +106,10 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<decimal>("price")
-                        .HasColumnType("decimal(65,30)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("quantity")
-                        .HasColumnType("decimal(65,30)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<bool>("status")
                         .HasColumnType("tinyint(1)");
@@ -177,7 +177,7 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                         .HasColumnType("int");
 
                     b.Property<decimal>("price")
-                        .HasColumnType("decimal(65,30)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("product_option_id")
                         .HasColumnType("int");
@@ -189,7 +189,7 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                         .HasColumnType("tinyint(1)");
 
                     b.Property<decimal>("weight")
-                        .HasColumnType("decimal(65,30)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("product_option_value_id");
 
@@ -245,13 +245,13 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<decimal>("shipping_fee")
-                        .HasColumnType("decimal(65,30)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("store_id", "category_id");
 
                     b.HasIndex("category_id");
 
-                    b.ToTable("StoreCategory");
+                    b.ToTable("storecategory");
                 });
 
             modelBuilder.Entity("Vivosis.MarketPlace.Data.Entities.StoreProduct", b =>
@@ -281,13 +281,13 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<decimal>("sale_price")
-                        .HasColumnType("decimal(65,30)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("shipping_fee")
-                        .HasColumnType("decimal(65,30)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("strikethrough_price")
-                        .HasColumnType("decimal(65,30)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("url")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
@@ -296,7 +296,7 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
 
                     b.HasIndex("product_id");
 
-                    b.ToTable("StoreProduct");
+                    b.ToTable("storeproduct");
                 });
 
             modelBuilder.Entity("Vivosis.MarketPlace.Data.Entities.StoreUser", b =>

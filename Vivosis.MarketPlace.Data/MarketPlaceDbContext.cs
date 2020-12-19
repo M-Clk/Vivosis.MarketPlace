@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using Vivosis.MarketPlace.Data.Entities;
 
 namespace Vivosis.MarketPlace.Data
@@ -95,6 +97,14 @@ namespace Vivosis.MarketPlace.Data
             builder.Entity<SystemUser>().Ignore(s => s.Settings);
 
             builder.Entity<StoreUser>().HasIndex(s => s.api_key).IsUnique();
+
+            var entitiesHasDecimalProperty = builder.Model.GetEntityTypes().Where(prop => prop.ClrType.GetProperties().Any(p => p.PropertyType.IsAssignableFrom(typeof(decimal))));
+            foreach(var entityType in entitiesHasDecimalProperty)
+            {
+                var properties = entityType.ClrType.GetProperties().Where(p => p.PropertyType.IsAssignableFrom(typeof(decimal)) && !p.CustomAttributes.Any(cA => cA.AttributeType.IsAssignableFrom(typeof(NotMappedAttribute))));
+                foreach(var prop in properties)
+                    builder.Entity(entityType.ClrType).Property(prop.Name).HasColumnType("decimal(18,2)");
+            }
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
