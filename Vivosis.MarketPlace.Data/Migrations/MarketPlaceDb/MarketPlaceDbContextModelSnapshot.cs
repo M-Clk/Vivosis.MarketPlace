@@ -236,6 +236,9 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                     b.Property<string>("currency")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
+                    b.Property<bool>("is_matched")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<string>("matched_category_code")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 

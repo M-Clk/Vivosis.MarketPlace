@@ -190,6 +190,7 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                     commission = table.Column<int>(nullable: false),
                     currency = table.Column<string>(nullable: true),
                     shipping_fee = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    is_matched = table.Column<bool>(nullable: false),
                     matched_category_name = table.Column<string>(nullable: true),
                     matched_category_code = table.Column<string>(nullable: true)
                 },
