@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Vivosis.MarketPlace.Data;
+using Vivosis.MarketPlace.Data.Entities;
 using Vivosis.MarketPlace.Service.Abstract;
 using Vivosis.MarketPlace.Web.Models;
 
@@ -31,7 +32,7 @@ namespace Vivosis.MarketPlace.Web.Controllers
             {
                 var model = new UserStoreProductModel();
                 model.Products = _localService.GetProducts();
-                model.Stores = _storeService.GetBoughtStores().Where(us=>us.is_confirmed);
+                model.Stores = _storeService.GetBoughtStores().Where(us=>us.is_confirmed && !string.IsNullOrEmpty(us.api_key) && !string.IsNullOrEmpty(us.secret_key));
                 return View(model);
             }
             return View();
@@ -47,6 +48,12 @@ namespace Vivosis.MarketPlace.Web.Controllers
         {
             var product = _localService.GetProducts(new List<int> { id });
             return View(product);
+        }
+        public IActionResult EditStoreProduct(int storeId, int productId)
+        {
+            var storeCategory = _localService.GetStoreProduct(storeId, productId) ?? new StoreProduct { store_id = storeId, product_id = productId};
+
+            return PartialView("_EditStoreProduct", storeCategory);
         }
         public IActionResult Settings()
         {

@@ -57,21 +57,31 @@
                     @foreach(var store in Model.Stores)
                     {
                         <td>
+
                             @{
-                                var productStore = product.ProductStores?.FirstOrDefault(ps => ps.store_id == store.store_id);
-                                if(productStore != null)
+                                var category = product.ProductCategories?.FirstOrDefault()?.Category;
+                                if(category?.CategoryStores?.FirstOrDefault(cs => cs.store_id == store.store_id && cs.is_matched) != null)
                                 {
-                                    var textStyle = productStore.sale_price > product.price ? "success" : productStore.sale_price < product.price ? "danger" : "info";
-                                    <small class="text-sm-left text-@textStyle">@productStore.sale_price TL</small>
+                                    var productStore = product.ProductStores?.FirstOrDefault(ps => ps.store_id == store.store_id);
+                                    if(productStore != null)
+                                    {
+                                        var textStyle = productStore.sale_price > product.price ? "success" : productStore.sale_price < product.price ? "danger" : "info";
+                                        <small class="text-sm-left text-@textStyle">@productStore.sale_price TL</small>
+                                    }
+                                    else
+                                    {
+                                        <small class="text-sm-left text-warning">Gönderilmedi</small>
+                                    }
+                                    <button onclick="showPopup('@Url.Action("EditStoreProduct","Products",new { productId = product.product_id },Context.Request.Scheme)', '@store.Store.name Ürün Ayarları', editStoreProductAfterOpen)" class="btn btn-outline-primary">
+                                        <i class="fa fa-sm fa-pencil-alt"></i>
+                                    </button>
                                 }
                                 else
                                 {
-                                    <small class="text-sm-left text-warning">Gönderilmedi</small>
+                                    var categoryInfo = category?.name != null ? $"{category.name} kategorisini eşleştirin." : "Kategoriler eşleştirilmedi.";
+                                    <small class="text-danger">@categoryInfo</small>
                                 }
                             }
-                            <button onclick="showPopup('@Url.Action("Options","Products",new { productId = product.product_id },Context.Request.Scheme)', '@store.Store.name Ürün Ayarları')" class="btn btn-outline-primary">
-                                <i class="fa fa-sm fa-pencil-alt"></i>
-                            </button>
                         </td>
                     }
                 </tr>
