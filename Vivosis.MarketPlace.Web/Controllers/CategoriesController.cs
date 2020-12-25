@@ -35,7 +35,7 @@ namespace Vivosis.MarketPlace.Web.Controllers
             {
                 var model = new UserStoreCategoryModel();
                 model.Categories = _localService.GetCategories();
-                model.Stores = _storeService.GetBoughtStores().Where(us => us.is_confirmed);
+                model.Stores = _storeService.GetBoughtStores().Where(us => us.is_confirmed && !string.IsNullOrEmpty(us.api_key) && !string.IsNullOrEmpty(us.secret_key));
                 return View(model);
             }
             return View();
@@ -56,11 +56,15 @@ namespace Vivosis.MarketPlace.Web.Controllers
             var category = _localService.GetCategories(new List<int> { id });
             return View(category);
         }
-        public IActionResult EditStoreCategory(int storeId, int categoryId)
+        public IActionResult EditStoreCategory(int storeId, int categoryId, string storeName)
         {
-            var storeCategory = _localService.GetStoreCategory(storeId, categoryId) ?? new StoreCategory { store_id = storeId, category_id = categoryId };
-
-            return PartialView("_EditStoreCategory", storeCategory);
+            var storeCategoryModel = new EditCategoryStoreModel();
+            var storeCategory = _localService.GetStoreCategory(storeId, categoryId);
+            storeCategoryModel.IsStoreCategoryExist = storeCategory != null;
+            storeCategoryModel.StoreCategory = storeCategory ?? new StoreCategory { category_id = categoryId, store_id = storeId };
+            storeCategoryModel.Options = _localService.GetAllOptions();
+            storeCategoryModel.SelectedStoreName = storeName;
+            return PartialView("_EditStoreCategory", storeCategoryModel);
         }
         [HttpPost]
         public IActionResult EditStoreCategory(StoreCategory storeCategory)
@@ -72,11 +76,40 @@ namespace Vivosis.MarketPlace.Web.Controllers
             }
             return Json(new { isValid = false, html = Helper.RenderRazorViewToString(this, "_EditStoreCategory", storeCategory) });
         }
+        public IActionResult GetCategoryOptions(long categoryCode, int categoryStoreId, string storeName)
+        {
+            if(ModelState.IsValid)
+            {
+                var model = new CategoryOptionListModel();
+                model.SelectedStoreName = storeName;
+                var categoryOptionFromStore = _n11Service.GetCategoryOptisons(categoryCode);
+                var categoryOptionsFromLocal = _localService.GetStoreCategory(categoryStoreId)?.CategoryOptions;
+                if(categoryOptionFromStore != null && categoryOptionFromStore.Any())
+                {
+                    var matchedCategoryOptions = new List<MatchedCategoryOptionModel>();
+                    foreach(var fromStore in categoryOptionFromStore.OrderByDescending(c=>c.IsRequired))
+                    {
+                        var fromLocal = categoryOptionsFromLocal?.FirstOrDefault(co => co.category_option_id == fromStore.Id);
+                        matchedCategoryOptions.Add(
+                            new MatchedCategoryOptionModel
+                            {
+                                FromStore = fromStore,
+                                FromLocal = fromLocal,
+                                IsSetted = fromLocal != null
+                            });
+                    }
+                    model.CategoryOptions = matchedCategoryOptions;
+                    model.Options = _localService.GetAllOptions();
+                    return Json(new { isEmpty = false, html = Helper.RenderRazorViewToString(this, "_ListCategoryOptions", model) });
+                }
+            }
+            return Json(new { isEmpty = true });
+        }
         public IActionResult GetCategories(int parentId)
         {
             var categories = parentId == 0 ? _n11Service.GetTopCategories() : _n11Service.GetSubCategories(parentId);
             if(categories.Any())
-                return PartialView("_CategoryList", categories);
+                return Json(new { isEmpty = false, html = Helper.RenderRazorViewToString(this, "_CategoryList", categories) });
             else
                 return Json(new { isEmpty = true });
         }

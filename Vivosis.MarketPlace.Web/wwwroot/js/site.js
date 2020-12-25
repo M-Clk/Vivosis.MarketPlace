@@ -21,22 +21,46 @@ function showPopup(url, title, afterOpenFunc) {
         }).then(afterOpenFunc);
 }
 
+function afterOpenCategoryEdit() {
+
+}
+
+function loadCategoryOptions(categoryCode) {
+    var url = jQuery("#category-options-area").attr('url') + "&categoryCode=" + categoryCode;
+    jQuery.ajax(
+        {
+            type: "GET",
+            url: url,
+            success: function (res) {
+                if (res.isEmpty) {
+                    jQuery("#category-options-area").empty();
+                    jQuery("#category-options-area").hide();
+                    return;
+                }
+                jQuery("#category-options-area").empty().append(res.html);
+                jQuery("#category-options-area").show();
+                jQuery('select').selectpicker();
+            }
+        });
+}
+
 function loadCategories(url) {
     jQuery.ajax(
         {
             type: "GET",
             url: url,
             success: function (res) {
-                jQuery("#categories-row").append(res);
+                if (res.isEmpty)
+                    return;
+                jQuery("#categories-row").append(res.html);
                 jQuery('select').selectpicker();
                 jQuery('#category-name').attr('disabled', 'disabled');
                 jQuery('#category-code').attr('disabled', 'disabled');
                 jQuery('#currency-option').on('changed.bs.select', function () {
                     jQuery('#currency').val(jQuery(this).val());
                 });
-                var currency = jQuery('#currency').val();
-                if (currency.length > 0) {
-                    jQuery("#currency-option option[value='" + currency + "']").attr('selected', 'selected');
+                if (jQuery('#currency').length > 0) {
+                    jQuery("#currency-option option[value='" + jQuery('#currency').val() + "']").attr('selected', 'selected');
                     jQuery("#currency-option").trigger('change');
                 }
             }
@@ -57,7 +81,8 @@ function loadSelectOptionEvents(id) {
         categoryText = categoryText.substr(0, categoryText.length - 3);
         jQuery('#category-name').prop('value', categoryText);
         jQuery('#category-code').prop('value', code);
-
+        if (code.length > 0)
+            loadCategoryOptions(jQuery('#category-code').prop('value'));
         jQuery.ajax(
             {
                 type: "GET",
@@ -65,14 +90,15 @@ function loadSelectOptionEvents(id) {
                 success: function (res) {
                     if (res.isEmpty)
                         return;
-                    res = res.replace(/(select id=[ ]?\"[ ]?)([0-9]+)(\")/, '$1' + lastId + '$3')
-                    jQuery("#categories-row").append(res);
+                    res.html = res.html.replace(/(select id=[ ]?\"[ ]?)([0-9]+)(\")/, '$1' + lastId + '$3')
+                    jQuery("#categories-row").append(res.html);
                     jQuery('select#' + lastId).selectpicker();
                     loadSelectOptionEvents(lastId);
                 }
             });
     });
 }
+
 function submitStoreCategory(form, infoId) {
     try {
         jQuery('#category-name').removeAttr('disabled');
@@ -103,6 +129,7 @@ function submitStoreCategory(form, infoId) {
         console.log(ex)
     }
 }
+
 submitStore = form => {
     try {
         jQuery.ajax({
@@ -158,6 +185,11 @@ function optionsAfterOpen() {
         var optionId = jQuery(this).prop('id');
         jQuery("input[name='checkbox-" + optionId + "']").prop('checked', jQuery(this).prop('checked')).change();
     });
+}
+
+function editStoreProductAfterOpen() {
+    jQuery("input[data-toggle='toggle']").bootstrapToggle();
+    jQuery('select').selectpicker();
 }
 
 $('#mytable').DataTable(
