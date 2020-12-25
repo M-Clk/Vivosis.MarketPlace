@@ -182,21 +182,44 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                 });
 
             migrationBuilder.CreateTable(
+                name: "CategoryFromStore",
+                columns: table => new
+                {
+                    Id = table.Column<long>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Name = table.Column<string>(nullable: true),
+                    ParentId = table.Column<long>(nullable: false),
+                    StoreId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CategoryFromStore", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CategoryFromStore_Stores_StoreId",
+                        column: x => x.StoreId,
+                        principalTable: "Stores",
+                        principalColumn: "store_id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "storecategory",
                 columns: table => new
                 {
-                    store_id = table.Column<int>(nullable: false),
-                    category_id = table.Column<int>(nullable: false),
+                    store_category_id = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     commission = table.Column<int>(nullable: false),
                     currency = table.Column<string>(nullable: true),
                     shipping_fee = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    store_id = table.Column<int>(nullable: false),
+                    category_id = table.Column<int>(nullable: false),
                     is_matched = table.Column<bool>(nullable: false),
                     matched_category_name = table.Column<string>(nullable: true),
                     matched_category_code = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_storecategory", x => new { x.store_id, x.category_id });
+                    table.PrimaryKey("PK_storecategory", x => x.store_category_id);
                     table.ForeignKey(
                         name: "FK_storecategory_Categories_category_id",
                         column: x => x.category_id,
@@ -307,6 +330,88 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "CategoryOptions",
+                columns: table => new
+                {
+                    category_option_id = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    store_category_id = table.Column<int>(nullable: false),
+                    option_id = table.Column<int>(nullable: false),
+                    is_required = table.Column<bool>(nullable: false),
+                    matched_store_option_name = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CategoryOptions", x => x.category_option_id);
+                    table.ForeignKey(
+                        name: "FK_CategoryOptions_Options_option_id",
+                        column: x => x.option_id,
+                        principalTable: "Options",
+                        principalColumn: "option_id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CategoryOptions_storecategory_store_category_id",
+                        column: x => x.store_category_id,
+                        principalTable: "storecategory",
+                        principalColumn: "store_category_id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CategoryOptionValues",
+                columns: table => new
+                {
+                    category_option_value_id = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    category_option_id = table.Column<int>(nullable: false),
+                    option_value_id = table.Column<int>(nullable: false),
+                    store_category_value_id = table.Column<int>(nullable: false),
+                    store_category_value_name = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CategoryOptionValues", x => x.category_option_value_id);
+                    table.ForeignKey(
+                        name: "FK_CategoryOptionValues_CategoryOptions_category_option_id",
+                        column: x => x.category_option_id,
+                        principalTable: "CategoryOptions",
+                        principalColumn: "category_option_id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CategoryOptionValues_OptionValues_option_value_id",
+                        column: x => x.option_value_id,
+                        principalTable: "OptionValues",
+                        principalColumn: "option_value_id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CategoryFromStore_StoreId",
+                table: "CategoryFromStore",
+                column: "StoreId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CategoryOptions_option_id",
+                table: "CategoryOptions",
+                column: "option_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CategoryOptions_store_category_id",
+                table: "CategoryOptions",
+                column: "store_category_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CategoryOptionValues_option_value_id",
+                table: "CategoryOptionValues",
+                column: "option_value_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CategoryOptionValues_category_option_id_option_value_id",
+                table: "CategoryOptionValues",
+                columns: new[] { "category_option_id", "option_value_id" },
+                unique: true);
+
             migrationBuilder.CreateIndex(
                 name: "IX_OptionValues_option_id",
                 table: "OptionValues",
@@ -344,6 +449,12 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                 column: "category_id");
 
             migrationBuilder.CreateIndex(
+                name: "IX_storecategory_store_id_category_id",
+                table: "storecategory",
+                columns: new[] { "store_id", "category_id" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_storeproduct_product_id",
                 table: "storeproduct",
                 column: "product_id");
@@ -363,13 +474,16 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "CategoryFromStore");
+
+            migrationBuilder.DropTable(
+                name: "CategoryOptionValues");
+
+            migrationBuilder.DropTable(
                 name: "productcategory");
 
             migrationBuilder.DropTable(
                 name: "ProductOptionValues");
-
-            migrationBuilder.DropTable(
-                name: "storecategory");
 
             migrationBuilder.DropTable(
                 name: "storeproduct");
@@ -378,25 +492,31 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                 name: "StoreUser");
 
             migrationBuilder.DropTable(
+                name: "CategoryOptions");
+
+            migrationBuilder.DropTable(
                 name: "OptionValues");
 
             migrationBuilder.DropTable(
                 name: "ProductOptions");
 
             migrationBuilder.DropTable(
-                name: "Categories");
-
-            migrationBuilder.DropTable(
-                name: "Stores");
-
-            migrationBuilder.DropTable(
                 name: "SystemUser");
+
+            migrationBuilder.DropTable(
+                name: "storecategory");
 
             migrationBuilder.DropTable(
                 name: "Options");
 
             migrationBuilder.DropTable(
                 name: "Products");
+
+            migrationBuilder.DropTable(
+                name: "Categories");
+
+            migrationBuilder.DropTable(
+                name: "Stores");
         }
     }
 }

@@ -15,5 +15,6 @@ namespace Vivosis.MarketPlace.Data.Entities
         public virtual IList<StoreUser> UserStores { get; set; }
         public virtual IList<StoreCategory> StoreCategories { get; set; }
         public virtual IList<StoreProduct> StoreProducts{ get; set; }
+        public virtual IList<CategoryFromStore> Categories { get; set; }
     }
 }

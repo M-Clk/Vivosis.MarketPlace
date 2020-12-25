@@ -12,5 +12,6 @@ namespace Vivosis.MarketPlace.Data.Entities
         public string name { get; set; }
         public virtual Option Option { get; set; }
         public virtual IList<ProductOptionValue> ProductOptionValues { get; set; }
+        public virtual IList<CategoryOptionValue> CategoryOptionValues{ get; set; }
     }
 }

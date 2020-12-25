@@ -9,22 +9,30 @@ namespace Vivosis.MarketPlace.Data
     {
         public MarketPlaceDbContext() :base() { }
         public MarketPlaceDbContext(DbContextOptions<MarketPlaceDbContext> options) :base(options) { }
+
+        #region DbSets
+
         public DbSet<Product> Products { get; set; }
+        public DbSet<ProductCategory> ProductCategories { get; set; }
         public DbSet<Category> Categories { get; set; }
-        public DbSet<Store> Stores { get; set; }
+        public DbSet<CategoryOption> CategoryOptions { get; set; }
+        public DbSet<CategoryOptionValue> CategoryOptionValues { get; set; }
         public DbSet<Option> Options { get; set; }
+        public DbSet<Store> Stores { get; set; }
         public DbSet<OptionValue> OptionValues { get; set; }
         public DbSet<ProductOption> ProductOptions { get; set; }
-        public DbSet<ProductCategory> ProductCategories { get; set; }
         public DbSet<ProductOptionValue> ProductOptionValues { get; set; }
         public DbSet<StoreCategory> StoreCategories { get; set; }
         public DbSet<StoreProduct> StoreProducts { get; set; }
+
+        #endregion
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<ProductCategory>()
-                .HasKey(x => new { x.product_id, x.category_id });
+            #region Declare Relations
+
             builder.Entity<ProductCategory>()
                 .HasOne(x => x.Category)
                 .WithMany(m => m.CategoryProducts)
@@ -35,8 +43,6 @@ namespace Vivosis.MarketPlace.Data
                 .HasForeignKey(x => x.product_id);
 
             builder.Entity<StoreCategory>()
-                .HasKey(x => new { x.store_id, x.category_id });
-            builder.Entity<StoreCategory>()
                 .HasOne(x => x.Category)
                 .WithMany(m => m.CategoryStores)
                 .HasForeignKey(x => x.category_id);
@@ -46,8 +52,6 @@ namespace Vivosis.MarketPlace.Data
                 .HasForeignKey(x => x.store_id);
 
             builder.Entity<StoreProduct>()
-                .HasKey(x => new { x.store_id, x.product_id });
-            builder.Entity<StoreProduct>()
                 .HasOne(x => x.Product)
                 .WithMany(m => m.ProductStores)
                 .HasForeignKey(x => x.product_id);
@@ -56,8 +60,6 @@ namespace Vivosis.MarketPlace.Data
                 .WithMany(e => e.StoreProducts)
                 .HasForeignKey(x => x.store_id);
 
-            builder.Entity<StoreUser>()
-                .HasKey(x => new { x.store_id, x.user_id });
             builder.Entity<StoreUser>()
                 .HasOne(x => x.User)
                 .WithMany(m => m.UserStores)
@@ -80,6 +82,15 @@ namespace Vivosis.MarketPlace.Data
                 .HasOne(x => x.Product)
                 .WithMany(m => m.ProductOptions)
                 .HasForeignKey(x => x.product_id);
+            
+            builder.Entity<CategoryOption>()
+                .HasOne(x => x.Option)
+                .WithMany(m => m.CategoryOptions)
+                .HasForeignKey(x => x.option_id);
+            builder.Entity<CategoryOption>()
+                .HasOne(x => x.StoreCategory)
+                .WithMany(m => m.CategoryOptions)
+                .HasForeignKey(x => x.store_category_id);
 
             builder.Entity<ProductOptionValue>()
                 .HasOne(x => x.ProductOption)
@@ -90,13 +101,50 @@ namespace Vivosis.MarketPlace.Data
                 .WithMany(m => m.ProductOptionValues)
                 .HasForeignKey(x => x.option_value_id);
 
+            builder.Entity<CategoryOptionValue>()
+                .HasOne(x => x.CategoryOption)
+                .WithMany(m => m.CategoryOptionValues)
+                .HasForeignKey(x => x.category_option_id);
+            builder.Entity<CategoryOptionValue>()
+                .HasOne(x => x.OptionValue)
+                .WithMany(m => m.CategoryOptionValues)
+                .HasForeignKey(x => x.option_value_id);
+
+            #endregion
+
+            #region Declare Keys
+
+            builder.Entity<StoreCategory>()
+                .HasIndex(x => new { x.store_id, x.category_id }).IsUnique();
+
+            builder.Entity<StoreProduct>()
+                .HasKey(x => new { x.store_id, x.product_id });
+
+            builder.Entity<StoreUser>()
+                .HasKey(x => new { x.store_id, x.user_id });
+
+            builder.Entity<ProductCategory>()
+                .HasKey(x => new { x.product_id, x.category_id });
+
+            builder.Entity<CategoryOptionValue>()
+                .HasIndex(p => new { p.category_option_id, p.option_value_id }).IsUnique();
+            
             builder.Entity<ProductOptionValue>()
                 .HasIndex(p => new { p.product_option_id, p.option_value_id }).IsUnique();
 
+            #endregion
+
+            #region Declare To Be Ignored Properties
+
             builder.Entity<Store>().Ignore(s => s.UserStores);
+            builder.Entity<Store>().Ignore(s => s.Categories);
             builder.Entity<SystemUser>().Ignore(s => s.Settings);
 
             builder.Entity<StoreUser>().HasIndex(s => s.api_key).IsUnique();
+
+            #endregion
+
+            #region Declare Formating All Of Decimal Properties
 
             var entitiesHasDecimalProperty = builder.Model.GetEntityTypes().Where(prop => prop.ClrType.GetProperties().Any(p => p.PropertyType.IsAssignableFrom(typeof(decimal))));
             foreach(var entityType in entitiesHasDecimalProperty)
@@ -105,6 +153,9 @@ namespace Vivosis.MarketPlace.Data
                 foreach(var prop in properties)
                     builder.Entity(entityType.ClrType).Property(prop.Name).HasColumnType("decimal(18,2)");
             }
+
+            #endregion
+
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

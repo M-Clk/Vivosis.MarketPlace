@@ -57,6 +57,20 @@ namespace Vivosis.MarketPlace.Data.Migrations.AccountDb
                 });
 
             migrationBuilder.CreateTable(
+                name: "CategoryFromStoreAttributes",
+                columns: table => new
+                {
+                    Id = table.Column<long>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Name = table.Column<string>(nullable: true),
+                    IsRequired = table.Column<bool>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CategoryFromStoreAttributes", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Stores",
                 columns: table => new
                 {
@@ -200,6 +214,47 @@ namespace Vivosis.MarketPlace.Data.Migrations.AccountDb
                 });
 
             migrationBuilder.CreateTable(
+                name: "CategoryFromStoreAttributeValues",
+                columns: table => new
+                {
+                    Id = table.Column<long>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Name = table.Column<string>(nullable: true),
+                    AttributeId = table.Column<long>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CategoryFromStoreAttributeValues", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CategoryFromStoreAttributeValues_CategoryFromStoreAttributes~",
+                        column: x => x.AttributeId,
+                        principalTable: "CategoryFromStoreAttributes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CategoryFromStores",
+                columns: table => new
+                {
+                    Id = table.Column<long>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Name = table.Column<string>(nullable: true),
+                    ParentId = table.Column<long>(nullable: false),
+                    StoreId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CategoryFromStores", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CategoryFromStores_Stores_StoreId",
+                        column: x => x.StoreId,
+                        principalTable: "Stores",
+                        principalColumn: "store_id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "StoreUsers",
                 columns: table => new
                 {
@@ -224,6 +279,32 @@ namespace Vivosis.MarketPlace.Data.Migrations.AccountDb
                         name: "FK_StoreUsers_AspNetUsers_user_id",
                         column: x => x.user_id,
                         principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CategoryToAttributeFromStores",
+                columns: table => new
+                {
+                    Id = table.Column<long>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    CategoryId = table.Column<long>(nullable: false),
+                    AttributeId = table.Column<long>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CategoryToAttributeFromStores", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CategoryToAttributeFromStores_CategoryFromStoreAttributes_At~",
+                        column: x => x.AttributeId,
+                        principalTable: "CategoryFromStoreAttributes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CategoryToAttributeFromStores_CategoryFromStores_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "CategoryFromStores",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -266,6 +347,26 @@ namespace Vivosis.MarketPlace.Data.Migrations.AccountDb
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_CategoryFromStoreAttributeValues_AttributeId",
+                table: "CategoryFromStoreAttributeValues",
+                column: "AttributeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CategoryFromStores_StoreId",
+                table: "CategoryFromStores",
+                column: "StoreId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CategoryToAttributeFromStores_AttributeId",
+                table: "CategoryToAttributeFromStores",
+                column: "AttributeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CategoryToAttributeFromStores_CategoryId",
+                table: "CategoryToAttributeFromStores",
+                column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_StoreUsers_user_id",
                 table: "StoreUsers",
                 column: "user_id");
@@ -295,6 +396,12 @@ namespace Vivosis.MarketPlace.Data.Migrations.AccountDb
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "CategoryFromStoreAttributeValues");
+
+            migrationBuilder.DropTable(
+                name: "CategoryToAttributeFromStores");
+
+            migrationBuilder.DropTable(
                 name: "StoreUsers");
 
             migrationBuilder.DropTable(
@@ -304,10 +411,16 @@ namespace Vivosis.MarketPlace.Data.Migrations.AccountDb
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "Stores");
+                name: "CategoryFromStoreAttributes");
+
+            migrationBuilder.DropTable(
+                name: "CategoryFromStores");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Stores");
         }
     }
 }

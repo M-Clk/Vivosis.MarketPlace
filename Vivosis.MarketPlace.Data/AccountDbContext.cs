@@ -10,6 +10,10 @@ namespace Vivosis.MarketPlace.Data
         public DbSet<Store> Stores { get; set; }
         public DbSet<StoreUser> StoreUsers { get; set; }
         public DbSet<UserSettings> UserSettings { get; set; }
+        public DbSet<CategoryFromStore> CategoryFromStores { get; set; }
+        public DbSet<CategoryFromStoreAttribute> CategoryFromStoreAttributes { get; set; }
+        public DbSet<CategoryToAttributeFromStore> CategoryToAttributeFromStores { get; set; }
+        public DbSet<CategoryFromStoreAttributeValue> CategoryFromStoreAttributeValues { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
