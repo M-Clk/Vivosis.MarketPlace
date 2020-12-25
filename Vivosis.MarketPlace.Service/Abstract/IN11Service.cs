@@ -8,10 +8,9 @@ namespace Vivosis.MarketPlace.Service.Abstract
 {
     public interface IN11Service
     {
-        GetTopLevelCategoriesResponse1 Test();
-        GetSubCategoriesResponse1 Test2();
-        IEnumerable<StoreCategory> GetTopCategories();
-        IEnumerable<StoreCategory> GetSubCategories(int categoryId);
+        IEnumerable<CategoryFromStore> GetTopCategories();
+        IEnumerable<CategoryFromStore> GetSubCategories(int categoryId);
         StoreCategory GetCategoryWithParentsName(long categoryId);
+        IEnumerable<CategoryFromStoreAttribute> GetCategoryOptisons(long categoryId);
     }
 }

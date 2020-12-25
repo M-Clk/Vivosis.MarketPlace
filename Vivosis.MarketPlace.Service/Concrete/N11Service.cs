@@ -7,21 +7,29 @@ using Microsoft.EntityFrameworkCore;
 using Vivosis.MarketPlace.Data.Entities;
 using Vivosis.MarketPlace.Data;
 using System.Linq;
+using Newtonsoft.Json;
+using System.Net;
+using System.Xml;
+using System.IO;
+using System.Xml.Serialization;
 
 namespace Vivosis.MarketPlace.Service.Concrete
 {
     public class N11Service :IN11Service
     {
         Authentication _auth;
-        public N11Service(IStoreService storeService)
+        AccountDbContext _accountDbContext;
+        StoreUser _store;
+        public N11Service(IStoreService storeService, AccountDbContext accountDbContext)
         {
             //TODO burasi hatali
-            var _store = storeService.GetBoughtStores().FirstOrDefault(su => su.Store.name.ToLower().Equals("n11"))/* ?? throw new InvalidOperationException("N11 sisteminizde kayitli degil.")*/;
+            _store = storeService.GetBoughtStores().FirstOrDefault(su => su.Store.name.ToLower().Equals("n11"))/* ?? throw new InvalidOperationException("N11 sisteminizde kayitli degil.")*/;
             _auth = new Authentication
             {
                 appKey = _store?.api_key,
                 appSecret = _store?.secret_key
             };
+            _accountDbContext = accountDbContext;
         }
 
         public bool CheckApiConnection()
@@ -29,46 +37,42 @@ namespace Vivosis.MarketPlace.Service.Concrete
             throw new NotImplementedException();
         }
 
-        public GetTopLevelCategoriesResponse1 Test()
+        public IEnumerable<CategoryFromStore> GetTopCategories()
         {
-            CategoryServicePortClient c = new CategoryServicePortClient();
-            GetTopLevelCategoriesRequest req = new GetTopLevelCategoriesRequest();
-            req.auth = _auth;
-            GetTopLevelCategoriesResponse1 res = c.GetTopLevelCategoriesAsync(req).Result;
+            var topCategories = _accountDbContext.CategoryFromStores.Where(c => c.ParentId == 0);
+            if(topCategories.Any())
+                return topCategories;
 
-            return res;
-        }
-        public GetSubCategoriesResponse1 Test2()
-        {
-            CategoryServicePortClient c = new CategoryServicePortClient();
-            var req = new GetCategoryAttributesRequest();
-            req.auth = _auth;
-            req.categoryId = 1002841;
-            var res = c.GetCategoryAttributesAsync(req).Result;
-            return new GetSubCategoriesResponse1();
-        }
-        public IEnumerable<StoreCategory> GetTopCategories()
-        {
             CategoryServicePortClient proxy = new CategoryServicePortClient();
             var request = new GetTopLevelCategoriesRequest();
             request.auth = _auth;
+            var req = new GetTopLevelCategoriesRequest1(request);
+            req.GetTopLevelCategoriesRequest.auth = _auth;
+
             var categories = proxy.GetTopLevelCategoriesAsync(request).Result;
-            var categoryList = new List<StoreCategory>();
+
+            var categoryList = new List<CategoryFromStore>();
             foreach(var category in categories.GetTopLevelCategoriesResponse.categoryList)
             {
-                var newCategory = new StoreCategory
+                var newCategory = new CategoryFromStore
                 {
-                    matched_category_name = category.name,
-                    matched_category_code = category.id.ToString()
+                    Id = category.id,
+                    Name = category.name,
+                    ParentId = 0,
+                    StoreId = _store.store_id
                 };
                 categoryList.Add(newCategory);
             }
+            _accountDbContext.CategoryFromStores.AddRange(categoryList);
+            _accountDbContext.SaveChanges();
             return categoryList;
         }
-        public IEnumerable<StoreCategory> GetSubCategories(int categoryId)
+        public IEnumerable<CategoryFromStore> GetSubCategories(int categoryId)
         {
-            var categoryList = new List<StoreCategory>();
-
+            var localSubCategories = _accountDbContext.CategoryFromStores.Where(c => c.ParentId == categoryId);
+            if(localSubCategories.Any())
+                return localSubCategories;
+            var categoryList = new List<CategoryFromStore>();
             CategoryServicePortClient proxy = new CategoryServicePortClient();
             var request = new GetSubCategoriesRequest();
             request.auth = _auth;
@@ -79,16 +83,19 @@ namespace Vivosis.MarketPlace.Service.Concrete
                 return categoryList;
             foreach(var category in subCategories.GetSubCategoriesResponse.category.SelectMany(c => c.subCategoryList))
             {
-                var newCategory = new StoreCategory
+                var newCategory = new CategoryFromStore
                 {
-                    matched_category_name = category.name,
-                    matched_category_code = category.id.ToString()
+                    Id = category.id,
+                    Name = category.name,
+                    ParentId = categoryId,
+                    StoreId = _store.store_id
                 };
                 categoryList.Add(newCategory);
             }
+            _accountDbContext.CategoryFromStores.AddRange(categoryList);
+            _accountDbContext.SaveChanges();
             return categoryList;
         }
-
         public StoreCategory GetCategoryWithParentsName(long categoryId)
         {
             var category = new StoreCategory();
@@ -112,6 +119,75 @@ namespace Vivosis.MarketPlace.Service.Concrete
                 categoryId = parentCategory.GetParentCategoryResponse.category.id;
             }
             return category;
+        }
+
+        public IEnumerable<CategoryFromStoreAttribute> GetCategoryOptisons(long categoryId)
+        {
+            var categoryOptions = _accountDbContext.CategoryToAttributeFromStores.Where(c => c.CategoryId == categoryId).Include(c => c.Attribute);
+            if(categoryOptions.Any())
+                return categoryOptions.Select(c => c.Attribute);
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+            var httpWebRequest = (HttpWebRequest)WebRequest.Create("https://api.n11.com/ws/CategoryService.wsdl");
+            httpWebRequest.ContentType = "text/xml";
+            httpWebRequest.Method = "POST";
+
+            XmlDocument soapEnvelopeXml = new XmlDocument();
+            soapEnvelopeXml.LoadXml("<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:sch=\"http://www.n11.com/ws/schemas\">" +
+            "<soapenv:Header/>" +
+            "<soapenv:Body>" +
+            "<sch:GetCategoryAttributesRequest>" +
+            "<auth>" +
+            "<appKey>" + _auth.appKey + "</appKey>" +
+            "<appSecret>" + _auth.appSecret + "</appSecret>" +
+            "</auth>" +
+            "<categoryId>" + categoryId + "</categoryId>" +
+            "</sch:GetCategoryAttributesRequest>" +
+            "</soapenv:Body>" +
+            "</soapenv:Envelope>");
+
+            using(var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
+            {
+                soapEnvelopeXml.Save(streamWriter);
+            }
+            var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+            using(var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+            {
+                XmlDocument responseXml = new XmlDocument();
+                responseXml.LoadXml(streamReader.ReadToEnd());
+                var attributeList = responseXml.GetElementsByTagName("attributeList");
+                if(attributeList != null && attributeList.Count > 0)
+                {
+                    var categoryOptionsList = new List<CategoryFromStoreAttribute>();
+
+                    foreach(XmlNode attribute in attributeList[0])
+                    {
+                        var categoryOption = new CategoryFromStoreAttribute();
+                        categoryOption.IsRequired = bool.Parse(attribute["mandatory"].InnerText);
+                        categoryOption.Name = attribute["name"].InnerText;
+                        categoryOption.Id = long.Parse(attribute["id"].InnerText);
+                        if(!_accountDbContext.CategoryFromStoreAttributes.Any(a => a.Id == categoryOption.Id))
+                        {
+                            categoryOption.AttributeValues = new List<CategoryFromStoreAttributeValue>();
+                            categoryOption.CategoryToAttributeFromStores = new List<CategoryToAttributeFromStore>
+                                { new CategoryToAttributeFromStore{ CategoryId = categoryId}};
+                            foreach(XmlNode attributeValue in attribute["valueList"])
+                            {
+                                var newCategoryOptionValue = new CategoryFromStoreAttributeValue
+                                {
+                                    Id = long.Parse(attributeValue["id"].InnerText),
+                                    Name = attributeValue["name"].InnerText
+                                };
+                                categoryOption.AttributeValues.Add(newCategoryOptionValue);
+                            }
+                            _accountDbContext.CategoryFromStoreAttributes.Add(categoryOption);
+                        }
+                        categoryOptionsList.Add(categoryOption);
+                    }
+                    _accountDbContext.SaveChanges();
+                    return categoryOptionsList;
+                }
+                return null;
+            }
         }
     }
 }

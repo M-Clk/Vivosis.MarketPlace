@@ -20,7 +20,6 @@ namespace Vivosis.MarketPlace.API.Controllers
         }
         public IActionResult Index()
         {
-            var res = _n11Service.Test();
             return View();
         }
     }
