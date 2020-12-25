@@ -31,21 +31,31 @@ namespace Vivosis.MarketPlace.Service
         public IEnumerable<Product> GetProducts(IEnumerable<int> idList = null)
         {
             if(idList?.Any() ?? false)
-                return _dbContext.Products.Include(p=>p.ProductStores).Where(p => idList.Contains(p.product_id));
+                return _dbContext.Products.Where(p => idList.Contains(p.product_id)).Include(p=>p.ProductStores).Include(p=>p.ProductCategories).ThenInclude(pc=>pc.Category).ThenInclude(c=>c.CategoryStores);
             else
-                return _dbContext.Products.Include(p => p.ProductStores);
+                return _dbContext.Products.Include(p => p.ProductStores).Include(p => p.ProductCategories).ThenInclude(pc => pc.Category).ThenInclude(c => c.CategoryStores);
         }
         public IEnumerable<Category> GetCategories(IEnumerable<int> idList = null)
         {
             if(idList?.Any() ?? false)
-                return _dbContext.Categories.Include(c=>c.CategoryStores).Where(c => idList.Contains(c.category_id));
+                return _dbContext.Categories.Where(c => idList.Contains(c.category_id)).Include(c=>c.CategoryStores);
             else
                 return _dbContext.Categories.Include(c => c.CategoryStores);
         }
         public StoreCategory GetStoreCategory(int storeId, int categoryId)
         {
-            var categoryStore = _dbContext.StoreCategories.FirstOrDefault(sc=>sc.store_id == storeId && sc.category_id == categoryId);
+            var categoryStore = _dbContext.StoreCategories.Include(cs=>cs.CategoryOptions).FirstOrDefault(sc=>sc.store_id == storeId && sc.category_id == categoryId);
             return categoryStore;
+        }
+        public StoreCategory GetStoreCategory(int storeCategoryId)
+        {
+            var categoryStore = _dbContext.StoreCategories.Include(cs=>cs.CategoryOptions).FirstOrDefault(sc=>sc.store_category_id == storeCategoryId);
+            return categoryStore;
+        }
+        public StoreProduct GetStoreProduct(int storeId, int productId)
+        {
+            var storeProduct = _dbContext.StoreProducts.FirstOrDefault(sc=>sc.store_id == storeId && sc.product_id == productId);
+            return storeProduct;
         }
 
         public int UpdateCategories(IEnumerable<Category> categories)
@@ -68,11 +78,16 @@ namespace Vivosis.MarketPlace.Service
 
         public bool AddOrUpdateStoreCategory(StoreCategory storeCategory)
         {
+            if(string.IsNullOrEmpty(storeCategory?.matched_category_code) || string.IsNullOrEmpty(storeCategory?.matched_category_name))
+                    return false;
+            storeCategory.is_matched = true;
             if(_dbContext.StoreCategories.Any(sc => sc.category_id == storeCategory.category_id && sc.store_id == storeCategory.store_id))
                 _dbContext.StoreCategories.Update(storeCategory);
             else
                 _dbContext.StoreCategories.Add(storeCategory);
             return _dbContext.SaveChanges() > 0;
         }
+
+        public IEnumerable<Option> GetAllOptions() => _dbContext.Options.Include(o => o.OptionValues);
     }
 }
