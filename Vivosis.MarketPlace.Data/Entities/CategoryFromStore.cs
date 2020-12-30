@@ -10,6 +10,8 @@ namespace Vivosis.MarketPlace.Data.Entities
         public long Id { get; set; }
         public string Name { get; set; }
         public long ParentId { get; set; }
+        [NotMapped]
+        public CategoryFromStore ParentCategory { get; set; }
         public int StoreId { get; set; }
         [ForeignKey("StoreId")]
         public virtual Store Store { get; set; }

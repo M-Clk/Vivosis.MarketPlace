@@ -9,7 +9,7 @@ using Vivosis.MarketPlace.Data;
 namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
 {
     [DbContext(typeof(MarketPlaceDbContext))]
-    [Migration("20201223182216_InitialCreate")]
+    [Migration("20201226235911_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -67,6 +67,42 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                     b.ToTable("CategoryFromStore");
                 });
 
+            modelBuilder.Entity("Vivosis.MarketPlace.Data.Entities.CategoryFromStoreAttribute", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    b.Property<bool>("IsRequired")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CategoryFromStoreAttribute");
+                });
+
+            modelBuilder.Entity("Vivosis.MarketPlace.Data.Entities.CategoryFromStoreAttributeValue", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("AttributeId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AttributeId");
+
+                    b.ToTable("CategoryFromStoreAttributeValue");
+                });
+
             modelBuilder.Entity("Vivosis.MarketPlace.Data.Entities.CategoryOption", b =>
                 {
                     b.Property<int>("category_option_id")
@@ -76,7 +112,7 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                     b.Property<bool>("is_required")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<string>("matched_store_option_name")
+                    b.Property<string>("matched_store_option_id")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<int>("option_id")
@@ -120,6 +156,27 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                         .IsUnique();
 
                     b.ToTable("CategoryOptionValues");
+                });
+
+            modelBuilder.Entity("Vivosis.MarketPlace.Data.Entities.CategoryToAttributeFromStore", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("AttributeId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("CategoryId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AttributeId");
+
+                    b.HasIndex("CategoryId");
+
+                    b.ToTable("CategoryToAttributeFromStore");
                 });
 
             modelBuilder.Entity("Vivosis.MarketPlace.Data.Entities.Option", b =>
@@ -505,6 +562,15 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Vivosis.MarketPlace.Data.Entities.CategoryFromStoreAttributeValue", b =>
+                {
+                    b.HasOne("Vivosis.MarketPlace.Data.Entities.CategoryFromStoreAttribute", "Attribute")
+                        .WithMany("AttributeValues")
+                        .HasForeignKey("AttributeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Vivosis.MarketPlace.Data.Entities.CategoryOption", b =>
                 {
                     b.HasOne("Vivosis.MarketPlace.Data.Entities.Option", "Option")
@@ -531,6 +597,21 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                     b.HasOne("Vivosis.MarketPlace.Data.Entities.OptionValue", "OptionValue")
                         .WithMany("CategoryOptionValues")
                         .HasForeignKey("option_value_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Vivosis.MarketPlace.Data.Entities.CategoryToAttributeFromStore", b =>
+                {
+                    b.HasOne("Vivosis.MarketPlace.Data.Entities.CategoryFromStoreAttribute", "Attribute")
+                        .WithMany("CategoryToAttributeFromStores")
+                        .HasForeignKey("AttributeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Vivosis.MarketPlace.Data.Entities.CategoryFromStore", "Category")
+                        .WithMany("CategoryToAttributeFromStores")
+                        .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

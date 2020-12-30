@@ -26,6 +26,20 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                 });
 
             migrationBuilder.CreateTable(
+                name: "CategoryFromStoreAttribute",
+                columns: table => new
+                {
+                    Id = table.Column<long>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Name = table.Column<string>(nullable: true),
+                    IsRequired = table.Column<bool>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CategoryFromStoreAttribute", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Options",
                 columns: table => new
                 {
@@ -106,6 +120,26 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_SystemUser", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CategoryFromStoreAttributeValue",
+                columns: table => new
+                {
+                    Id = table.Column<long>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Name = table.Column<string>(nullable: true),
+                    AttributeId = table.Column<long>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CategoryFromStoreAttributeValue", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CategoryFromStoreAttributeValue_CategoryFromStoreAttribute_A~",
+                        column: x => x.AttributeId,
+                        principalTable: "CategoryFromStoreAttribute",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -331,6 +365,32 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                 });
 
             migrationBuilder.CreateTable(
+                name: "CategoryToAttributeFromStore",
+                columns: table => new
+                {
+                    Id = table.Column<long>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    CategoryId = table.Column<long>(nullable: false),
+                    AttributeId = table.Column<long>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CategoryToAttributeFromStore", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CategoryToAttributeFromStore_CategoryFromStoreAttribute_Attr~",
+                        column: x => x.AttributeId,
+                        principalTable: "CategoryFromStoreAttribute",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CategoryToAttributeFromStore_CategoryFromStore_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "CategoryFromStore",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "CategoryOptions",
                 columns: table => new
                 {
@@ -339,7 +399,7 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                     store_category_id = table.Column<int>(nullable: false),
                     option_id = table.Column<int>(nullable: false),
                     is_required = table.Column<bool>(nullable: false),
-                    matched_store_option_name = table.Column<string>(nullable: true)
+                    matched_store_option_id = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -392,6 +452,11 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                 column: "StoreId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CategoryFromStoreAttributeValue_AttributeId",
+                table: "CategoryFromStoreAttributeValue",
+                column: "AttributeId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_CategoryOptions_option_id",
                 table: "CategoryOptions",
                 column: "option_id");
@@ -411,6 +476,16 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                 table: "CategoryOptionValues",
                 columns: new[] { "category_option_id", "option_value_id" },
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CategoryToAttributeFromStore_AttributeId",
+                table: "CategoryToAttributeFromStore",
+                column: "AttributeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CategoryToAttributeFromStore_CategoryId",
+                table: "CategoryToAttributeFromStore",
+                column: "CategoryId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_OptionValues_option_id",
@@ -474,10 +549,13 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "CategoryFromStore");
+                name: "CategoryFromStoreAttributeValue");
 
             migrationBuilder.DropTable(
                 name: "CategoryOptionValues");
+
+            migrationBuilder.DropTable(
+                name: "CategoryToAttributeFromStore");
 
             migrationBuilder.DropTable(
                 name: "productcategory");
@@ -493,6 +571,12 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
 
             migrationBuilder.DropTable(
                 name: "CategoryOptions");
+
+            migrationBuilder.DropTable(
+                name: "CategoryFromStoreAttribute");
+
+            migrationBuilder.DropTable(
+                name: "CategoryFromStore");
 
             migrationBuilder.DropTable(
                 name: "OptionValues");
