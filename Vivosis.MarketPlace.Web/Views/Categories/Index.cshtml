@@ -49,7 +49,7 @@
                                 }
                                 <small id="info-@(category.category_id)-@(store.store_id)" class="text-sm-left text-@infoStyle">@infoMessage</small>
                             }
-                            <button onclick="showPopup('@Url.Action("EditStoreCategory","Categories",new { storeId = store.store_id, categoryId = category.category_id, storeName =store.Store.name },Context.Request.Scheme)', '@store.Store.name Ürün Ayarları', loadCategories('@Url.Action("GetCategories","Categories", null ,Context.Request.Scheme)'))" class="btn btn-outline-primary">
+                            <button onclick="showPopup('@Url.Action("EditStoreCategory","Categories",new { storeId = store.store_id, categoryId = category.category_id, storeName =store.Store.name },Context.Request.Scheme)', '@store.Store.name Ürün Ayarları')" class="btn btn-outline-primary">
                                 <i class="fa fa-sm fa-pencil-alt"></i>
                             </button>
                         </td>

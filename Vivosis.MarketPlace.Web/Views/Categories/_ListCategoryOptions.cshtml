@@ -1,35 +1,62 @@
 ﻿@model CategoryOptionListModel
-<hr />
-<input type="hidden" value="" />
-    <table class="table">
-        <thead>
-            <tr>
-                <th scope="col" class="text-primary">@(Model.SelectedStoreName) Seçenekleri</th>
-                <th scope="col" class="text-primary">Seçenekleriniz</th>
-                <th scope="col" class="text-primary">İşlem</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if(Model.CategoryOptions?.Any() ?? false)
-            {
-                @foreach(var categoryOption in Model.CategoryOptions)
-                {
-                    var isRequiredText = categoryOption.FromStore.IsRequired ? "Zorunlu" : "Zorunlu Değil";
-                    var nameStyle = categoryOption.FromStore.IsRequired ? "danger" : "success";
-                    <tr>
-                        <td><p class="text-justify font-weight-bold text-@nameStyle">@categoryOption.FromStore.Name (@isRequiredText)</p></td>
-                        <td name="options-area" class="mr-2 ml-2">
-                            <select class="form-control selectpicker" data-style="btn-outline-primary">
-                                @foreach(var option in Model.Options)
-                                {
-                                    <option id="from_all_stores_@(option.option_id)" value="@(option.option_id)">@option.name</option>
-                                }
-                            </select>
-                        </td>
-                        <td><button onclick="matchCategoryOptions(@(categoryOption.FromStore.Id))" class="btn btn-outline-primary">Eşleştir</button></td>
-                    </tr>
-                }
-            }
-        </tbody>
-    </table>
+<div class="card border-primary">
+    <h6 class="card-header">
+        Kategori Seçenekleri
+    </h6>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-4">
+                <ul class="nav nav-pills nav-fill navbar-text" id="option">
+                    @foreach(var categoryOption in Model.CategoryOptions)
+                    {
+                        var nameStyle = categoryOption.FromStore.IsRequired ? "danger" : "success";
+                        var icon = categoryOption.FromLocal != null ? "check" : "minus";
+                        <li class="nav-item">
+                            <a class="nav-link btn-outline-@nameStyle d-flex align-items-md-center mb-1" href="#tab_option@(categoryOption.FromStore.Id)" data-toggle="tab" aria-expanded="true">
+                                <i class="fa fa-@icon mr-1" style="display: flex;"></i> @categoryOption.FromStore.Name
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </div>
+            <div class="col-8">
+                <div class="tab-content" id="option-content">
+                    @foreach(var categoryOption in Model.CategoryOptions)
+                    {
+                        var buttonText = categoryOption.FromLocal == null ? "Eşleştir" : "Değiştir";
+                        var buttonDisabled = categoryOption.FromLocal == null ? "disabled" : "";
+                        var localCategoryOptionId = categoryOption?.FromLocal?.category_option_id ?? 0;
+                        var openValuesUrl = @Url.Action("GetCategoryOptionValues", "Categories", new { storeCategoryAttributeId = categoryOption.FromStore.Id }, Context.Request.Scheme);
+                        <div class="tab-pane" id="tab_option@(categoryOption.FromStore.Id)">
+                            <div name="category-options" class="d-flex justify-content-end w-100 p-3">
+                                <select id="institution-options-@(categoryOption.FromStore.Id)" is-required="@categoryOption.FromStore.IsRequired.ToString().ToLower()" option-id="@categoryOption.FromStore.Id" category-option-id="@localCategoryOptionId" class="form-control selectpicker" data-style="btn-outline-primary" title="Sizin Seçenekleriniz">
+                                    @foreach(var option in Model.Options)
+                                    {
+                                        <option name="option-institution-options-@(categoryOption.FromStore.Id)" value="@(option.option_id)">@option.name</option>
+                                    }
+                                </select>
+                                <button onclick="openCategoryOptionsValues('@(openValuesUrl)', @(categoryOption.FromStore.Id), @(localCategoryOptionId))" id="get-option-values-@(categoryOption.FromStore.Id)" type="button" class="btn btn-primary ml-1" @buttonDisabled>@buttonText</button>
+                            </div>
+                            <div id="option-values-area-@(categoryOption.FromStore.Id)">
+                                <!-- Values here -->
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    @if(Model.LocalCategoryOptionsExist)
+    {
+        @foreach(var categoryOption in Model.CategoryOptions)
+        {
+            if(categoryOption.FromLocal == null)
+                continue;
+            var localCategoryOptionId = categoryOption?.FromLocal?.category_option_id ?? 0;
+            var openValuesUrl = @Url.Action("GetCategoryOptionValues", "Categories", new { storeCategoryAttributeId = categoryOption.FromStore.Id }, Context.Request.Scheme);
+            <script>
+    loadCategoryOption(@(categoryOption.FromStore.Id), @(categoryOption.FromLocal.option_id), () => openCategoryOptionsValues('@(openValuesUrl)', '@(categoryOption.FromStore.Id)', @(localCategoryOptionId)));
+            </script>
+        }
+    }
 </div>

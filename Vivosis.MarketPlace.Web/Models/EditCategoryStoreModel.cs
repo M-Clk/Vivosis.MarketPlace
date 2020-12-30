@@ -10,7 +10,7 @@ namespace Vivosis.MarketPlace.Web.Models
     {
         public bool IsStoreCategoryExist { get; set; }
         public StoreCategory StoreCategory { get; set; }
-        public IEnumerable<Option> Options { get; set; }
+        public CategoryOptionListModel OptionsModel { get; set; }
         public string SelectedStoreName { get; set; }
     }
 }

@@ -3,8 +3,7 @@
     <select id="1" class="selectpicker" title="Kategori Seçin">
         @foreach(var storeCategory in Model)
         {
-            <option id="@storeCategory.Id" url="@Url.Action("GetCategories","Categories", new { parentId =
-            storeCategory.Id } ,Context.Request.Scheme)">
+            <option id="@storeCategory.Id">
                 @storeCategory.Name
             </option>
         }

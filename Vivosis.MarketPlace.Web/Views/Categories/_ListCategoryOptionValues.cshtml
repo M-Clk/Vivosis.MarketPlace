@@ -1,0 +1,47 @@
+﻿@model CategoryOptionValueModel
+@if(!(Model?.MatchedCategoryOptionValues?.Any() ?? false))
+    return;
+<div class="table-responsive" style="overflow:auto">
+    <table id="option-values-table-@(Model.CategoryOptionIdFromStore)" class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Sizin Değeriniz</th>
+                <th>@Model.StoreName Değerleri</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var categoryOptionValue in Model.MatchedCategoryOptionValues)
+            {
+                var icon = categoryOptionValue.CategoryOptionValue != null ? "check" : "minus";
+                var categoryOptionId = categoryOptionValue.CategoryOptionValue?.category_option_id ?? 0;
+                var categoryOptionValueId = categoryOptionValue.CategoryOptionValue?.category_option_value_id ?? 0;
+
+                <tr option-value-id="@categoryOptionValue.OptionValue.option_value_id" category-option-value-id="@categoryOptionValueId" category-option-id="@categoryOptionId">
+                    <td>
+                        <i class="fa fa-@(icon)-circle mr-1"></i> <p>@categoryOptionValue.OptionValue.name</p>
+                    </td>
+                    <td>
+                        <select id="store-attribute-value-options-@(Model.CategoryOptionIdFromStore)-@(categoryOptionValue.OptionValue.option_value_id)" class="form-control selectpicker" data-style="btn-outline-success" title="Değeri Seçin">
+                            @foreach(var value in Model.OptionValuesFromStore)
+                            {
+                                <option id="store-attribute-value-@(value.Id)" value="@(value.Id)" attribute-name="@value.Name">@value.Name</option>
+                            }
+                        </select>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+@if(Model.LocalCategoryOptionValuesExist)
+{
+    @foreach(var categoryOptionValue in Model.MatchedCategoryOptionValues)
+    {
+        if(categoryOptionValue.CategoryOptionValue != null)
+        {
+        <script>
+            jQuery('#store-attribute-value-options-@(Model.CategoryOptionIdFromStore)-@(categoryOptionValue.OptionValue.option_value_id)').selectpicker('val', @(categoryOptionValue.CategoryOptionValue.store_category_value_id));
+        </script>
+        }
+    }
+}
