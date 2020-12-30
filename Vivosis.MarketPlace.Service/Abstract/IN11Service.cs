@@ -10,7 +10,8 @@ namespace Vivosis.MarketPlace.Service.Abstract
     {
         IEnumerable<CategoryFromStore> GetTopCategories();
         IEnumerable<CategoryFromStore> GetSubCategories(int categoryId);
-        StoreCategory GetCategoryWithParentsName(long categoryId);
-        IEnumerable<CategoryFromStoreAttribute> GetCategoryOptisons(long categoryId);
+        CategoryFromStore GetCategoryWithParents(long categoryId);
+        IEnumerable<CategoryFromStoreAttribute> GetCategoryOptions(long categoryId);
+        IEnumerable<CategoryFromStoreAttributeValue> GetCategoryOptionValues(long categoryOptionId);
     }
 }

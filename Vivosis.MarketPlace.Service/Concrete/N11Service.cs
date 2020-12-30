@@ -96,32 +96,14 @@ namespace Vivosis.MarketPlace.Service.Concrete
             _accountDbContext.SaveChanges();
             return categoryList;
         }
-        public StoreCategory GetCategoryWithParentsName(long categoryId)
+        public CategoryFromStore GetCategoryWithParents(long categoryId)
         {
-            var category = new StoreCategory();
-            CategoryServicePortClient proxy = new CategoryServicePortClient();
-            var request = new GetParentCategoryRequest();
-            request.auth = _auth;
-            while(true)
-            {
-                request.categoryId = categoryId;
-                var parentCategory = proxy.GetParentCategoryAsync(request).Result;
-                if(parentCategory.GetParentCategoryResponse.category == null)
-                    return null;
-                if(string.IsNullOrEmpty(category.matched_category_code))
-                {
-                    category.matched_category_code = parentCategory.GetParentCategoryResponse.category.id.ToString();
-                    category.matched_category_name = parentCategory.GetParentCategoryResponse.category.name;
-                }
-                if(parentCategory.GetParentCategoryResponse.category?.parentCategory?.name == null)
-                    break;
-                category.matched_category_name = $"{parentCategory.GetParentCategoryResponse.category.parentCategory.name} > {category.matched_category_name}";
-                categoryId = parentCategory.GetParentCategoryResponse.category.id;
-            }
+            var category = _accountDbContext.CategoryFromStores.FirstOrDefault(c => c.Id == categoryId);
+            category = LoadParentCategories(category);
             return category;
         }
 
-        public IEnumerable<CategoryFromStoreAttribute> GetCategoryOptisons(long categoryId)
+        public IEnumerable<CategoryFromStoreAttribute> GetCategoryOptions(long categoryId)
         {
             var categoryOptions = _accountDbContext.CategoryToAttributeFromStores.Where(c => c.CategoryId == categoryId).Include(c => c.Attribute);
             if(categoryOptions.Any())
@@ -188,6 +170,18 @@ namespace Vivosis.MarketPlace.Service.Concrete
                 }
                 return null;
             }
+        }
+
+        public IEnumerable<CategoryFromStoreAttributeValue> GetCategoryOptionValues(long categoryOptionId)
+        {
+            var categoryAttributeValues = _accountDbContext.CategoryFromStoreAttributeValues.Where(cav => cav.AttributeId == categoryOptionId);
+            return categoryAttributeValues;
+        }
+        private CategoryFromStore LoadParentCategories(CategoryFromStore category)
+        {
+            if(category != null)
+                category.ParentCategory = LoadParentCategories(_accountDbContext.CategoryFromStores.FirstOrDefault(c => c.Id == category.ParentId));
+            return category;
         }
     }
 }
