@@ -18,6 +18,7 @@ namespace Vivosis.MarketPlace.Data.Entities
 
         public bool is_required { get; set; }
         public string matched_store_option_id { get; set; }
+        public string matched_store_option_name { get; set; }
 
         public virtual IList<CategoryOptionValue> CategoryOptionValues { get; set; }
     }

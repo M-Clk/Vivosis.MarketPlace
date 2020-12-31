@@ -399,7 +399,8 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                     store_category_id = table.Column<int>(nullable: false),
                     option_id = table.Column<int>(nullable: false),
                     is_required = table.Column<bool>(nullable: false),
-                    matched_store_option_id = table.Column<string>(nullable: true)
+                    matched_store_option_id = table.Column<string>(nullable: true),
+                    matched_store_option_name = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {

@@ -113,6 +113,9 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                     b.Property<string>("matched_store_option_id")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
+                    b.Property<string>("matched_store_option_name")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
                     b.Property<int>("option_id")
                         .HasColumnType("int");
 
