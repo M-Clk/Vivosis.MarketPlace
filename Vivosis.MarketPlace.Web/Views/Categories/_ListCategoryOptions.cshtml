@@ -1,4 +1,7 @@
 ﻿@model CategoryOptionListModel
+@{
+    var matchedOptionDictionary = new Dictionary<long, int>();
+}
 <div class="card border-primary">
     <h6 class="card-header">
         Kategori Seçenekleri
@@ -29,9 +32,11 @@
                         var openValuesUrl = @Url.Action("GetCategoryOptionValues", "Categories", new { storeCategoryAttributeId = categoryOption.FromStore.Id }, Context.Request.Scheme);
                         <div class="tab-pane" id="tab_option@(categoryOption.FromStore.Id)">
                             <div name="category-options" class="d-flex justify-content-end w-100 p-3">
-                                <select id="institution-options-@(categoryOption.FromStore.Id)" is-required="@categoryOption.FromStore.IsRequired.ToString().ToLower()" option-id="@categoryOption.FromStore.Id" category-option-id="@localCategoryOptionId" class="form-control selectpicker" data-style="btn-outline-primary" title="Sizin Seçenekleriniz">
+                                <select id="institution-options-@(categoryOption.FromStore.Id)" is-required="@categoryOption.FromStore.IsRequired.ToString().ToLower()" option-id="@categoryOption.FromStore.Id" option-name="@categoryOption.FromStore.Name" category-option-id="@localCategoryOptionId" class="form-control selectpicker" data-style="btn-outline-primary" title="Sizin Seçenekleriniz">
                                     @foreach(var option in Model.Options)
                                     {
+                                        if(categoryOption.FromLocal == null && categoryOption.FromStore.Name.Equals(option.name, StringComparison.InvariantCultureIgnoreCase))
+                                            matchedOptionDictionary.Add(categoryOption.FromStore.Id, option.option_id);
                                         <option name="option-institution-options-@(categoryOption.FromStore.Id)" value="@(option.option_id)">@option.name</option>
                                     }
                                 </select>
@@ -51,11 +56,28 @@
         @foreach(var categoryOption in Model.CategoryOptions)
         {
             if(categoryOption.FromLocal == null)
+            {
+                if(matchedOptionDictionary.ContainsKey(categoryOption.FromStore.Id))
+                {
+                    <script>
+                        jQuery('#institution-options-@(categoryOption.FromStore.Id)').selectpicker('val', @(matchedOptionDictionary[categoryOption.FromStore.Id]));
+                    </script>
+                }
                 continue;
+            }
             var localCategoryOptionId = categoryOption?.FromLocal?.category_option_id ?? 0;
             var openValuesUrl = @Url.Action("GetCategoryOptionValues", "Categories", new { storeCategoryAttributeId = categoryOption.FromStore.Id }, Context.Request.Scheme);
             <script>
-    loadCategoryOption(@(categoryOption.FromStore.Id), @(categoryOption.FromLocal.option_id), () => openCategoryOptionsValues('@(openValuesUrl)', '@(categoryOption.FromStore.Id)', @(localCategoryOptionId)));
+                loadCategoryOption(@(categoryOption.FromStore.Id), @(categoryOption.FromLocal.option_id), () => openCategoryOptionsValues('@(openValuesUrl)', '@(categoryOption.FromStore.Id)', @(localCategoryOptionId)));
+            </script>
+        }
+    }
+    else
+    {
+        foreach(var optionPair in matchedOptionDictionary)
+        {
+            <script>
+                jQuery('#institution-options-@(optionPair.Key)').selectpicker('val', @(optionPair.Value));
             </script>
         }
     }

@@ -1,6 +1,9 @@
 ﻿@model CategoryOptionValueModel
-@if(!(Model?.MatchedCategoryOptionValues?.Any() ?? false))
-    return;
+@{
+    if(!(Model?.MatchedCategoryOptionValues?.Any() ?? false))
+        return;
+    var matchedOptionValueDictionary = new Dictionary<string, long>();
+}
 <div class="table-responsive" style="overflow:auto">
     <table id="option-values-table-@(Model.CategoryOptionIdFromStore)" class="table table-bordered">
         <thead>
@@ -20,10 +23,12 @@
                     <td>
                         <i class="fa fa-@(icon)-circle mr-1"></i> <p>@categoryOptionValue.OptionValue.name</p>
                     </td>
-                    <td>
-                        <select id="store-attribute-value-options-@(Model.CategoryOptionIdFromStore)-@(categoryOptionValue.OptionValue.option_value_id)" class="form-control selectpicker" data-style="btn-outline-success" title="Değeri Seçin">
+                    <td id="@($"value-name-{Model.CategoryOptionIdFromStore}-{categoryOptionValue.OptionValue.option_value_id}")">
+                        <select id="store-attribute-value-options-@(Model.CategoryOptionIdFromStore)-@(categoryOptionValue.OptionValue.option_value_id)" class="form-control selectpicker" data-style="btn-outline-danger" title="Değeri Seçin">
                             @foreach(var value in Model.OptionValuesFromStore)
                             {
+                                if(categoryOptionValue.CategoryOptionValue == null && categoryOptionValue.OptionValue.name.Equals(value.Name, StringComparison.InvariantCultureIgnoreCase))
+                                    matchedOptionValueDictionary.Add($"{Model.CategoryOptionIdFromStore}-{categoryOptionValue.OptionValue.option_value_id}", value.Id);
                                 <option id="store-attribute-value-@(value.Id)" value="@(value.Id)" attribute-name="@value.Name">@value.Name</option>
                             }
                         </select>
@@ -39,9 +44,32 @@
     {
         if(categoryOptionValue.CategoryOptionValue != null)
         {
-        <script>
-            jQuery('#store-attribute-value-options-@(Model.CategoryOptionIdFromStore)-@(categoryOptionValue.OptionValue.option_value_id)').selectpicker('val', @(categoryOptionValue.CategoryOptionValue.store_category_value_id));
-        </script>
+            var idKey = $"{Model.CategoryOptionIdFromStore}-{categoryOptionValue.OptionValue.option_value_id}";
+            <script>
+                jQuery('#store-attribute-value-options-@(idKey)').selectpicker('val', @(categoryOptionValue.CategoryOptionValue.store_category_value_id));
+            jQuery('#store-attribute-value-options-@(idKey)').selectpicker('setStyle', 'btn-outline-success');
+            </script>
+            continue;
         }
+        var key = $"{Model.CategoryOptionIdFromStore}-{categoryOptionValue.OptionValue.option_value_id}";
+        if(matchedOptionValueDictionary.ContainsKey(key))
+        {
+            <script>
+                jQuery('#store-attribute-value-options-@(key)').selectpicker('val', @(matchedOptionValueDictionary[key]));
+                 jQuery('#store-attribute-value-options-@(key)').selectpicker('setStyle', 'btn-outline-success');
+                jQuery('#value-name-@(key)').append('<small class="text-success">Otomatik eşleştirildi.</small>');
+            </script>
+        }
+    }
+}
+else
+{
+    foreach(var optionValuePair in matchedOptionValueDictionary)
+    {
+        <script>
+            jQuery('#store-attribute-value-options-@(optionValuePair.Key)').selectpicker('val', @(optionValuePair.Value));
+            jQuery('#store-attribute-value-options-@(optionValuePair.Key)').selectpicker('setStyle', 'btn-outline-success');
+            jQuery('#value-name-@(optionValuePair.Key)').append('<small class="text-success">Otomatik eşleştirildi.</small>');
+        </script>
     }
 }
