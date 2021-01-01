@@ -74,6 +74,7 @@ function saveStoreCategory(url, infoId) {
             categoryOption.option_id = Number(jQuery('option:selected', optionRow).val());
             categoryOption.is_required = isRequired;
             categoryOption.matched_store_option_id = optionRow.attr("option-id");
+            categoryOption.matched_store_option_name = optionRow.attr("option-name");
             var categoryOptionValues = new Array();
             jQuery("#option-values-table-" + categoryOption.matched_store_option_id + " tbody tr").each(function () {
                 var row = jQuery(this);
@@ -229,6 +230,30 @@ function loadSelectOptionEvents(id) {
                 }
             });
     });
+}
+function submitStoreProduct(form) {
+    try {
+        jQuery.ajax({
+            type: 'POST',
+            url: form.action,
+            data: new FormData(form),
+            contentType: false,
+            processData: false,
+            success: function (res) {
+                if (res.isSucced) {
+                    jQuery('#form-modal .modal-body').html('');
+                    jQuery('#form-modal .modal-title').html('');
+                    jQuery('#form-modal').modal('hide');
+                }
+            },
+            error: function (err) {
+                console.log(err)
+            }
+        })
+        return false;
+    } catch (ex) {
+        console.log(ex)
+    }
 }
 
 function submitStoreCategory(form, infoId) {
