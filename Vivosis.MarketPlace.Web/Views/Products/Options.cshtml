@@ -67,19 +67,17 @@ else
                                             </td>
                                             <td>
                                                 <div class="row align-items-center m-0">
-                                                    <input name="checkbox-price-@(productOption.option_id)" type="checkbox" @priceChecked data-toggle="toggle" data-onstyle="outline-success" data-offstyle="outline-danger" data-on="+" data-off="-" data-height="38" data-size="xs">
-                                                    <div class="col-9">
-                                                        <input type="text" class="form-control" value="@Math.Abs(productOptionValue.price).ToString("0.##")" />
+                                                    <input name="checkbox-price-@(productOption.option_id)" type="checkbox" @priceChecked data-toggle="toggle" data-onstyle="outline-success" data-offstyle="outline-danger" data-on="+" data-off="-" data-height="38" data-size="xs" data-style="right-radius-none">
+                                                    <div class="col-9 pl-0">
+                                                        <input type="text" class="form-control left-radius-none" value="@Math.Abs(productOptionValue.price).ToString("0.##")" />
                                                     </div>
                                                 </div>
                                             </td>
                                             <td>
-                                                <div class="row align-items-center">
-                                                    <div class="row align-items-center m-0 col-3">
-                                                        <input name="checkbox-weight-@(productOption.option_id)" type="checkbox" @weightChecked data-toggle="toggle" data-onstyle="outline-success" data-offstyle="outline-danger" d data-on="+" data-off="-" data-height="38" data-size="xs">
-                                                    </div>
-                                                    <div class="col-9">
-                                                        <input type="text" class="form-control" value="@Math.Abs(productOptionValue.weight).ToString("0.##")" />
+                                                <div class="row align-items-center m-0">
+                                                        <input name="checkbox-weight-@(productOption.option_id)" type="checkbox" @weightChecked data-toggle="toggle" data-onstyle="outline-success" data-offstyle="outline-danger" d data-on="+" data-off="-" data-height="38" data-size="xs" data-style="right-radius-none">
+                                                    <div class="col-9 pl-0">
+                                                        <input type="text" class="form-control left-radius-none" value="@Math.Abs(productOptionValue.weight).ToString("0.##")" />
                                                     </div>
                                                 </div>
                                             </td>
