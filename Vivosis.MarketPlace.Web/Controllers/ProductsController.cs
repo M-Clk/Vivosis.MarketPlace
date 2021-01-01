@@ -53,8 +53,18 @@ namespace Vivosis.MarketPlace.Web.Controllers
         public IActionResult EditStoreProduct(int storeId, int productId)
         {
             var storeCategory = _localService.GetStoreProduct(storeId, productId) ?? new StoreProduct { store_id = storeId, product_id = productId};
-
-            return PartialView("_EditStoreProduct", storeCategory);
+            var templates = _commonService.GetShipmentTemplate();
+            if(!templates.Any())
+            {
+                templates = _n11Service.GetShipmentTemplates();
+                _commonService.SaveShipmentTemplates(templates);
+            }
+            var model = new EditStoreProductModel
+            {
+                StoreProduct = storeCategory,
+                ShipmentTemplates = templates
+            };
+            return PartialView("_EditStoreProduct", model);
         }
         public IActionResult Settings()
         {

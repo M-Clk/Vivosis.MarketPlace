@@ -1,23 +1,23 @@
-﻿@model StoreProduct
+﻿@model EditStoreProductModel
 @{
     var originChecked = "checked";
-    if(Model.origin == "Yabancı")
+    if(Model.StoreProduct.origin == "Yabancı")
         originChecked = "";
-    var changeStatusCommand = Model.is_active ? "Satışa Kapat" : "Satışa Aç";
-    var storeNameWithAdditional = Model.Store == null ? "" : Model.Store.name.EndsWith('1') ? Model.Store.name+"'e " : Model.Store.name.EndsWith('a') ? Model.Store.name + "'ya " : Model.Store.name.EndsWith('i') ? Model.Store.name + "'ne " : Model.Store.name.EndsWith('r') || Model.Store.name.EndsWith('l') ? Model.Store.name + "'a " : Model.Store.name + " Mağazasına ";
+    var changeStatusCommand = Model.StoreProduct.is_active ? "Satışa Kapat" : "Satışa Aç";
+    var storeNameWithAdditional = Model.StoreProduct.Store == null ? "" : Model.StoreProduct.Store.name.EndsWith('1') ? Model.StoreProduct.Store.name + "'e " : Model.StoreProduct.Store.name.EndsWith('a') ? Model.StoreProduct.Store.name + "'ya " : Model.StoreProduct.Store.name.EndsWith('i') ? Model.StoreProduct.Store.name + "'ne " : Model.StoreProduct.Store.name.EndsWith('r') || Model.StoreProduct.Store.name.EndsWith('l') ? Model.StoreProduct.Store.name + "'a " : Model.StoreProduct.Store.name + " Mağazasına ";
 }
 <form asp-action="SendProductToStore" onsubmit="return submitStoreProduct(this)" autocomplete="off">
-    <input type="hidden" asp-for="store_id" />
-    <input type="hidden" asp-for="product_id" />
-    <input id="currency" type="hidden" asp-for="currency" />
-    <input id="origin" type="hidden" asp-for="origin" />
+    <input type="hidden" asp-for="StoreProduct.store_id" />
+    <input type="hidden" asp-for="StoreProduct.product_id" />
+    <input id="currency" type="hidden" asp-for="StoreProduct.currency" />
+    <input id="origin" type="hidden" asp-for="StoreProduct.origin" />
     <div class="form-group">
         <div class="form-group row">
-            @if(Model.is_sent)
+            @if(Model.StoreProduct.is_sent)
             {
                 <button type="submit" class="btn btn-primary">Güncelle</button>
-                <button onclick="changeProductStatus(@(Model.product_id), @(Model.store_id))" class="btn btn-warning">@changeStatusCommand</button>
-                <button onclick="deleteProductFromStore(@(Model.product_id), @(Model.store_id))" class="btn btn-danger">Sil</button>
+                <button onclick="changeProductStatus(@(Model.StoreProduct.product_id), @(Model.StoreProduct.store_id))" class="btn btn-warning">@changeStatusCommand</button>
+                <button onclick="deleteProductFromStore(@(Model.StoreProduct.product_id), @(Model.StoreProduct.store_id))" class="btn btn-danger">Sil</button>
                 <button type="submit" class="btn btn-success">Ürüne Gözat</button>
             }
         </div>
@@ -26,29 +26,38 @@
                 <label class="col-form-label">Menşei</label>
                 <input class="form-control" id="checkbox-origin" name="all-checkbox-substract" type="checkbox" @originChecked data-toggle="toggle" data-onstyle="outline-primary" asp-for="origin" data-offstyle="outline-info" data-on="Yerli" data-off="Yabancı" data-size="sm">
             </div>
-            <div class="col-sm-5">
+            <div class="col-sm-3">
                 <label class="col-form-label">Satış Fiyatı</label>
-                <input id="sale-price" type="text" asp-for="sale_price" class="form-control" style="border-radius: 5px;">
+                <input id="sale-price" type="text" asp-for="StoreProduct.sale_price" class="form-control" style="border-radius: 5px;">
             </div>
-            <div class="col-sm-5">
+            <div class="col-sm-3">
                 <label class="col-form-label">Üstü Çizili Fiyat</label>
-                <input id="strikethrough-price" type="text" asp-for="strikethrough_price" class="form-control" style="border-radius: 5px;">
+                <input id="strikethrough-price" type="text" asp-for="StoreProduct.strikethrough_price" class="form-control" style="border-radius: 5px;">
+            </div>
+            <div class="col-sm-4">
+                <label class="col-form-label">Teslimat Şablonu</label>
+                <select asp-for="StoreProduct.shipment_template" id="currency-option" class="form-control selectpicker" data-style="btn-primary">
+                    @foreach(var template in Model.ShipmentTemplates)
+                    {
+                        <option value="@(template.Name)">@(template.Name)</option>
+                    }
+                </select>
             </div>
         </div>
         <div class="row">
             <div class="col-sm-12">
                 <label class="col-form-label">Açıklama</label>
-                <textarea id="description" type="text" asp-for="description" class="form-control" style="border-radius: 5px;"></textarea>
+                <textarea id="description" type="text" asp-for="StoreProduct.description" class="form-control" style="border-radius: 5px;"></textarea>
             </div>
         </div>
         <div class="row">
             <div class="col-sm-4">
                 <label class="col-form-label">Kargo Bedeli</label>
-                <input type="text" asp-for="shipping_fee" class="form-control" style="border-radius: 5px;" placeholder="Boş bırakabilirsiniz.">
+                <input type="text" asp-for="StoreProduct.shipping_fee" class="form-control" style="border-radius: 5px;" placeholder="Boş bırakabilirsiniz.">
             </div>
             <div class="col-sm-4">
                 <label class="col-form-label">Komisyon</label>
-                <input id="comission" type="text" asp-for="commission" class="form-control" style="border-radius: 5px;" placeholder="Boş bırakabilirsiniz.">
+                <input id="comission" type="text" asp-for="StoreProduct.commission" class="form-control" style="border-radius: 5px;" placeholder="Boş bırakabilirsiniz.">
             </div>
             <div class="col-sm-4">
                 <label class="col-form-label">Para Birimi</label>
@@ -60,7 +69,7 @@
             </div>
         </div>
     </div>
-    @if(!Model.is_sent)
+    @if(!Model.StoreProduct.is_sent)
     {
         <div class="form-group">
             <button type="submit" class="btn btn-primary">@(storeNameWithAdditional)Gönder</button>
