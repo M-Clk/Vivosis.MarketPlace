@@ -29,8 +29,9 @@ namespace Vivosis.MarketPlace.Data
                 .WithMany(e => e.UserStores)
                 .HasForeignKey(x => x.store_id);
 
-            modelBuilder.Entity<Store>().Ignore(s => s.StoreCategories);
-            modelBuilder.Entity<Store>().Ignore(s => s.StoreProducts);
+            modelBuilder.Ignore<ProductCategory>();
+            modelBuilder.Ignore<StoreCategory>();
+            modelBuilder.Ignore<StoreProduct>();
         }
     }
 }
