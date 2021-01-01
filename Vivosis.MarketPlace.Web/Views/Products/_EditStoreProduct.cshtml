@@ -6,7 +6,7 @@
     var changeStatusCommand = Model.is_active ? "Satışa Kapat" : "Satışa Aç";
     var storeNameWithAdditional = Model.Store == null ? "" : Model.Store.name.EndsWith('1') ? Model.Store.name+"'e " : Model.Store.name.EndsWith('a') ? Model.Store.name + "'ya " : Model.Store.name.EndsWith('i') ? Model.Store.name + "'ne " : Model.Store.name.EndsWith('r') || Model.Store.name.EndsWith('l') ? Model.Store.name + "'a " : Model.Store.name + " Mağazasına ";
 }
-<form asp-action="EditStoreProduct" onsubmit="return sendStoreProduct(this,'info-@(Model.product_id)-@(Model.store_id)')" autocomplete="off">
+<form asp-action="SendProductToStore" onsubmit="return submitStoreProduct(this)" autocomplete="off">
     <input type="hidden" asp-for="store_id" />
     <input type="hidden" asp-for="product_id" />
     <input id="currency" type="hidden" asp-for="currency" />
