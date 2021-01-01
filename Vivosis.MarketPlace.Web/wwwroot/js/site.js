@@ -349,7 +349,17 @@ function editStoreProductAfterOpen() {
     jQuery('select').selectpicker();
 }
 
-$('#mytable').DataTable(
+$('table#table-categories').DataTable(
+    {
+        language: {
+            url: '//cdn.datatables.net/plug-ins/1.10.22/i18n/Turkish.json'
+        },
+        columnDefs: [
+            { orderable: false, targets: 0 }
+        ],
+        order: [[1, 'asc']]
+    });
+$('table#table-products').DataTable(
     {
         language: {
             url: '//cdn.datatables.net/plug-ins/1.10.22/i18n/Turkish.json'
