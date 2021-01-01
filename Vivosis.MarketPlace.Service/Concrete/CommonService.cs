@@ -258,7 +258,7 @@ namespace Vivosis.MarketPlace.Service.Concrete
             return productFromDb;
         }
 
-        public void SaveShipmentTemplate(List<ShipmentTemplate> templates)
+        public void SaveShipmentTemplates(IEnumerable<ShipmentTemplate> templates)
         {
             if(_dbContext.ShipmentTemplates.Any())
                 _dbContext.ShipmentTemplates.UpdateRange(templates);
@@ -266,5 +266,7 @@ namespace Vivosis.MarketPlace.Service.Concrete
                 _dbContext.ShipmentTemplates.AddRange(templates);
             _dbContext.SaveChanges();
         }
+
+        public IEnumerable<ShipmentTemplate> GetShipmentTemplate() => _dbContext.ShipmentTemplates;
     }
 }

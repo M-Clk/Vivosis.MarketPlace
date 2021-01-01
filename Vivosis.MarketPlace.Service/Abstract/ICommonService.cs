@@ -8,7 +8,8 @@ namespace Vivosis.MarketPlace.Service.Abstract
     public interface ICommonService
     {
         void SyncDatabase();
-        void SaveShipmentTemplate(List<ShipmentTemplate> templates);
+        void SaveShipmentTemplates(IEnumerable<ShipmentTemplate> templates);
+        IEnumerable<ShipmentTemplate> GetShipmentTemplate();
         Product GetProductToSendStore(StoreProduct productStore);
     }
 }
