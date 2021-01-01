@@ -29,7 +29,7 @@ else
                     var requiredChecked = productOption.is_required ? "checked" : "";
                     <div class="tab-pane" id="tab_option@(productOption.product_option_id)">
                         <div class="d-flex justify-content-end w-100 p-3">
-                            <input id="@(productOption.option_id)" name="all-checkbox-substract" type="checkbox" @requiredChecked data-toggle="toggle" data-onstyle="success" data-offstyle="danger" data-on="Gerekli" data-off="Gerekli Değil" data-size="sm">
+                            <input id="@(productOption.option_id)" name="all-checkbox-substract" type="checkbox" @requiredChecked data-toggle="toggle" data-onstyle="danger" data-offstyle="success" data-on="Gerekli" data-off="Gerekli Değil" data-size="sm">
                         </div>
                         <div class="table-responsive" style="overflow:auto">
                             <table class="table table-bordered" id="product-option@(productOption.product_option_id)">
