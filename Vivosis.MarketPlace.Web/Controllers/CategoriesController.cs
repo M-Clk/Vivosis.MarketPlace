@@ -15,15 +15,11 @@ namespace Vivosis.MarketPlace.Web.Controllers
     [Authorize(Roles = "Customer")]
     public class CategoriesController :Controller
     {
-        private readonly MarketPlaceDbContext _context;
-        IGlobalService _globalService;
         ILocalService _localService;
         IStoreService _storeService;
         IN11Service _n11Service;
-        public CategoriesController(MarketPlaceDbContext context, IGlobalService globalService, ILocalService localService, IStoreService storeService, IN11Service n11Service)
+        public CategoriesController( ILocalService localService, IStoreService storeService, IN11Service n11Service)
         {
-            _context = context;
-            _globalService = globalService;
             _localService = localService;
             _storeService = storeService;
             _n11Service = n11Service;
