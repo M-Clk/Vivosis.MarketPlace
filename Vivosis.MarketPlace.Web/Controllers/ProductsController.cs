@@ -17,13 +17,14 @@ namespace Vivosis.MarketPlace.Web.Controllers
         ICommonService _commonService;
         ILocalService _localService;
         IStoreService _storeService;
-        public ProductsController(MarketPlaceDbContext context, ICommonService commonService, ILocalService localService, IStoreService storeService)
+        IN11Service _n11Service;
+        public ProductsController(MarketPlaceDbContext context, ICommonService commonService, ILocalService localService, IStoreService storeService, IN11Service n11Service)
         {
             _context = context;
-            
             _localService = localService;
             _commonService = commonService;
             _storeService = storeService;
+            _n11Service = n11Service;
         }
         // GET: Products
         public IActionResult Index()
@@ -69,6 +70,12 @@ namespace Vivosis.MarketPlace.Web.Controllers
                 Message = "Ürünler ve kategoriler başarıyla senkronize edildi."
             };
             return View("Settings", updateModel);
+        }
+        public IActionResult SendProductToStore(StoreProduct storeProduct)
+        {
+            var product = _commonService.GetProductToSendStore(storeProduct);
+            var result = _n11Service.SendProduct(product);
+            return Json(new { isSucced = result });
         }
         public IActionResult Options(int productId)
         {
