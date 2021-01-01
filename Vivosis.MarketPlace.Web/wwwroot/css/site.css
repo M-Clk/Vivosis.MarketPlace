@@ -11,6 +11,10 @@ a.navbar-brand {
 a {
     color: #0366d6;
 }
+.flex-img{
+    height:40px;
+    width:40px;
+}
 
 .btn-primary {
     color: #fff;
