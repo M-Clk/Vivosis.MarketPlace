@@ -211,6 +211,25 @@ namespace Vivosis.MarketPlace.Service.Concrete
                 }
                 if(dataReader["c_id"] != DBNull.Value && !(_dbContext.ProductCategories?.Any(pc => pc.category_id == (int)dataReader["c_id"] && pc.product_id == productId) ?? false))
                     _dbContext.ProductCategories.Add(new ProductCategory { category_id = (int)dataReader["c_id"], product_id = productId });
+                if(dataReader["pi_id"] != DBNull.Value)
+                {
+                    var image = _dbContext.ProductImages?.FirstOrDefault(pi => pi.Id == (int)dataReader["c_id"] && pi.product_id == productId);
+                    if(image == null)
+                    {
+                        image = new ProductImage();
+                        image.order = (int)dataReader["pi_sort_order"];
+                        image.url = (string)dataReader["pi_image"];
+                        image.product_id = productId;
+                        _dbContext.ProductImages.Add(image);
+                    }
+                    else
+                    {
+                        image.order = (int)dataReader["pi_sort_order"];
+                        image.url = (string)dataReader["pi_image"];
+                        image.product_id = productId;
+                        _dbContext.ProductImages.Update(image);
+                    }
+                }
                 if(isProductExist)
                     _dbContext.Products.Update(product);
                 else
@@ -231,9 +250,10 @@ namespace Vivosis.MarketPlace.Service.Concrete
             userSettings.Settings.LastSyncTime = DateTime.Now;
             _userManager.UpdateAsync(userSettings).Wait();
         }
+
         public Product GetProductToSendStore(StoreProduct productStore)
         { //Duzenlenecek 
-            var productFromDb = _dbContext.Products.Where(p => p.product_id == productStore.product_id).Include(p => p.ProductCategories).ThenInclude(pc => pc.Category).ThenInclude(c => c.CategoryStores).ThenInclude(cs=>cs.CategoryOptions).ThenInclude(co=>co.CategoryOptionValues).Include(p => p.ProductOptions).FirstOrDefault();
+            var productFromDb = _dbContext.Products.Where(p => p.product_id == productStore.product_id).Include(p => p.ProductCategories).ThenInclude(pc => pc.Category).ThenInclude(c => c.CategoryStores).ThenInclude(cs => cs.CategoryOptions).ThenInclude(co => co.CategoryOptionValues).Include(p => p.ProductOptions).FirstOrDefault();
             productFromDb.ProductStores = new List<StoreProduct> { productStore };
             return productFromDb;
         }
