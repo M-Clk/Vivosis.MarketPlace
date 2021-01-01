@@ -141,18 +141,17 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     product_id = table.Column<int>(nullable: false),
                     order = table.Column<int>(nullable: false),
-                    url = table.Column<string>(nullable: true),
-                    product_id1 = table.Column<int>(nullable: true)
+                    url = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ProductImages", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ProductImages_Products_product_id1",
-                        column: x => x.product_id1,
+                        name: "FK_ProductImages_Products_product_id",
+                        column: x => x.product_id,
                         principalTable: "Products",
                         principalColumn: "product_id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -229,8 +228,9 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                     origin = table.Column<string>(nullable: true),
                     description = table.Column<string>(nullable: true),
                     url = table.Column<string>(nullable: true),
-                    is_active = table.Column<bool>(nullable: false),
                     matched_product_code = table.Column<string>(nullable: true),
+                    shipment_template = table.Column<string>(nullable: true),
+                    is_active = table.Column<bool>(nullable: false),
                     is_sent = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
@@ -371,9 +371,9 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                 column: "category_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductImages_product_id1",
+                name: "IX_ProductImages_product_id",
                 table: "ProductImages",
-                column: "product_id1");
+                column: "product_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProductOptions_option_id",

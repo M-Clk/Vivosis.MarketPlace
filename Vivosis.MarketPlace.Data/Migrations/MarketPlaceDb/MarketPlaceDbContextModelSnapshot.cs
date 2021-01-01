@@ -202,15 +202,12 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                     b.Property<int>("product_id")
                         .HasColumnType("int");
 
-                    b.Property<int?>("product_id1")
-                        .HasColumnType("int");
-
                     b.Property<string>("url")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("product_id1");
+                    b.HasIndex("product_id");
 
                     b.ToTable("ProductImages");
                 });
@@ -391,6 +388,9 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                     b.Property<decimal>("sale_price")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<string>("shipment_template")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
                     b.Property<decimal>("shipping_fee")
                         .HasColumnType("decimal(18,2)");
 
@@ -463,9 +463,11 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
 
             modelBuilder.Entity("Vivosis.MarketPlace.Data.Entities.ProductImage", b =>
                 {
-                    b.HasOne("Vivosis.MarketPlace.Data.Entities.Product", null)
+                    b.HasOne("Vivosis.MarketPlace.Data.Entities.Product", "Product")
                         .WithMany("ProductImages")
-                        .HasForeignKey("product_id1");
+                        .HasForeignKey("product_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Vivosis.MarketPlace.Data.Entities.ProductOption", b =>
