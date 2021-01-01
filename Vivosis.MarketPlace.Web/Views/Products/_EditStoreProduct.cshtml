@@ -36,7 +36,7 @@
             </div>
             <div class="col-sm-4">
                 <label class="col-form-label">Teslimat Şablonu</label>
-                <select asp-for="StoreProduct.shipment_template" id="currency-option" class="form-control selectpicker" data-style="btn-primary">
+                <select asp-for="StoreProduct.shipment_template" id="shipment-template" class="form-control selectpicker" data-style="btn-primary">
                     @foreach(var template in Model.ShipmentTemplates)
                     {
                         <option value="@(template.Name)">@(template.Name)</option>
