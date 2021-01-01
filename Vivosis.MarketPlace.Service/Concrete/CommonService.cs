@@ -257,5 +257,14 @@ namespace Vivosis.MarketPlace.Service.Concrete
             productFromDb.ProductStores = new List<StoreProduct> { productStore };
             return productFromDb;
         }
+
+        public void SaveShipmentTemplate(List<ShipmentTemplate> templates)
+        {
+            if(_dbContext.ShipmentTemplates.Any())
+                _dbContext.ShipmentTemplates.UpdateRange(templates);
+            else
+                _dbContext.ShipmentTemplates.AddRange(templates);
+            _dbContext.SaveChanges();
+        }
     }
 }
