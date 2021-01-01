@@ -13,7 +13,6 @@ using System.Xml;
 using System.IO;
 using System.Xml.Serialization;
 using N11ProductService;
-using N11ShipmentService;
 
 namespace Vivosis.MarketPlace.Service.Concrete
 {
@@ -21,7 +20,6 @@ namespace Vivosis.MarketPlace.Service.Concrete
     {
         N11CategoryService.Authentication _authCategory;
         N11ProductService.Authentication _authProduct;
-        N11ShipmentService.Authentication _authShipment;
         AccountDbContext _accountDbContext;
         StoreUser _store;
         public N11Service(IStoreService storeService, AccountDbContext accountDbContext)
@@ -34,11 +32,6 @@ namespace Vivosis.MarketPlace.Service.Concrete
                 appSecret = _store?.secret_key
             };
             _authProduct = new N11ProductService.Authentication
-            {
-                appKey = _store?.api_key,
-                appSecret = _store?.secret_key
-            };
-            _authShipment = new N11ShipmentService.Authentication
             {
                 appKey = _store?.api_key,
                 appSecret = _store?.secret_key
