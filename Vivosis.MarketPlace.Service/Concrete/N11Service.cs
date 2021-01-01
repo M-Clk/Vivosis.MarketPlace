@@ -243,19 +243,49 @@ namespace Vivosis.MarketPlace.Service.Concrete
         }
         public IEnumerable<ShipmentTemplate> GetShipmentTemplates()
         {
-            var proxy = new ShipmentServicePortClient();
-            var shipmentTemplateListRequest = new GetShipmentTemplateListRequest();
-            shipmentTemplateListRequest.auth = _authShipment;
-            var response = proxy.GetShipmentTemplateListAsync(shipmentTemplateListRequest).Result;
-            if(response.GetShipmentTemplateListResponse.shipmentTemplates.Length>0)
+
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+            var httpWebRequest = (HttpWebRequest)WebRequest.Create("https://api.n11.com/ws/ShipmentService.wsdl");
+            httpWebRequest.ContentType = "text/xml";
+            httpWebRequest.Method = "POST";
+
+            XmlDocument soapEnvelopeXml = new XmlDocument();
+            soapEnvelopeXml.LoadXml("<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:sch=\"http://www.n11.com/ws/schemas\">" +
+            "<soapenv:Header/>" +
+            "<soapenv:Body>" +
+            "<sch:GetShipmentTemplateListRequest>" +
+            "<auth>" +
+            "<appKey>" + _authCategory.appKey + "</appKey>" +
+            "<appSecret>" + _authCategory.appSecret + "</appSecret>" +
+            "</auth>" +
+            "</sch:GetShipmentTemplateListRequest>" +
+            "</soapenv:Body>" +
+            "</soapenv:Envelope>");
+
+            using(var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
             {
-                var templateList = response.GetShipmentTemplateListResponse.shipmentTemplates.Select(st => new ShipmentTemplate
-                {
-                    Name = st.templateName
-                });
-                return templateList;
+                soapEnvelopeXml.Save(streamWriter);
             }
-            return null;
+            var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+            using(var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+            {
+                XmlDocument responseXml = new XmlDocument();
+                responseXml.LoadXml(streamReader.ReadToEnd());
+                var templates = responseXml.GetElementsByTagName("shipmentTemplates");
+                if(templates != null && templates.Count > 0)
+                {
+                    var templateList = new List<ShipmentTemplate>();
+
+                    foreach(XmlNode template in templates[0])
+                    {
+                        var newTemplate = new ShipmentTemplate();
+                        newTemplate.Name = template["templateName"].InnerText;
+                        templateList.Add(newTemplate);
+                    }
+                    return templateList;
+                }
+                return null;
+            }
         }
         private CategoryFromStore LoadParentCategories(CategoryFromStore category)
         {
