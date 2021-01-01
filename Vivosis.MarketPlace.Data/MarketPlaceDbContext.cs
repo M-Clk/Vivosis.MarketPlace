@@ -24,6 +24,8 @@ namespace Vivosis.MarketPlace.Data
         public DbSet<ProductOptionValue> ProductOptionValues { get; set; }
         public DbSet<StoreCategory> StoreCategories { get; set; }
         public DbSet<StoreProduct> StoreProducts { get; set; }
+        public DbSet<ProductImage> ProductImages { get; set; }
+        public DbSet<ShipmentTemplate> ShipmentTemplates { get; set; }
 
         #endregion
 
@@ -132,15 +134,19 @@ namespace Vivosis.MarketPlace.Data
             builder.Entity<ProductOptionValue>()
                 .HasIndex(p => new { p.product_option_id, p.option_value_id }).IsUnique();
 
+            builder.Entity<StoreUser>().HasIndex(s => s.api_key).IsUnique();
+
             #endregion
 
             #region Declare To Be Ignored Properties
 
-            builder.Entity<Store>().Ignore(s => s.UserStores);
-            builder.Entity<Store>().Ignore(s => s.Categories);
             builder.Entity<SystemUser>().Ignore(s => s.Settings);
-
-            builder.Entity<StoreUser>().HasIndex(s => s.api_key).IsUnique();
+            builder.Ignore<CategoryFromStore>();
+            builder.Ignore<CategoryFromStoreAttribute>();
+            builder.Ignore<CategoryFromStoreAttributeValue>();
+            builder.Ignore<CategoryToAttributeFromStore>();
+            builder.Ignore<StoreUser>();
+            builder.Ignore<SystemUser>();
 
             #endregion
 

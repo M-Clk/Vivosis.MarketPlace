@@ -201,9 +201,9 @@ namespace Vivosis.MarketPlace.Service.Concrete
             };
             newProductRequest.price = storeProduct.sale_price > 0 ? storeProduct.sale_price : productFromDb.price;
             newProductRequest.currencyType = storeProduct.currency;
-            newProductRequest.images = new ProductImage[]
+            newProductRequest.images = new N11ProductService.ProductImage[]
             {
-                new ProductImage
+                new N11ProductService.ProductImage
                 {
                     url = productFromDb.image_url, order = "1"
                 }

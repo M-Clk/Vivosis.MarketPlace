@@ -21,5 +21,6 @@ namespace Vivosis.MarketPlace.Data.Entities
         public virtual IList<ProductOption> ProductOptions { get; set; }
         public virtual IList<ProductCategory> ProductCategories { get; set; }
         public virtual IList<StoreProduct> ProductStores { get; set; }
+        public virtual IList<ProductImage> ProductImages { get; set; }
     }
 }

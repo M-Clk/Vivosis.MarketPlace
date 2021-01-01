@@ -9,7 +9,7 @@ using Vivosis.MarketPlace.Data;
 namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
 {
     [DbContext(typeof(MarketPlaceDbContext))]
-    [Migration("20201231135925_InitialCreate")]
+    [Migration("20210101171845_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -43,64 +43,6 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                     b.HasKey("category_id");
 
                     b.ToTable("Categories");
-                });
-
-            modelBuilder.Entity("Vivosis.MarketPlace.Data.Entities.CategoryFromStore", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
-
-                    b.Property<long>("ParentId")
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("StoreId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("StoreId");
-
-                    b.ToTable("CategoryFromStore");
-                });
-
-            modelBuilder.Entity("Vivosis.MarketPlace.Data.Entities.CategoryFromStoreAttribute", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    b.Property<bool>("IsRequired")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("CategoryFromStoreAttribute");
-                });
-
-            modelBuilder.Entity("Vivosis.MarketPlace.Data.Entities.CategoryFromStoreAttributeValue", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("AttributeId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AttributeId");
-
-                    b.ToTable("CategoryFromStoreAttributeValue");
                 });
 
             modelBuilder.Entity("Vivosis.MarketPlace.Data.Entities.CategoryOption", b =>
@@ -159,27 +101,6 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                         .IsUnique();
 
                     b.ToTable("CategoryOptionValues");
-                });
-
-            modelBuilder.Entity("Vivosis.MarketPlace.Data.Entities.CategoryToAttributeFromStore", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("AttributeId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("CategoryId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AttributeId");
-
-                    b.HasIndex("CategoryId");
-
-                    b.ToTable("CategoryToAttributeFromStore");
                 });
 
             modelBuilder.Entity("Vivosis.MarketPlace.Data.Entities.Option", b =>
@@ -271,6 +192,31 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                     b.ToTable("productcategory");
                 });
 
+            modelBuilder.Entity("Vivosis.MarketPlace.Data.Entities.ProductImage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("order")
+                        .HasColumnType("int");
+
+                    b.Property<int>("product_id")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("product_id1")
+                        .HasColumnType("int");
+
+                    b.Property<string>("url")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("product_id1");
+
+                    b.ToTable("ProductImages");
+                });
+
             modelBuilder.Entity("Vivosis.MarketPlace.Data.Entities.ProductOption", b =>
                 {
                     b.Property<int>("product_option_id")
@@ -336,6 +282,20 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                         .IsUnique();
 
                     b.ToTable("ProductOptionValues");
+                });
+
+            modelBuilder.Entity("Vivosis.MarketPlace.Data.Entities.ShipmentTemplate", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ShipmentTemplates");
                 });
 
             modelBuilder.Entity("Vivosis.MarketPlace.Data.Entities.Store", b =>
@@ -449,131 +409,6 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                     b.ToTable("storeproduct");
                 });
 
-            modelBuilder.Entity("Vivosis.MarketPlace.Data.Entities.StoreUser", b =>
-                {
-                    b.Property<int>("store_id")
-                        .HasColumnType("int");
-
-                    b.Property<int>("user_id")
-                        .HasColumnType("int");
-
-                    b.Property<string>("api_key")
-                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
-
-                    b.Property<DateTime>("expire_time")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<bool>("is_active")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<bool>("is_confirmed")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<string>("secret_key")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
-
-                    b.HasKey("store_id", "user_id");
-
-                    b.HasIndex("api_key")
-                        .IsUnique();
-
-                    b.HasIndex("user_id");
-
-                    b.ToTable("StoreUser");
-                });
-
-            modelBuilder.Entity("Vivosis.MarketPlace.Data.Entities.SystemUser", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<int>("AccessFailedCount")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
-
-                    b.Property<string>("DbName")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
-
-                    b.Property<string>("DbPassword")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
-
-                    b.Property<string>("DbUserName")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
-
-                    b.Property<string>("Email")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
-
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<DateTime?>("ExpireTime")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("FullName")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
-
-                    b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("NormalizedEmail")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
-
-                    b.Property<string>("NormalizedUserName")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
-
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
-
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<string>("SecurityStamp")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
-
-                    b.Property<string>("Server")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
-
-                    b.Property<bool>("Status")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<string>("UserName")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("SystemUser");
-                });
-
-            modelBuilder.Entity("Vivosis.MarketPlace.Data.Entities.CategoryFromStore", b =>
-                {
-                    b.HasOne("Vivosis.MarketPlace.Data.Entities.Store", "Store")
-                        .WithMany()
-                        .HasForeignKey("StoreId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Vivosis.MarketPlace.Data.Entities.CategoryFromStoreAttributeValue", b =>
-                {
-                    b.HasOne("Vivosis.MarketPlace.Data.Entities.CategoryFromStoreAttribute", "Attribute")
-                        .WithMany("AttributeValues")
-                        .HasForeignKey("AttributeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Vivosis.MarketPlace.Data.Entities.CategoryOption", b =>
                 {
                     b.HasOne("Vivosis.MarketPlace.Data.Entities.Option", "Option")
@@ -604,21 +439,6 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Vivosis.MarketPlace.Data.Entities.CategoryToAttributeFromStore", b =>
-                {
-                    b.HasOne("Vivosis.MarketPlace.Data.Entities.CategoryFromStoreAttribute", "Attribute")
-                        .WithMany("CategoryToAttributeFromStores")
-                        .HasForeignKey("AttributeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Vivosis.MarketPlace.Data.Entities.CategoryFromStore", "Category")
-                        .WithMany("CategoryToAttributeFromStores")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Vivosis.MarketPlace.Data.Entities.OptionValue", b =>
                 {
                     b.HasOne("Vivosis.MarketPlace.Data.Entities.Option", "Option")
@@ -641,6 +461,13 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                         .HasForeignKey("product_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Vivosis.MarketPlace.Data.Entities.ProductImage", b =>
+                {
+                    b.HasOne("Vivosis.MarketPlace.Data.Entities.Product", null)
+                        .WithMany("ProductImages")
+                        .HasForeignKey("product_id1");
                 });
 
             modelBuilder.Entity("Vivosis.MarketPlace.Data.Entities.ProductOption", b =>
@@ -699,21 +526,6 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                     b.HasOne("Vivosis.MarketPlace.Data.Entities.Store", "Store")
                         .WithMany("StoreProducts")
                         .HasForeignKey("store_id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Vivosis.MarketPlace.Data.Entities.StoreUser", b =>
-                {
-                    b.HasOne("Vivosis.MarketPlace.Data.Entities.Store", "Store")
-                        .WithMany()
-                        .HasForeignKey("store_id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Vivosis.MarketPlace.Data.Entities.SystemUser", "User")
-                        .WithMany("UserStores")
-                        .HasForeignKey("user_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
