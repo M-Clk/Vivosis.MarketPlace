@@ -14,5 +14,6 @@ namespace Vivosis.MarketPlace.Service.Abstract
         IEnumerable<CategoryFromStoreAttribute> GetCategoryOptions(long categoryId);
         IEnumerable<CategoryFromStoreAttributeValue> GetCategoryOptionValues(long categoryOptionId);
         bool SendProduct(Data.Entities.Product productFromDb);
+        IEnumerable<ShipmentTemplate> GetShipmentTemplates();
     }
 }

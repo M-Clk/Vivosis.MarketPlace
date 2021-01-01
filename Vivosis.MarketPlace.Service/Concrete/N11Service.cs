@@ -13,6 +13,7 @@ using System.Xml;
 using System.IO;
 using System.Xml.Serialization;
 using N11ProductService;
+using N11ShipmentService;
 
 namespace Vivosis.MarketPlace.Service.Concrete
 {
@@ -20,6 +21,7 @@ namespace Vivosis.MarketPlace.Service.Concrete
     {
         N11CategoryService.Authentication _authCategory;
         N11ProductService.Authentication _authProduct;
+        N11ShipmentService.Authentication _authShipment;
         AccountDbContext _accountDbContext;
         StoreUser _store;
         public N11Service(IStoreService storeService, AccountDbContext accountDbContext)
@@ -32,6 +34,11 @@ namespace Vivosis.MarketPlace.Service.Concrete
                 appSecret = _store?.secret_key
             };
             _authProduct = new N11ProductService.Authentication
+            {
+                appKey = _store?.api_key,
+                appSecret = _store?.secret_key
+            };
+            _authShipment = new N11ShipmentService.Authentication
             {
                 appKey = _store?.api_key,
                 appSecret = _store?.secret_key
@@ -233,6 +240,22 @@ namespace Vivosis.MarketPlace.Service.Concrete
             var response = proxy.SaveProductAsync(saveProductRequest).Result;
             var product = response.SaveProductResponse.product;
             return string.IsNullOrEmpty(response.SaveProductResponse.result.errorMessage);
+        }
+        public IEnumerable<ShipmentTemplate> GetShipmentTemplates()
+        {
+            var proxy = new ShipmentServicePortClient();
+            var shipmentTemplateListRequest = new GetShipmentTemplateListRequest();
+            shipmentTemplateListRequest.auth = _authShipment;
+            var response = proxy.GetShipmentTemplateListAsync(shipmentTemplateListRequest).Result;
+            if(response.GetShipmentTemplateListResponse.shipmentTemplates.Length>0)
+            {
+                var templateList = response.GetShipmentTemplateListResponse.shipmentTemplates.Select(st => new ShipmentTemplate
+                {
+                    Name = st.templateName
+                });
+                return templateList;
+            }
+            return null;
         }
         private CategoryFromStore LoadParentCategories(CategoryFromStore category)
         {
