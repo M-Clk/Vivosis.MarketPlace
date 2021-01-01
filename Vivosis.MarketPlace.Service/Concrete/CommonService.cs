@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MySql.Data.MySqlClient;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Vivosis.MarketPlace.Data;
@@ -220,7 +221,6 @@ namespace Vivosis.MarketPlace.Service.Concrete
             command.Dispose();
             dataReader.Dispose();
         }
-
         public void SyncDatabase()
         {
             SyncLocalCategories();
@@ -230,6 +230,12 @@ namespace Vivosis.MarketPlace.Service.Concrete
             userSettings.Settings.IsSynced = true;
             userSettings.Settings.LastSyncTime = DateTime.Now;
             _userManager.UpdateAsync(userSettings).Wait();
+        }
+        public Product GetProductToSendStore(StoreProduct productStore)
+        { //Duzenlenecek 
+            var productFromDb = _dbContext.Products.Where(p => p.product_id == productStore.product_id).Include(p => p.ProductCategories).ThenInclude(pc => pc.Category).ThenInclude(c => c.CategoryStores).ThenInclude(cs=>cs.CategoryOptions).ThenInclude(co=>co.CategoryOptionValues).Include(p => p.ProductOptions).FirstOrDefault();
+            productFromDb.ProductStores = new List<StoreProduct> { productStore };
+            return productFromDb;
         }
     }
 }
