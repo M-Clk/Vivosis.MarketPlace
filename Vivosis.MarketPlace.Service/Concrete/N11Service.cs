@@ -12,19 +12,26 @@ using System.Net;
 using System.Xml;
 using System.IO;
 using System.Xml.Serialization;
+using N11ProductService;
 
 namespace Vivosis.MarketPlace.Service.Concrete
 {
     public class N11Service :IN11Service
     {
-        Authentication _auth;
+        N11CategoryService.Authentication _authCategory;
+        N11ProductService.Authentication _authProduct;
         AccountDbContext _accountDbContext;
         StoreUser _store;
         public N11Service(IStoreService storeService, AccountDbContext accountDbContext)
         {
             //TODO burasi hatali
             _store = storeService.GetBoughtStores().FirstOrDefault(su => su.Store.name.ToLower().Equals("n11"))/* ?? throw new InvalidOperationException("N11 sisteminizde kayitli degil.")*/;
-            _auth = new Authentication
+            _authCategory = new N11CategoryService.Authentication
+            {
+                appKey = _store?.api_key,
+                appSecret = _store?.secret_key
+            };
+            _authProduct = new N11ProductService.Authentication
             {
                 appKey = _store?.api_key,
                 appSecret = _store?.secret_key
@@ -45,9 +52,9 @@ namespace Vivosis.MarketPlace.Service.Concrete
 
             CategoryServicePortClient proxy = new CategoryServicePortClient();
             var request = new GetTopLevelCategoriesRequest();
-            request.auth = _auth;
+            request.auth = _authCategory;
             var req = new GetTopLevelCategoriesRequest1(request);
-            req.GetTopLevelCategoriesRequest.auth = _auth;
+            req.GetTopLevelCategoriesRequest.auth = _authCategory;
 
             var categories = proxy.GetTopLevelCategoriesAsync(request).Result;
 
@@ -75,7 +82,7 @@ namespace Vivosis.MarketPlace.Service.Concrete
             var categoryList = new List<CategoryFromStore>();
             CategoryServicePortClient proxy = new CategoryServicePortClient();
             var request = new GetSubCategoriesRequest();
-            request.auth = _auth;
+            request.auth = _authCategory;
             request.categoryId = categoryId;
 
             var subCategories = proxy.GetSubCategoriesAsync(request).Result;
@@ -119,8 +126,8 @@ namespace Vivosis.MarketPlace.Service.Concrete
             "<soapenv:Body>" +
             "<sch:GetCategoryAttributesRequest>" +
             "<auth>" +
-            "<appKey>" + _auth.appKey + "</appKey>" +
-            "<appSecret>" + _auth.appSecret + "</appSecret>" +
+            "<appKey>" + _authCategory.appKey + "</appKey>" +
+            "<appSecret>" + _authCategory.appSecret + "</appSecret>" +
             "</auth>" +
             "<categoryId>" + categoryId + "</categoryId>" +
             "</sch:GetCategoryAttributesRequest>" +
@@ -176,6 +183,56 @@ namespace Vivosis.MarketPlace.Service.Concrete
         {
             var categoryAttributeValues = _accountDbContext.CategoryFromStoreAttributeValues.Where(cav => cav.AttributeId == categoryOptionId);
             return categoryAttributeValues;
+        }
+        public bool SendProduct(Data.Entities.Product productFromDb)
+        {
+            var storeProduct = productFromDb.ProductStores.First();
+            var proxy = new ProductServicePortClient();
+            var saveProductRequest = new SaveProductRequest();
+            saveProductRequest.auth = _authProduct;
+            var newProductRequest = new ProductRequest();
+            newProductRequest.productSellerCode = "MarketPlace" + productFromDb.product_id;
+            newProductRequest.title = productFromDb.name;
+            newProductRequest.description = string.IsNullOrEmpty(storeProduct.description) ? productFromDb.description : storeProduct.description;
+            newProductRequest.subtitle = productFromDb.name;
+            newProductRequest.category = new CategoryRequest
+            {
+                id = long.Parse(productFromDb.ProductCategories.FirstOrDefault().Category.CategoryStores.FirstOrDefault(cs => cs.store_id == storeProduct.store_id).matched_category_code)
+            };
+            newProductRequest.price = storeProduct.sale_price > 0 ? storeProduct.sale_price : productFromDb.price;
+            newProductRequest.currencyType = storeProduct.currency;
+            newProductRequest.images = new ProductImage[]
+            {
+                new ProductImage
+                {
+                    url = productFromDb.image_url, order = "1"
+                }
+            };
+            newProductRequest.productCondition = "1";//TODO 1 = yeni, 2 = ikinci el anlaminda.
+            newProductRequest.preparingDay = "3";
+            newProductRequest.shipmentTemplate = "";//TODO sablon da temin edilecek sekilde guncellencek.
+            var categoryOptions = productFromDb.ProductCategories.FirstOrDefault().Category.CategoryStores.FirstOrDefault(cs => cs.store_id == storeProduct.store_id).CategoryOptions;
+            var attributeRequest = new ProductAttributeRequest[categoryOptions.Count];
+            for(int i = 0; i < attributeRequest.Length; i++)
+            {
+                foreach(var optionValue in categoryOptions[i].CategoryOptionValues)
+                    attributeRequest[i] = new ProductAttributeRequest { name = categoryOptions[i].matched_store_option_name, value = optionValue.store_category_value_name };
+            }
+            newProductRequest.stockItems = new ProductSkuRequest[]
+                {
+                    new ProductSkuRequest
+                    {
+                        quantity = ((int)productFromDb.quantity).ToString(),
+                        attributes = attributeRequest,
+                        optionPrice = newProductRequest.price
+                    }
+                };
+            newProductRequest.attributes = attributeRequest;
+            newProductRequest.shipmentTemplate = "RENASS";
+            saveProductRequest.product = newProductRequest;
+            var response = proxy.SaveProductAsync(saveProductRequest).Result;
+            var product = response.SaveProductResponse.product;
+            return string.IsNullOrEmpty(response.SaveProductResponse.result.errorMessage);
         }
         private CategoryFromStore LoadParentCategories(CategoryFromStore category)
         {
