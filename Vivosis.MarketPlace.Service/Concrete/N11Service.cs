@@ -186,7 +186,7 @@ namespace Vivosis.MarketPlace.Service.Concrete
             var categoryAttributeValues = _accountDbContext.CategoryFromStoreAttributeValues.Where(cav => cav.AttributeId == categoryOptionId);
             return categoryAttributeValues;
         }
-        public bool SendProduct(Data.Entities.Product productFromDb)
+        public bool SendProduct(Data.Entities.Product productFromDb, Dictionary<string, string> attributePairs)
         {
             var storeProduct = productFromDb.ProductStores.First();
             var proxy = new ProductServicePortClient();
@@ -231,14 +231,8 @@ namespace Vivosis.MarketPlace.Service.Concrete
             var categoryOptions = productFromDb.ProductCategories.FirstOrDefault().Category.CategoryStores.FirstOrDefault(cs => cs.store_id == storeProduct.store_id).CategoryOptions;
             var attributeList = new List<ProductAttributeRequest>();
 
-            foreach(var categoryOption in categoryOptions) //Bu on taraftan secilecek.
-            {
-                foreach(var optionValue in categoryOption.CategoryOptionValues)
-                {
-                    attributeList.Add(new ProductAttributeRequest { name = categoryOption.matched_store_option_name, value = optionValue.store_category_value_name });
-                    break;
-                }
-            }
+            foreach(var attributePair in attributePairs)
+                attributeList.Add(new ProductAttributeRequest { name = attributePair.Key, value = attributePair.Value });
             var attributeArray = attributeList.ToArray();
             var stockItems = new List<ProductSkuRequest>();
             //stockItems.Add(new ProductSkuRequest

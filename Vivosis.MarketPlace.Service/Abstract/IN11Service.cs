@@ -1,7 +1,4 @@
-﻿using N11CategoryService;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using Vivosis.MarketPlace.Data.Entities;
 
 namespace Vivosis.MarketPlace.Service.Abstract
@@ -13,7 +10,7 @@ namespace Vivosis.MarketPlace.Service.Abstract
         CategoryFromStore GetCategoryWithParents(long categoryId);
         IEnumerable<CategoryFromStoreAttribute> GetCategoryOptions(long categoryId);
         IEnumerable<CategoryFromStoreAttributeValue> GetCategoryOptionValues(long categoryOptionId);
-        bool SendProduct(Data.Entities.Product productFromDb);
+        bool SendProduct(Product productFromDb, Dictionary<string, string> attributePairs);
         IEnumerable<ShipmentTemplate> GetShipmentTemplates();
     }
 }
