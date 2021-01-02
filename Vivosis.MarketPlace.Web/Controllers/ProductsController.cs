@@ -13,14 +13,12 @@ namespace Vivosis.MarketPlace.Web.Controllers
     [Authorize(Roles = "Customer")]
     public class ProductsController :Controller
     {
-        private readonly MarketPlaceDbContext _context;
         ICommonService _commonService;
         ILocalService _localService;
         IStoreService _storeService;
         IN11Service _n11Service;
-        public ProductsController(MarketPlaceDbContext context, ICommonService commonService, ILocalService localService, IStoreService storeService, IN11Service n11Service)
+        public ProductsController(ICommonService commonService, ILocalService localService, IStoreService storeService, IN11Service n11Service)
         {
-            _context = context;
             _localService = localService;
             _commonService = commonService;
             _storeService = storeService;
@@ -52,7 +50,7 @@ namespace Vivosis.MarketPlace.Web.Controllers
         }
         public IActionResult EditStoreProduct(int storeId, int productId)
         {
-            var storeCategory = _localService.GetStoreProduct(storeId, productId) ?? new StoreProduct { store_id = storeId, product_id = productId};
+            var storeProduct = _localService.GetStoreProduct(storeId, productId);
             var templates = _commonService.GetShipmentTemplate();
             if(!templates.Any())
             {
@@ -61,9 +59,14 @@ namespace Vivosis.MarketPlace.Web.Controllers
             }
             var model = new EditStoreProductModel
             {
-                StoreProduct = storeCategory,
+                StoreProduct = storeProduct,
                 ShipmentTemplates = templates
             };
+            if(storeProduct.Product?.ProductCategories?.Any()??false)
+            {
+                var categoryId = storeProduct.Product.ProductCategories.First().category_id;
+                model.CategoryAttributes = _localService.GetCategoryOptions(categoryId, storeId);
+            }
             return PartialView("_EditStoreProduct", model);
         }
         public IActionResult Settings()
