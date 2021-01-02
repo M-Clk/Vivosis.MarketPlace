@@ -113,7 +113,8 @@ namespace Vivosis.MarketPlace.Service.Concrete
         public IEnumerable<CategoryFromStoreAttribute> GetCategoryOptions(long categoryId)
         {
             var categoryOptions = _accountDbContext.CategoryToAttributeFromStores.Where(c => c.CategoryId == categoryId).Include(c => c.Attribute);
-            if(categoryOptions.Any())
+            var isCategoryOptionExistInLocal = categoryOptions.Any();
+            if(isCategoryOptionExistInLocal)
                 return categoryOptions.Select(c => c.Attribute);
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
             var httpWebRequest = (HttpWebRequest)WebRequest.Create("https://api.n11.com/ws/CategoryService.wsdl");
@@ -154,22 +155,23 @@ namespace Vivosis.MarketPlace.Service.Concrete
                         categoryOption.IsRequired = bool.Parse(attribute["mandatory"].InnerText);
                         categoryOption.Name = attribute["name"].InnerText;
                         categoryOption.Id = long.Parse(attribute["id"].InnerText);
-                        if(!_accountDbContext.CategoryFromStoreAttributes.Any(a => a.Id == categoryOption.Id))
-                        {
-                            categoryOption.AttributeValues = new List<CategoryFromStoreAttributeValue>();
-                            categoryOption.CategoryToAttributeFromStores = new List<CategoryToAttributeFromStore>
+                        categoryOption.CategoryToAttributeFromStores = new List<CategoryToAttributeFromStore>
                                 { new CategoryToAttributeFromStore{ CategoryId = categoryId}};
-                            foreach(XmlNode attributeValue in attribute["valueList"])
+                        categoryOption.AttributeValues = new List<CategoryFromStoreAttributeValue>();
+                        foreach(XmlNode attributeValue in attribute["valueList"])
+                        {
+                            var newCategoryOptionValue = new CategoryFromStoreAttributeValue
                             {
-                                var newCategoryOptionValue = new CategoryFromStoreAttributeValue
-                                {
-                                    Id = long.Parse(attributeValue["id"].InnerText),
-                                    Name = attributeValue["name"].InnerText
-                                };
-                                categoryOption.AttributeValues.Add(newCategoryOptionValue);
-                            }
-                            _accountDbContext.CategoryFromStoreAttributes.Add(categoryOption);
+                                Id = long.Parse(attributeValue["id"].InnerText),
+                                Name = attributeValue["name"].InnerText
+                            };
+                            categoryOption.AttributeValues.Add(newCategoryOptionValue);
                         }
+                        if(!isCategoryOptionExistInLocal)
+                            _accountDbContext.CategoryFromStoreAttributes.Add(categoryOption);
+                        else
+                            _accountDbContext.CategoryFromStoreAttributes.Update(categoryOption);
+
                         categoryOptionsList.Add(categoryOption);
                     }
                     _accountDbContext.SaveChanges();
@@ -199,36 +201,68 @@ namespace Vivosis.MarketPlace.Service.Concrete
             {
                 id = long.Parse(productFromDb.ProductCategories.FirstOrDefault().Category.CategoryStores.FirstOrDefault(cs => cs.store_id == storeProduct.store_id).matched_category_code)
             };
-            newProductRequest.price = storeProduct.sale_price > 0 ? storeProduct.sale_price : productFromDb.price;
-            newProductRequest.currencyType = storeProduct.currency;
-            newProductRequest.images = new N11ProductService.ProductImage[]
+
+            //Discount Turleri: 1=indirim tutari, 2=Indirim orani, 3=indirimli fiyat
+            //TODO komisyon nasil hesaplancak sor onu
+            var salePrice = storeProduct.sale_price > 0 ? storeProduct.sale_price : productFromDb.price;
+            newProductRequest.price = salePrice;
+            if(storeProduct.strikethrough_price > 0) //Javascript ile alti cizili fiyat eger varsa satis fiyatindan yuksek oldugunu dogrulayarak gonder
             {
-                new N11ProductService.ProductImage
-                {
-                    url = productFromDb.image_url, order = "1"
-                }
-            };
+                var discount = new ProductDiscountRequest();
+                discount.type = "3";
+                discount.value = salePrice.ToString();
+                newProductRequest.discount = discount;
+                newProductRequest.price = storeProduct.strikethrough_price;
+            }
+
+            newProductRequest.currencyType = storeProduct.currency;
             newProductRequest.productCondition = "1";//TODO 1 = yeni, 2 = ikinci el anlaminda.
             newProductRequest.preparingDay = "3";
             newProductRequest.shipmentTemplate = "";//TODO sablon da temin edilecek sekilde guncellencek.
-            var categoryOptions = productFromDb.ProductCategories.FirstOrDefault().Category.CategoryStores.FirstOrDefault(cs => cs.store_id == storeProduct.store_id).CategoryOptions;
-            var attributeRequest = new ProductAttributeRequest[categoryOptions.Count];
-            for(int i = 0; i < attributeRequest.Length; i++)
+
+            var images = productFromDb.ProductImages.Select(pi => new N11ProductService.ProductImage
             {
-                foreach(var optionValue in categoryOptions[i].CategoryOptionValues)
-                    attributeRequest[i] = new ProductAttributeRequest { name = categoryOptions[i].matched_store_option_name, value = optionValue.store_category_value_name };
-            }
-            newProductRequest.stockItems = new ProductSkuRequest[]
+                url = pi.url,
+                order = pi.order.ToString()
+            }).ToList();
+            images.Add(new N11ProductService.ProductImage { url = productFromDb.image_url, order = "1" });
+            newProductRequest.images = images.ToArray();
+
+            var categoryOptions = productFromDb.ProductCategories.FirstOrDefault().Category.CategoryStores.FirstOrDefault(cs => cs.store_id == storeProduct.store_id).CategoryOptions;
+            var attributeList = new List<ProductAttributeRequest>();
+
+            foreach(var categoryOption in categoryOptions) //Bu on taraftan secilecek.
+            {
+                foreach(var optionValue in categoryOption.CategoryOptionValues)
                 {
-                    new ProductSkuRequest
+                    attributeList.Add(new ProductAttributeRequest { name = categoryOption.matched_store_option_name, value = optionValue.store_category_value_name });
+                    break;
+                }
+            }
+            var attributeArray = attributeList.ToArray();
+            var stockItems = new List<ProductSkuRequest>();
+            //stockItems.Add(new ProductSkuRequest
+            //{
+            //    quantity = ((int)productFromDb.quantity).ToString(),
+            //    optionPrice = newProductRequest.price
+            //});
+            foreach(var productOption in productFromDb.ProductOptions)
+            {
+                foreach(var optionValue in productOption.ProductOptionValues)
+                {
+                    var newStockAttribute = new ProductSkuRequest
                     {
-                        quantity = ((int)productFromDb.quantity).ToString(),
-                        attributes = attributeRequest,
-                        optionPrice = newProductRequest.price
-                    }
-                };
-            newProductRequest.attributes = attributeRequest;
-            newProductRequest.shipmentTemplate = "RENASS";
+                        quantity = optionValue.quantity.ToString(),
+                        optionPrice = newProductRequest.price + optionValue.price,
+                        sellerStockCode = "MarketPlace" + productFromDb.product_id + productOption.product_option_id + optionValue.product_option_value_id,
+                        attributes = new ProductAttributeRequest[] { new ProductAttributeRequest { name = productOption.Option.name, value = optionValue.OptionValue.name } }
+                    };
+                    stockItems.Add(newStockAttribute);
+                }
+            }
+            newProductRequest.stockItems = stockItems.ToArray();
+            newProductRequest.attributes = attributeArray;
+            newProductRequest.shipmentTemplate = storeProduct.shipment_template;
             saveProductRequest.product = newProductRequest;
             var response = proxy.SaveProductAsync(saveProductRequest).Result;
             var product = response.SaveProductResponse.product;
