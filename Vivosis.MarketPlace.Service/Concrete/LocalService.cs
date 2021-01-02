@@ -11,9 +11,11 @@ namespace Vivosis.MarketPlace.Service
     public class LocalService :ILocalService
     {
         MarketPlaceDbContext _dbContext;
-        public LocalService(MarketPlaceDbContext dbContext)
+        AccountDbContext _accountDbContext;
+        public LocalService(MarketPlaceDbContext dbContext, AccountDbContext accountDbContext)
         {
             _dbContext = dbContext;
+            _accountDbContext = accountDbContext;
         }
 
         public int AddCategories(IEnumerable<Category> categories)
@@ -55,6 +57,13 @@ namespace Vivosis.MarketPlace.Service
         public StoreProduct GetStoreProduct(int storeId, int productId)
         {
             var storeProduct = _dbContext.StoreProducts.FirstOrDefault(sc => sc.store_id == storeId && sc.product_id == productId);
+            if(storeProduct==null)
+            {
+                storeProduct = new StoreProduct();
+                storeProduct.product_id = productId;
+                storeProduct.store_id = storeId;
+                storeProduct.Product = _dbContext.Products.Include(p=>p.ProductCategories).FirstOrDefault(p => p.product_id == productId);
+            }
             return storeProduct;
         }
 
@@ -105,6 +114,13 @@ namespace Vivosis.MarketPlace.Service
         {
             var optionValues = _dbContext.OptionValues.Where(ov => ov.option_id == optionId);
             return optionValues;
+        }
+
+        public IEnumerable<CategoryFromStoreAttribute> GetCategoryOptions(int categoryId, int storeId)
+        {
+            var category = _dbContext.StoreCategories.First(cs=>cs.category_id == categoryId && cs.store_id == storeId);
+            var categoryToAttributes = _accountDbContext.CategoryToAttributeFromStores.Where(ca => ca.CategoryId.ToString() == category.matched_category_code).Include(ca => ca.Attribute).ThenInclude(a => a.AttributeValues);
+            return categoryToAttributes.Select(ca => ca.Attribute);
         }
     }
 }

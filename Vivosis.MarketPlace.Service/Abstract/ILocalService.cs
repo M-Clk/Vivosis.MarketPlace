@@ -21,5 +21,6 @@ namespace Vivosis.MarketPlace.Service.Abstract
         IEnumerable<ProductOption> GetProductOptions(int productId);
         IEnumerable<Option> GetAllOptions();
         IEnumerable<OptionValue> GetOptionValues(int optionId);
+        IEnumerable<CategoryFromStoreAttribute> GetCategoryOptions(int categoryId, int storeId);
     }
 }
