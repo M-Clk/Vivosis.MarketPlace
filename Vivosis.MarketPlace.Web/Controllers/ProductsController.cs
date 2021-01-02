@@ -31,7 +31,7 @@ namespace Vivosis.MarketPlace.Web.Controllers
             {
                 var model = new UserStoreProductModel();
                 model.Products = _localService.GetProducts();
-                model.Stores = _storeService.GetBoughtStores().Where(us=>us.is_confirmed && !string.IsNullOrEmpty(us.api_key) && !string.IsNullOrEmpty(us.secret_key));
+                model.Stores = _storeService.GetBoughtStores().Where(us => us.is_confirmed && !string.IsNullOrEmpty(us.api_key) && !string.IsNullOrEmpty(us.secret_key));
                 return View(model);
             }
             return View();
@@ -62,10 +62,10 @@ namespace Vivosis.MarketPlace.Web.Controllers
                 StoreProduct = storeProduct,
                 ShipmentTemplates = templates
             };
-            if(storeProduct.Product?.ProductCategories?.Any()??false)
+            if(storeProduct.Product?.ProductCategories?.Any() ?? false)
             {
                 var categoryId = storeProduct.Product.ProductCategories.First().category_id;
-                model.CategoryAttributes = _localService.GetCategoryOptions(categoryId, storeId);
+                model.CategoryAttributes = _localService.GetCategoryOptions(categoryId, storeId).ToList();
             }
             return PartialView("_EditStoreProduct", model);
         }
@@ -84,10 +84,19 @@ namespace Vivosis.MarketPlace.Web.Controllers
             };
             return View("Settings", updateModel);
         }
-        public IActionResult SendProductToStore(StoreProduct storeProduct)
+        public IActionResult SendProductToStore(PostStoreProductModel storeProductModel)
         {
-            var product = _commonService.GetProductToSendStore(storeProduct);
-            var result = _n11Service.SendProduct(product);
+            var product = _commonService.GetProductToSendStore(storeProductModel.StoreProduct);
+            var attributePairs = new Dictionary<string, string>();
+            if(!string.IsNullOrEmpty(storeProductModel.AttributesQuery))
+            {
+                foreach(var pair in storeProductModel.AttributesQuery.Split('&'))
+                {
+                    var splitedPair = pair.Split('=');
+                    attributePairs.Add(splitedPair.First(), splitedPair.Last());
+                }
+            }
+            var result = _n11Service.SendProduct(product, attributePairs);
             return Json(new { isSucced = result });
         }
         public IActionResult Options(int productId)

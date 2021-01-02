@@ -233,10 +233,19 @@ function loadSelectOptionEvents(id) {
 }
 function submitStoreProduct(form) {
     try {
+        var attributes = jQuery("select[name='product-attribute']", form);
+        var query = '';
+        attributes.each((index, select) => {
+            if (select.value.length > 0)
+                query += jQuery(select).attr('attribute-name') + '=' + select.value + '&';
+        });
+        query = query.slice(0, query.length-1);
+        var data = new FormData(form);
+        data.set("AttributesQuery", query);
         jQuery.ajax({
             type: 'POST',
             url: form.action,
-            data: new FormData(form),
+            data: data,
             contentType: false,
             processData: false,
             success: function (res) {
