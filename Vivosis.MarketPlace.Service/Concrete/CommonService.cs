@@ -253,7 +253,7 @@ namespace Vivosis.MarketPlace.Service.Concrete
 
         public Product GetProductToSendStore(StoreProduct productStore)
         { //Duzenlenecek 
-            var productFromDb = _dbContext.Products.Where(p => p.product_id == productStore.product_id).Include(p => p.ProductCategories).ThenInclude(pc => pc.Category).ThenInclude(c => c.CategoryStores).ThenInclude(cs => cs.CategoryOptions).ThenInclude(co => co.CategoryOptionValues).Include(p => p.ProductOptions).FirstOrDefault();
+            var productFromDb = _dbContext.Products.Where(p => p.product_id == productStore.product_id).Include(p => p.ProductCategories).ThenInclude(pc => pc.Category).ThenInclude(c => c.CategoryStores).ThenInclude(cs => cs.CategoryOptions).ThenInclude(co => co.CategoryOptionValues).Include(p => p.ProductOptions).ThenInclude(po=>po.ProductOptionValues).ThenInclude(pov=>pov.OptionValue).Include(p=>p.ProductOptions).ThenInclude(po=>po.Option).Include(p=>p.ProductImages).FirstOrDefault();
             productFromDb.ProductStores = new List<StoreProduct> { productStore };
             return productFromDb;
         }
