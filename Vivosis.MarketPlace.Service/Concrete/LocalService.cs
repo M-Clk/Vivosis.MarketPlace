@@ -87,11 +87,8 @@ namespace Vivosis.MarketPlace.Service
 
         public bool AddOrUpdateStoreProduct(StoreProduct storeProduct)
         {
-            var fromDb = _dbContext.StoreProducts.FirstOrDefault(sp => sp.product_id == storeProduct.product_id && sp.store_id == storeProduct.store_id);
-            if(fromDb == null)
-            {
+            if(!_dbContext.StoreProducts.Any(sp => sp.product_id == storeProduct.product_id && sp.store_id == storeProduct.store_id))
                 _dbContext.StoreProducts.Add(storeProduct);
-            }
             else
                 _dbContext.StoreProducts.Update(storeProduct);
             return _dbContext.SaveChanges() > 0;
