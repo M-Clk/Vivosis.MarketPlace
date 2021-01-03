@@ -16,10 +16,10 @@
         <div class="form-group row">
             @if(Model.StoreProduct.is_sent)
             {
-                <button type="submit" class="btn btn-primary">Güncelle</button>
-                <button onclick="changeProductStatus(@(Model.StoreProduct.product_id), @(Model.StoreProduct.store_id))" class="btn btn-warning">@changeStatusCommand</button>
-                <button onclick="deleteProductFromStore(@(Model.StoreProduct.product_id), @(Model.StoreProduct.store_id))" class="btn btn-danger">Sil</button>
-                <button type="submit" class="btn btn-success">Ürüne Gözat</button>
+                <button type="submit" class="btn btn-primary ml-2">Güncelle</button>
+                <button onclick="changeProductStatus(@(Model.StoreProduct.product_id), @(Model.StoreProduct.store_id))" class="btn btn-warning ml-2">@changeStatusCommand</button>
+                <button onclick="deleteProductFromStore(@(Model.StoreProduct.product_id), @(Model.StoreProduct.store_id))" class="btn btn-danger ml-2">Sil</button>
+                <button type="submit" class="btn btn-success ml-2">Ürüne Gözat</button>
             }
         </div>
         <div class="row">

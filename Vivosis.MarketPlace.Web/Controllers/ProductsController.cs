@@ -97,7 +97,11 @@ namespace Vivosis.MarketPlace.Web.Controllers
                 }
             }
             var result = _n11Service.SendProduct(product, attributePairs);
-            return Json(new { isSucced = result });
+            if(result != null)
+            {
+                _localService.AddOrUpdateStoreProduct(result);
+            }
+            return Json(new { isSucced = result == null });
         }
         public IActionResult Options(int productId)
         {

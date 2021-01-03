@@ -167,7 +167,7 @@ namespace Vivosis.MarketPlace.Service.Concrete
                             };
                             categoryOption.AttributeValues.Add(newCategoryOptionValue);
                         }
-                        if(!isCategoryOptionExistInLocal)
+                        if(!_accountDbContext.CategoryFromStoreAttributes.Any(c => c.Id == categoryOption.Id))
                             _accountDbContext.CategoryFromStoreAttributes.Add(categoryOption);
                         else
                             _accountDbContext.CategoryFromStoreAttributes.Update(categoryOption);
@@ -186,7 +186,7 @@ namespace Vivosis.MarketPlace.Service.Concrete
             var categoryAttributeValues = _accountDbContext.CategoryFromStoreAttributeValues.Where(cav => cav.AttributeId == categoryOptionId);
             return categoryAttributeValues;
         }
-        public bool SendProduct(Data.Entities.Product productFromDb, Dictionary<string, string> attributePairs)
+        public StoreProduct SendProduct(Data.Entities.Product productFromDb, Dictionary<string, string> attributePairs)
         {
             var storeProduct = productFromDb.ProductStores.First();
             var proxy = new ProductServicePortClient();
@@ -235,11 +235,6 @@ namespace Vivosis.MarketPlace.Service.Concrete
                 attributeList.Add(new ProductAttributeRequest { name = attributePair.Key, value = attributePair.Value });
             var attributeArray = attributeList.ToArray();
             var stockItems = new List<ProductSkuRequest>();
-            //stockItems.Add(new ProductSkuRequest
-            //{
-            //    quantity = ((int)productFromDb.quantity).ToString(),
-            //    optionPrice = newProductRequest.price
-            //});
             foreach(var productOption in productFromDb.ProductOptions)
             {
                 foreach(var optionValue in productOption.ProductOptionValues)
@@ -254,13 +249,25 @@ namespace Vivosis.MarketPlace.Service.Concrete
                     stockItems.Add(newStockAttribute);
                 }
             }
+            if(!stockItems.Any())
+                stockItems.Add(new ProductSkuRequest
+                {
+                    quantity = ((int)productFromDb.quantity).ToString(),
+                    optionPrice = newProductRequest.price
+                });
             newProductRequest.stockItems = stockItems.ToArray();
             newProductRequest.attributes = attributeArray;
             newProductRequest.shipmentTemplate = storeProduct.shipment_template;
             saveProductRequest.product = newProductRequest;
             var response = proxy.SaveProductAsync(saveProductRequest).Result;
-            var product = response.SaveProductResponse.product;
-            return string.IsNullOrEmpty(response.SaveProductResponse.result.errorMessage);
+            if(response.SaveProductResponse.result.errorMessage == null)
+            {
+                storeProduct.is_sent = true;
+                storeProduct.matched_product_code = "";
+                storeProduct.matched_product_code = GetProductIdBySellerCode(newProductRequest.productSellerCode).ToString();
+                return storeProduct;
+            }
+            return null;
         }
         public IEnumerable<ShipmentTemplate> GetShipmentTemplates()
         {
@@ -313,6 +320,44 @@ namespace Vivosis.MarketPlace.Service.Concrete
             if(category != null)
                 category.ParentCategory = LoadParentCategories(_accountDbContext.CategoryFromStores.FirstOrDefault(c => c.Id == category.ParentId));
             return category;
+        }
+        private long GetProductIdBySellerCode(string sellerCode)
+        {
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+            var httpWebRequest = (HttpWebRequest)WebRequest.Create("https://api.n11.com/ws/ProductService.wsdl");
+            httpWebRequest.ContentType = "text/xml";
+            httpWebRequest.Method = "POST";
+
+            XmlDocument soapEnvelopeXml = new XmlDocument();
+            soapEnvelopeXml.LoadXml("<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:sch=\"http://www.n11.com/ws/schemas\">" +
+            "<soapenv:Header/>" +
+            "<soapenv:Body>" +
+            "<sch:GetProductBySellerCodeRequest>" +
+            "<auth>" +
+            "<appKey>" + _authProduct.appKey + "</appKey>" +
+            "<appSecret>" + _authProduct.appSecret + "</appSecret>" +
+            "</auth>" +
+            "<sellerCode>" + sellerCode + "</sellerCode>" +
+            "</sch:GetProductBySellerCodeRequest>" +
+            "</soapenv:Body>" +
+            "</soapenv:Envelope>");
+
+            using(var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
+            {
+                soapEnvelopeXml.Save(streamWriter);
+            }
+            var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+            using(var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+            {
+                XmlDocument responseXml = new XmlDocument();
+                responseXml.LoadXml(streamReader.ReadToEnd());
+                var product = responseXml.GetElementsByTagName("product");
+                if(product != null && product.Count > 0)
+                {
+                    return long.Parse(product[0]["id"].InnerText);
+                }
+                return 0;
+            }
         }
     }
 }

@@ -56,13 +56,13 @@ namespace Vivosis.MarketPlace.Service
         }
         public StoreProduct GetStoreProduct(int storeId, int productId)
         {
-            var storeProduct = _dbContext.StoreProducts.FirstOrDefault(sc => sc.store_id == storeId && sc.product_id == productId);
-            if(storeProduct==null)
+            var storeProduct = _dbContext.StoreProducts.Include(sp=>sp.Product).ThenInclude(p => p.ProductCategories).FirstOrDefault(sc => sc.store_id == storeId && sc.product_id == productId);
+            if(storeProduct == null)
             {
                 storeProduct = new StoreProduct();
                 storeProduct.product_id = productId;
                 storeProduct.store_id = storeId;
-                storeProduct.Product = _dbContext.Products.Include(p=>p.ProductCategories).FirstOrDefault(p => p.product_id == productId);
+                storeProduct.Product = _dbContext.Products.Include(p => p.ProductCategories).FirstOrDefault(p => p.product_id == productId);
             }
             return storeProduct;
         }
@@ -85,6 +85,17 @@ namespace Vivosis.MarketPlace.Service
             return productOptions;
         }
 
+        public bool AddOrUpdateStoreProduct(StoreProduct storeProduct)
+        {
+            var fromDb = _dbContext.StoreProducts.FirstOrDefault(sp => sp.product_id == storeProduct.product_id && sp.store_id == storeProduct.store_id);
+            if(fromDb == null)
+            {
+                _dbContext.StoreProducts.Add(storeProduct);
+            }
+            else
+                _dbContext.StoreProducts.Update(storeProduct);
+            return _dbContext.SaveChanges() > 0;
+        }
         public bool AddOrUpdateStoreCategory(StoreCategory storeCategory)
         {
             if(string.IsNullOrEmpty(storeCategory?.matched_category_code) || string.IsNullOrEmpty(storeCategory?.matched_category_name))
@@ -96,7 +107,7 @@ namespace Vivosis.MarketPlace.Service
                 _dbContext.CategoryOptions.RemoveRange(toBeDeletedCategoryOptions);
                 _dbContext.CategoryOptions.AddRange(storeCategory.CategoryOptions);
                 storeCategory.CategoryOptions = null;
-                 _dbContext.StoreCategories.Update(storeCategory);
+                _dbContext.StoreCategories.Update(storeCategory);
             }
             else
                 _dbContext.StoreCategories.Add(storeCategory);
@@ -118,7 +129,7 @@ namespace Vivosis.MarketPlace.Service
 
         public IEnumerable<CategoryFromStoreAttribute> GetCategoryOptions(int categoryId, int storeId)
         {
-            var category = _dbContext.StoreCategories.First(cs=>cs.category_id == categoryId && cs.store_id == storeId);
+            var category = _dbContext.StoreCategories.First(cs => cs.category_id == categoryId && cs.store_id == storeId);
             var categoryToAttributes = _accountDbContext.CategoryToAttributeFromStores.Where(ca => ca.CategoryId.ToString() == category.matched_category_code).Include(ca => ca.Attribute).ThenInclude(a => a.AttributeValues);
             return categoryToAttributes.Select(ca => ca.Attribute);
         }
