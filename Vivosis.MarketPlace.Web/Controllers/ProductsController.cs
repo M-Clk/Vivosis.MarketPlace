@@ -60,7 +60,8 @@ namespace Vivosis.MarketPlace.Web.Controllers
             var model = new EditStoreProductModel
             {
                 StoreProduct = storeProduct,
-                ShipmentTemplates = templates
+                ShipmentTemplates = templates,
+                AttributesQuery = storeProduct.attribute_query
             };
             if(storeProduct.Product?.ProductCategories?.Any() ?? false)
             {
@@ -99,6 +100,7 @@ namespace Vivosis.MarketPlace.Web.Controllers
             var result = _n11Service.SendProduct(product, attributePairs);
             if(result != null)
             {
+                result.attribute_query = storeProductModel.AttributesQuery;
                 _localService.AddOrUpdateStoreProduct(result);
             }
             return Json(new { isSucced = result == null });

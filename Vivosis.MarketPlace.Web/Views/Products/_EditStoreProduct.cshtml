@@ -11,7 +11,7 @@
     <input id="product-id" type="hidden" asp-for="StoreProduct.product_id" />
     <input id="currency" type="hidden" asp-for="StoreProduct.currency" />
     <input id="origin" type="hidden" asp-for="StoreProduct.origin" />
-    <input id="attributes-query" type="hidden" asp-for="AttributesQuery"/>
+    <input id="attributes-query" type="hidden" asp-for="AttributesQuery" />
     <div class="form-group">
         <div class="form-group row">
             @if(Model.StoreProduct.is_sent)
@@ -70,9 +70,19 @@
             </div>
         </div>
     </div>
-    @if(Model.CategoryAttributes?.Any()??false)
+    @if(Model.CategoryAttributes?.Any() ?? false)
     {
         @await Html.PartialAsync("_ListCategoryAttributes", Model.CategoryAttributes);
+    }
+    @if(!string.IsNullOrEmpty(Model.AttributesQuery))
+    {
+        foreach(var pair in Model.AttributesQuery.Split('&'))
+        {
+            var splitedPair = pair.Split('=');
+            <script>
+                jQuery('select[attribute-name="@Html.Raw(splitedPair.First())"]').selectpicker('val', '@Html.Raw(splitedPair.Last())');
+            </script>
+        }
     }
     @if(!Model.StoreProduct.is_sent)
     {
