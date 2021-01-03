@@ -13,6 +13,7 @@ using System.Xml;
 using System.IO;
 using System.Xml.Serialization;
 using N11ProductService;
+using System.Web;
 
 namespace Vivosis.MarketPlace.Service.Concrete
 {
@@ -227,8 +228,8 @@ namespace Vivosis.MarketPlace.Service.Concrete
             }).ToList();
             images.Add(new N11ProductService.ProductImage { url = productFromDb.image_url, order = "1" });
             newProductRequest.images = images.ToArray();
-
-            var categoryOptions = productFromDb.ProductCategories.FirstOrDefault().Category.CategoryStores.FirstOrDefault(cs => cs.store_id == storeProduct.store_id).CategoryOptions;
+            var categoryStore = productFromDb.ProductCategories.FirstOrDefault().Category.CategoryStores.FirstOrDefault(cs => cs.store_id == storeProduct.store_id);
+            var categoryOptions = categoryStore.CategoryOptions;
             var attributeList = new List<ProductAttributeRequest>();
 
             foreach(var attributePair in attributePairs)
@@ -265,6 +266,9 @@ namespace Vivosis.MarketPlace.Service.Concrete
                 storeProduct.is_sent = true;
                 storeProduct.matched_product_code = "";
                 storeProduct.matched_product_code = GetProductIdBySellerCode(newProductRequest.productSellerCode).ToString();
+                var productName = $"{productFromDb.name} P{storeProduct.matched_product_code}";
+                storeProduct.url = $"https://urun.n11.com/{HttpUtility.UrlEncode(categoryStore.matched_category_name.Split(" > ").Last()).Replace("+","-").ToLowerInvariant()}/{HttpUtility.UrlEncode(productName).Replace("+","-").ToLowerInvariant()}";
+                
                 return storeProduct;
             }
             return null;
