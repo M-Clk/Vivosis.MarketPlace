@@ -210,7 +210,7 @@ namespace Vivosis.MarketPlace.Service.Concrete
             {
                 var discount = new ProductDiscountRequest();
                 discount.type = "3";
-                discount.value = salePrice.ToString();
+                discount.value = salePrice.ToString(System.Globalization.CultureInfo.InvariantCulture);
                 newProductRequest.discount = discount;
                 newProductRequest.price = storeProduct.strikethrough_price;
             }
