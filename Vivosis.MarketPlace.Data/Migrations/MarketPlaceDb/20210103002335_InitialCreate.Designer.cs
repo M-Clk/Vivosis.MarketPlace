@@ -9,7 +9,7 @@ using Vivosis.MarketPlace.Data;
 namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
 {
     [DbContext(typeof(MarketPlaceDbContext))]
-    [Migration("20210101203026_InitialCreate")]
+    [Migration("20210103002335_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -365,6 +365,9 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
 
                     b.Property<int>("product_id")
                         .HasColumnType("int");
+
+                    b.Property<string>("attribute_query")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<int>("commission")
                         .HasColumnType("int");

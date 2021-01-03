@@ -364,6 +364,9 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                     b.Property<int>("product_id")
                         .HasColumnType("int");
 
+                    b.Property<string>("attribute_query")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
                     b.Property<int>("commission")
                         .HasColumnType("int");
 

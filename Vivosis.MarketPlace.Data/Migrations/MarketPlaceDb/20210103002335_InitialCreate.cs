@@ -230,6 +230,7 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                     url = table.Column<string>(nullable: true),
                     matched_product_code = table.Column<string>(nullable: true),
                     shipment_template = table.Column<string>(nullable: true),
+                    attribute_query = table.Column<string>(nullable: true),
                     is_active = table.Column<bool>(nullable: false),
                     is_sent = table.Column<bool>(nullable: false)
                 },
