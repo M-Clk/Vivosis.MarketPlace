@@ -5,6 +5,8 @@
         originChecked = "";
     var changeStatusCommand = Model.StoreProduct.is_active ? "Satışa Kapat" : "Satışa Aç";
     var storeNameWithAdditional = Model.StoreProduct.Store == null ? "" : Model.StoreProduct.Store.name.EndsWith('1') ? Model.StoreProduct.Store.name + "'e " : Model.StoreProduct.Store.name.EndsWith('a') ? Model.StoreProduct.Store.name + "'ya " : Model.StoreProduct.Store.name.EndsWith('i') ? Model.StoreProduct.Store.name + "'ne " : Model.StoreProduct.Store.name.EndsWith('r') || Model.StoreProduct.Store.name.EndsWith('l') ? Model.StoreProduct.Store.name + "'a " : Model.StoreProduct.Store.name + " Mağazasına ";
+    Model.StoreProduct.description ??= Model.StoreProduct.Product.description;
+    Model.StoreProduct.sale_price = Model.StoreProduct.sale_price > 0 ? Model.StoreProduct.sale_price : Model.StoreProduct.Product.price;
 }
 <form asp-action="SendProductToStore" onsubmit="return submitStoreProduct(this)" autocomplete="off">
     <input id="store-id" type="hidden" asp-for="StoreProduct.store_id" />
@@ -27,23 +29,27 @@
                 <label class="col-form-label">Menşei</label>
                 <input class="form-control" id="checkbox-origin" name="all-checkbox-substract" type="checkbox" @originChecked data-toggle="toggle" data-onstyle="outline-primary" asp-for="origin" data-offstyle="outline-info" data-on="Yerli" data-off="Yabancı" data-size="sm">
             </div>
-            <div class="col-sm-3">
+            <div class="col-sm-2">
+                <label class="col-form-label">Para Birimi</label>
+                <select id="currency-option" class="form-control selectpicker" data-style="btn-primary">
+                    <option value="TL">TL (₺)</option>
+                    <option value="USD">USD ($)</option>
+                    <option value="EUR">EUR (€)</option>
+                </select>
+            </div>
+            <div class="col-sm-2">
                 <label class="col-form-label">Satış Fiyatı</label>
                 <input id="sale-price" type="text" asp-for="StoreProduct.sale_price" class="form-control" style="border-radius: 5px;">
             </div>
-            <div class="col-sm-3">
+            <div class="col-sm-2">
                 <label class="col-form-label">Üstü Çizili Fiyat</label>
                 <input id="strikethrough-price" type="text" asp-for="StoreProduct.strikethrough_price" class="form-control" style="border-radius: 5px;">
             </div>
-            <div class="col-sm-4">
-                <label class="col-form-label">Teslimat Şablonu</label>
-                <select asp-for="StoreProduct.shipment_template" id="shipment-template" class="form-control selectpicker" data-style="btn-primary">
-                    @foreach(var template in Model.ShipmentTemplates)
-                    {
-                        <option value="@(template.Name)">@(template.Name)</option>
-                    }
-                </select>
+            <div class="col-sm-2">
+                <label class="col-form-label">Katalog Numarası</label>
+                <input id="sale-price" type="text" asp-for="StoreProduct.catalog_id" class="form-control" style="border-radius: 5px;">
             </div>
+
         </div>
         <div class="row">
             <div class="col-sm-12">
@@ -52,20 +58,21 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-sm-4">
+            <div class="col-sm-2">
                 <label class="col-form-label">Kargo Bedeli</label>
                 <input id="shipping-fee" type="text" asp-for="StoreProduct.shipping_fee" class="form-control" style="border-radius: 5px;" placeholder="Boş bırakabilirsiniz.">
             </div>
-            <div class="col-sm-4">
+            <div class="col-sm-2">
                 <label class="col-form-label">Komisyon</label>
                 <input id="comission" type="text" asp-for="StoreProduct.commission" class="form-control" style="border-radius: 5px;" placeholder="Boş bırakabilirsiniz.">
             </div>
-            <div class="col-sm-4">
-                <label class="col-form-label">Para Birimi</label>
-                <select id="currency-option" class="form-control selectpicker" data-style="btn-primary">
-                    <option value="TL">TL (₺)</option>
-                    <option value="USD">USD ($)</option>
-                    <option value="EUR">EUR (€)</option>
+            <div class="col-sm-3">
+                <label class="col-form-label">Teslimat Şablonu</label>
+                <select asp-for="StoreProduct.shipment_template" id="shipment-template" class="form-control selectpicker" data-style="btn-primary">
+                    @foreach(var template in Model.ShipmentTemplates)
+                    {
+                        <option value="@(template.Name)">@(template.Name)</option>
+                    }
                 </select>
             </div>
         </div>

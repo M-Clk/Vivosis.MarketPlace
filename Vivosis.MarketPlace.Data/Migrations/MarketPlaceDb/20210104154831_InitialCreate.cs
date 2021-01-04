@@ -226,6 +226,7 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                     shipping_fee = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     sale_price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     strikethrough_price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    catalog_id = table.Column<long>(nullable: false),
                     origin = table.Column<string>(nullable: true),
                     description = table.Column<string>(nullable: true),
                     url = table.Column<string>(nullable: true),

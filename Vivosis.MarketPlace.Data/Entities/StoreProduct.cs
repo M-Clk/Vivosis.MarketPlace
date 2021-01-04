@@ -10,9 +10,9 @@ namespace Vivosis.MarketPlace.Data.Entities
 
         public virtual Product Product { get; set; }
         public int product_id { get; set; }
-
         public decimal sale_price { get; set; }
         public decimal strikethrough_price{ get; set; }
+        public long catalog_id{ get; set; }
         public string origin { get; set; }
         public string description { get; set; }
         public string url { get; set; }

@@ -370,6 +370,9 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                     b.Property<string>("attribute_query")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
+                    b.Property<long>("catalog_id")
+                        .HasColumnType("bigint");
+
                     b.Property<int>("commission")
                         .HasColumnType("int");
 

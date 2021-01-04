@@ -220,7 +220,7 @@ namespace Vivosis.MarketPlace.Service.Concrete
             newProductRequest.productCondition = "1";//TODO 1 = yeni, 2 = ikinci el anlaminda.
             newProductRequest.preparingDay = "3";
             newProductRequest.shipmentTemplate = "";//TODO sablon da temin edilecek sekilde guncellencek.
-
+            
             var images = productFromDb.ProductImages.Select(pi => new N11ProductService.ProductImage
             {
                 url = pi.url,
@@ -245,7 +245,8 @@ namespace Vivosis.MarketPlace.Service.Concrete
                         quantity = optionValue.quantity.ToString(),
                         optionPrice = newProductRequest.price + optionValue.price,
                         sellerStockCode = "MarketPlace" + productFromDb.product_id + productOption.product_option_id + optionValue.product_option_value_id,
-                        attributes = new ProductAttributeRequest[] { new ProductAttributeRequest { name = productOption.Option.name, value = optionValue.OptionValue.name } }
+                        attributes = new ProductAttributeRequest[] { new ProductAttributeRequest { name = productOption.Option.name, value = optionValue.OptionValue.name } },
+                        n11CatalogId = storeProduct.catalog_id
                     };
                     stockItems.Add(newStockAttribute);
                 }
@@ -264,10 +265,9 @@ namespace Vivosis.MarketPlace.Service.Concrete
             if(response.SaveProductResponse.result.errorMessage == null)
             {
                 storeProduct.is_sent = true;
-                storeProduct.matched_product_code = "";
                 storeProduct.matched_product_code = GetProductIdBySellerCode(newProductRequest.productSellerCode).ToString();
-                var productName = $"{productFromDb.name} P{storeProduct.matched_product_code}";
-                storeProduct.url = $"https://urun.n11.com/{HttpUtility.UrlEncode(categoryStore.matched_category_name.Split(" > ").Last()).Replace("+","-").ToLowerInvariant()}/{HttpUtility.UrlEncode(productName).Replace("+","-").ToLowerInvariant()}";
+                var productCode = $"xxx-P{storeProduct.matched_product_code}";
+                storeProduct.url = $"https://urun.n11.com/{productCode}";
                 
                 return storeProduct;
             }
