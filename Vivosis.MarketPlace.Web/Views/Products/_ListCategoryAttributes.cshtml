@@ -10,11 +10,11 @@
         {
             if(i % 4 == 0)
             {
-                @Html.Raw("<div class=\"row justify-content-center\">")
+                @Html.Raw("<div class=\"row justify-content-center m-1\">")
             }
             var selectStyle = Model[i].IsRequired ? "danger" : "success";
             var required = Model[i].IsRequired ? "required" : "";
-            <div class="col col-lg-3">
+            <div class="col">
                 <label class="text-@selectStyle">@Model[i].Name</label>
                 <select name="product-attribute" id="store-attribute-value-options-@(Model[i].Id)" attribute-name="@Model[i].Name" class="form-control selectpicker" data-style="btn-outline-@selectStyle" title="Değeri Seçin" @required>
                     @foreach(var value in Model[i].AttributeValues)

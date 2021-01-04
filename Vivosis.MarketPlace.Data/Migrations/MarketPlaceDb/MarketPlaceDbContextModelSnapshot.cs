@@ -155,6 +155,9 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                     b.Property<DateTime>("date_modified")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<string>("description")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
                     b.Property<string>("image_url")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 

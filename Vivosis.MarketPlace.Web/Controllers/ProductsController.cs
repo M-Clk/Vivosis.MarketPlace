@@ -66,7 +66,7 @@ namespace Vivosis.MarketPlace.Web.Controllers
             if(storeProduct.Product?.ProductCategories?.Any() ?? false)
             {
                 var categoryId = storeProduct.Product.ProductCategories.First().category_id;
-                model.CategoryAttributes = _localService.GetCategoryOptions(categoryId, storeId).ToList();
+                model.CategoryAttributes = _localService.GetCategoryOptions(categoryId, storeId).OrderByDescending(co=>co.IsRequired).ToList();
             }
             return PartialView("_EditStoreProduct", model);
         }

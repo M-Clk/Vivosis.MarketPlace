@@ -9,7 +9,7 @@ using Vivosis.MarketPlace.Data;
 namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
 {
     [DbContext(typeof(MarketPlaceDbContext))]
-    [Migration("20210103002335_InitialCreate")]
+    [Migration("20210104135525_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -156,6 +156,9 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
 
                     b.Property<DateTime>("date_modified")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<string>("description")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<string>("image_url")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");

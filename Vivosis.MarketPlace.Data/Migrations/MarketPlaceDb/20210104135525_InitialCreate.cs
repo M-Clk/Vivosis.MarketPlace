@@ -50,6 +50,7 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                     date_added = table.Column<DateTime>(nullable: false),
                     date_modified = table.Column<DateTime>(nullable: false),
                     name = table.Column<string>(nullable: true),
+                    description = table.Column<string>(nullable: true),
                     image_url = table.Column<string>(nullable: true),
                     price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     quantity = table.Column<decimal>(type: "decimal(18,2)", nullable: false)

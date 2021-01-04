@@ -195,6 +195,7 @@ namespace Vivosis.MarketPlace.Service.Concrete
                 {
                     product.quantity = (int)dataReader["p_quantity"];
                     product.name = (string)dataReader["p_name"];
+                    product.description = (string)dataReader["p_description"];
                     product.price = (decimal)dataReader["p_price"];
                     product.image_url = (string)dataReader["p_image"];
                     product.date_modified = DateTime.Now;
@@ -205,6 +206,7 @@ namespace Vivosis.MarketPlace.Service.Concrete
                     product.product_id = productId;
                     product.quantity = (int)dataReader["p_quantity"];
                     product.name = (string)dataReader["p_name"];
+                    product.description = (string)dataReader["p_description"];
                     product.price = (decimal)dataReader["p_price"];
                     product.image_url = (string)dataReader["p_image"];
                     product.date_added = DateTime.Now;

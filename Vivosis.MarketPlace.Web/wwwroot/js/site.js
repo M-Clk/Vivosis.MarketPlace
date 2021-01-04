@@ -233,6 +233,11 @@ function loadSelectOptionEvents(id) {
 }
 function submitStoreProduct(form) {
     try {
+        if (jQuery('#description').val().length > 150)
+        {
+            alert("Aciklama max 150 karakter uzunlugunda olmalidir.");
+            return false;
+        }
         var attributes = jQuery("select[name='product-attribute']", form);
         var query = '';
         attributes.each((index, select) => {

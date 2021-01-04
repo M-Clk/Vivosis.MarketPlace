@@ -11,7 +11,6 @@ namespace Vivosis.MarketPlace.Data.Entities
         [Key]
         public int product_id { get; set; }
         public string name { get; set; }
-        [NotMapped]
         public string description { get; set; }
         public string image_url { get; set; }
         [NotMapped]
