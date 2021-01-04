@@ -187,7 +187,7 @@ namespace Vivosis.MarketPlace.Service.Concrete
             var categoryAttributeValues = _accountDbContext.CategoryFromStoreAttributeValues.Where(cav => cav.AttributeId == categoryOptionId);
             return categoryAttributeValues;
         }
-        public StoreProduct SendProduct(Data.Entities.Product productFromDb, Dictionary<string, string> attributePairs)
+        public StoreProduct SendProduct(Data.Entities.Product productFromDb, Dictionary<string, string> attributePairs, ref string errorMessage)
         {
             var storeProduct = productFromDb.ProductStores.First();
             var proxy = new ProductServicePortClient();
@@ -246,7 +246,8 @@ namespace Vivosis.MarketPlace.Service.Concrete
                         optionPrice = newProductRequest.price + optionValue.price,
                         sellerStockCode = "MarketPlace" + productFromDb.product_id + productOption.product_option_id + optionValue.product_option_value_id,
                         attributes = new ProductAttributeRequest[] { new ProductAttributeRequest { name = productOption.Option.name, value = optionValue.OptionValue.name } },
-                        n11CatalogId = storeProduct.catalog_id
+                        n11CatalogId = storeProduct.catalog_id,
+                        gtin = newProductRequest.productSellerCode + productOption.product_option_id + optionValue.product_option_value_id
                     };
                     stockItems.Add(newStockAttribute);
                 }
@@ -271,6 +272,7 @@ namespace Vivosis.MarketPlace.Service.Concrete
                 
                 return storeProduct;
             }
+            errorMessage = response.SaveProductResponse.result.errorMessage;
             return null;
         }
         public IEnumerable<ShipmentTemplate> GetShipmentTemplates()

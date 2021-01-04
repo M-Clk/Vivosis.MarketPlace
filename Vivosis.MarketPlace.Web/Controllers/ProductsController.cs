@@ -97,13 +97,14 @@ namespace Vivosis.MarketPlace.Web.Controllers
                     attributePairs.Add(splitedPair.First(), splitedPair.Last());
                 }
             }
-            var result = _n11Service.SendProduct(product, attributePairs);
+            var errorMessage = "";
+            var result = _n11Service.SendProduct(product, attributePairs, ref errorMessage);
             if(result != null)
             {
                 result.attribute_query = storeProductModel.AttributesQuery;
                 _localService.AddOrUpdateStoreProduct(result);
             }
-            return Json(new { isSucced = result == null });
+            return Json(new { isSucced = result != null, errorMessage = errorMessage });
         }
         public IActionResult Options(int productId)
         {

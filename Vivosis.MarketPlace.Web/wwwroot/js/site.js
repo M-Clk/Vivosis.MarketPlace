@@ -259,6 +259,7 @@ function submitStoreProduct(form) {
                     jQuery('#form-modal .modal-title').html('');
                     jQuery('#form-modal').modal('hide');
                 }
+                else alert(res.errorMessage);
             },
             error: function (err) {
                 console.log(err)
