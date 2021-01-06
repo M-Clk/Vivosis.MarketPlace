@@ -100,7 +100,17 @@ namespace Vivosis.MarketPlace.Service.Concrete
             var user = _accountDbContext.Users.Find(userId);
             if(user.UserName == _httpContextAccessor.HttpContext.User.Identity.Name)
                 return null;
-            return _userManager.DeleteAsync(user).Result;
+            var isCustomer = _userManager.IsInRoleAsync(user, "Customer").Result;
+            var result = _userManager.DeleteAsync(user).Result;
+            if(result.Succeeded && isCustomer)
+            {
+                var options = new DbContextOptionsBuilder<MarketPlaceDbContext>();
+                var connectionString = string.Format(_configuration.GetConnectionString("DynamicLocalDatabase"), $"db_{user.UserName.ToLower()}");
+                options.UseMySql(connectionString);
+                var dbContext = new MarketPlaceDbContext(options.Options);
+                dbContext.Database.EnsureDeleted();
+            }
+            return result;
         }
         private bool CheckDbConnection(string server, string dbName, string dbUserName, string dbPassword)
         {
