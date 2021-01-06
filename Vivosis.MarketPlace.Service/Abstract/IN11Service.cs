@@ -12,5 +12,6 @@ namespace Vivosis.MarketPlace.Service.Abstract
         IEnumerable<CategoryFromStoreAttributeValue> GetCategoryOptionValues(long categoryOptionId);
         StoreProduct SendProduct(Product productFromDb, Dictionary<string, string> attributePairs, ref string errorMessage);
         IEnumerable<ShipmentTemplate> GetShipmentTemplates();
+        bool DeleteProduct(long productCode);
     }
 }

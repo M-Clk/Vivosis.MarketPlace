@@ -220,7 +220,7 @@ namespace Vivosis.MarketPlace.Service.Concrete
             newProductRequest.productCondition = "1";//TODO 1 = yeni, 2 = ikinci el anlaminda.
             newProductRequest.preparingDay = "3";
             newProductRequest.shipmentTemplate = "";//TODO sablon da temin edilecek sekilde guncellencek.
-            
+
             var images = productFromDb.ProductImages.Select(pi => new N11ProductService.ProductImage
             {
                 url = pi.url,
@@ -269,7 +269,7 @@ namespace Vivosis.MarketPlace.Service.Concrete
                 storeProduct.matched_product_code = GetProductIdBySellerCode(newProductRequest.productSellerCode).ToString();
                 var productCode = $"xxx-P{storeProduct.matched_product_code}";
                 storeProduct.url = $"https://urun.n11.com/{productCode}";
-                
+
                 return storeProduct;
             }
             errorMessage = response.SaveProductResponse.result.errorMessage;
@@ -320,6 +320,16 @@ namespace Vivosis.MarketPlace.Service.Concrete
                 }
                 return null;
             }
+        }
+        public bool DeleteProduct(long productCode)
+        {
+            var proxy = new ProductServicePortClient();
+            var request = new DeleteProductByIdRequest();
+            request.auth = _authProduct;
+            request.productId = productCode;
+
+            var response = proxy.DeleteProductByIdAsync(request).Result;
+            return response.DeleteProductByIdResponse.result.errorMessage != null;
         }
         private CategoryFromStore LoadParentCategories(CategoryFromStore category)
         {
