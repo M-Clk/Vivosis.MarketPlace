@@ -9,7 +9,7 @@ using Vivosis.MarketPlace.Data;
 namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
 {
     [DbContext(typeof(MarketPlaceDbContext))]
-    [Migration("20210104154831_InitialCreate")]
+    [Migration("20210106212718_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -363,10 +363,8 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
 
             modelBuilder.Entity("Vivosis.MarketPlace.Data.Entities.StoreProduct", b =>
                 {
-                    b.Property<int>("store_id")
-                        .HasColumnType("int");
-
-                    b.Property<int>("product_id")
+                    b.Property<int>("store_product_id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     b.Property<string>("attribute_query")
@@ -396,6 +394,9 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                     b.Property<string>("origin")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
+                    b.Property<int>("product_id")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("sale_price")
                         .HasColumnType("decimal(18,2)");
 
@@ -405,15 +406,21 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                     b.Property<decimal>("shipping_fee")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<int>("store_id")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("strikethrough_price")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("url")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.HasKey("store_id", "product_id");
+                    b.HasKey("store_product_id");
 
                     b.HasIndex("product_id");
+
+                    b.HasIndex("store_id", "product_id")
+                        .IsUnique();
 
                     b.ToTable("storeproduct");
                 });

@@ -219,11 +219,13 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                 name: "storeproduct",
                 columns: table => new
                 {
-                    store_id = table.Column<int>(nullable: false),
-                    product_id = table.Column<int>(nullable: false),
+                    store_product_id = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     commission = table.Column<int>(nullable: false),
                     currency = table.Column<string>(nullable: true),
                     shipping_fee = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    store_id = table.Column<int>(nullable: false),
+                    product_id = table.Column<int>(nullable: false),
                     sale_price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     strikethrough_price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     catalog_id = table.Column<long>(nullable: false),
@@ -238,7 +240,7 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_storeproduct", x => new { x.store_id, x.product_id });
+                    table.PrimaryKey("PK_storeproduct", x => x.store_product_id);
                     table.ForeignKey(
                         name: "FK_storeproduct_Products_product_id",
                         column: x => x.product_id,
@@ -414,6 +416,12 @@ namespace Vivosis.MarketPlace.Data.Migrations.MarketPlaceDb
                 name: "IX_storeproduct_product_id",
                 table: "storeproduct",
                 column: "product_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_storeproduct_store_id_product_id",
+                table: "storeproduct",
+                columns: new[] { "store_id", "product_id" },
+                unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

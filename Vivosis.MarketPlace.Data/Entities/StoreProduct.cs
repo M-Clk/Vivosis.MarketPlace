@@ -1,15 +1,19 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Vivosis.MarketPlace.Data.Entities
 {
     [Table("storeproduct")]
     public class StoreProduct :StoreRelationBase
     {
+        [Key]
+        public int store_product_id { get; set; }
         public virtual Store Store { get; set; }
         public int store_id { get; set; }
 
         public virtual Product Product { get; set; }
         public int product_id { get; set; }
+
         public decimal sale_price { get; set; }
         public decimal strikethrough_price{ get; set; }
         public long catalog_id{ get; set; }

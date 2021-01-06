@@ -120,7 +120,7 @@ namespace Vivosis.MarketPlace.Data
                 .HasIndex(x => new { x.store_id, x.category_id }).IsUnique();
 
             builder.Entity<StoreProduct>()
-                .HasKey(x => new { x.store_id, x.product_id });
+                .HasIndex(x => new { x.store_id, x.product_id }).IsUnique();
 
             builder.Entity<StoreUser>()
                 .HasKey(x => new { x.store_id, x.user_id });
