@@ -36,43 +36,43 @@
             }
 
             <div class="input-group mb-3">
-                <label asp-for="UserName" class="sr-only">Username</label>
+                <label asp-for="UserName" class="col-2 col-form-label">Kullanıcı Adı</label>
                 <input type="text" asp-for="UserName" class="form-control" style="border-radius: 5px;" placeholder="Kullanıcı adı girin." required autofocus>
             </div>
             <div class="input-group mb-3">
-                <label asp-for="FullName" class="sr-only">Ad Soyad</label>
+                <label asp-for="FullName" class="col-2 col-form-label">Ad Soyad</label>
                 <input type="text" asp-for="FullName" class="form-control" style="border-radius: 5px;" placeholder="Ad ve soyadınızı girin." required autofocus>
             </div>
             <div class="input-group mb-3">
-                <label asp-for="PasswordHash" class="sr-only">Password</label>
+                <label asp-for="PasswordHash" class="col-2 col-form-label">Password</label>
                 <input asp-for="PasswordHash" type="text" id="password" class="form-control" style="border-radius: 5px 0px 0px 5px;" placeholder="Şifre girin." required>
                 <div class="input-group-append">
                     <button id="btnRandomPassword" onclick="generateRandomPass('password')" class="btn btn-outline-primary" style="border-radius: 0px 5px 5px 0px;" type="button">Şifre Üret</button>
                 </div>
             </div>
             <div class="input-group mb-3">
-                <label asp-for="Email" class="sr-only">Email</label>
+                <label asp-for="Email" class="col-2 col-form-label">Email</label>
                 <input type="email" asp-for="Email" class="form-control" style="border-radius: 5px;" placeholder="Email adresi girin.">
             </div>
             <div class="input-group mb-3">
-                <label asp-for="PhoneNumber" class="sr-only">Telefon Numarası</label>
+                <label asp-for="PhoneNumber" class="col-2 col-form-label">Telefon Numarası</label>
                 <input id="phone" type="tel" asp-for="PhoneNumber" class="form-control rd" style="border-radius: 5px;" placeholder="Telefon numarası girin.">
             </div>
 
             <div class="input-group mb-3">
-                <label asp-for="Server" class="sr-only">Veritabanı Sunucusu</label>
+                <label asp-for="Server" class="col-2 col-form-label">Veritabanı Sunucusu</label>
                 <input type="text" asp-for="Server" class="form-control" style="border-radius: 5px;" placeholder="Veritabanı sunucusunun adını veya ip adresini girin." required>
             </div>
             <div class="input-group mb-3">
-                <label asp-for="DbName" class="sr-only">Veritabanı Adı</label>
+                <label asp-for="DbName" class="col-2 col-form-label">Veritabanı Adı</label>
                 <input type="text" asp-for="DbName" class="form-control" style="border-radius: 5px;" placeholder="Veritabanı adını girin." required>
             </div>
             <div class="input-group mb-3">
-                <label asp-for="DbUserName" class="sr-only">Veritabanı Kullanıcı Adı</label>
+                <label asp-for="DbUserName" class="col-2 col-form-label">Veritabanı Kullanıcı Adı</label>
                 <input type="text" asp-for="DbUserName" class="form-control" style="border-radius: 5px;" placeholder="Veritabanına erişim yetkisine sahip kullanıcı adını girin." required>
             </div>
             <div class="input-group mb-3">
-                <label asp-for="DbPassword" class="sr-only">Veritabanı Kullanıcı Şifresi</label>
+                <label asp-for="DbPassword" class="col-2 col-form-label">Veritabanı Kullanıcı Şifresi</label>
                 <input type="text" asp-for="DbPassword" class="form-control" style="border-radius: 5px;" placeholder="Veritabanı kullanıcısının şifresini girin.">
             </div>
         </form>
