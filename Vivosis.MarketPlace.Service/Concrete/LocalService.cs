@@ -56,13 +56,13 @@ namespace Vivosis.MarketPlace.Service
         }
         public StoreProduct GetStoreProduct(int storeId, int productId)
         {
-            var storeProduct = _dbContext.StoreProducts.Include(sp=>sp.Product).ThenInclude(p => p.ProductCategories).FirstOrDefault(sc => sc.store_id == storeId && sc.product_id == productId);
+            var storeProduct = _dbContext.StoreProducts.Include(sp=>sp.Product).ThenInclude(p => p.ProductCategories).ThenInclude(pc=>pc.Category).FirstOrDefault(sc => sc.store_id == storeId && sc.product_id == productId);
             if(storeProduct == null)
             {
                 storeProduct = new StoreProduct();
                 storeProduct.product_id = productId;
                 storeProduct.store_id = storeId;
-                storeProduct.Product = _dbContext.Products.Include(p => p.ProductCategories).FirstOrDefault(p => p.product_id == productId);
+                storeProduct.Product = _dbContext.Products.Include(p => p.ProductCategories).ThenInclude(pc => pc.Category).FirstOrDefault(p => p.product_id == productId);
             }
             return storeProduct;
         }
