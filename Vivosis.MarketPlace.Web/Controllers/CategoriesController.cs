@@ -64,24 +64,24 @@ namespace Vivosis.MarketPlace.Web.Controllers
                 model.SelectedStoreName = storeName;
                 var categoryOptionFromStore = _n11Service.GetCategoryOptions(long.Parse(storeCategory.matched_category_code));
                 var categoryOptionsFromLocal = _localService.GetStoreCategory(storeCategory.store_category_id)?.CategoryOptions;
-                if(categoryOptionFromStore != null && categoryOptionFromStore.Any())
-                {
-                    var matchedCategoryOptions = new List<MatchedCategoryOptionModel>();
-                    foreach(var fromStore in categoryOptionFromStore.OrderByDescending(c => c.IsRequired))
-                    {
-                        var fromLocal = categoryOptionsFromLocal?.FirstOrDefault(co => co.category_option_id == fromStore.Id);
-                        matchedCategoryOptions.Add(
-                            new MatchedCategoryOptionModel
-                            {
-                                FromStore = fromStore,
-                                FromLocal = fromLocal,
-                                IsSetted = fromLocal != null
-                            });
-                    }
-                    model.CategoryOptions = matchedCategoryOptions;
-                    model.Options = _localService.GetAllOptions();
-                    storeCategoryModel.OptionsModel = model;
-                }
+                //if(categoryOptionFromStore != null && categoryOptionFromStore.Any())
+                //{
+                //    var matchedCategoryOptions = new List<MatchedCategoryOptionModel>();
+                //    foreach(var fromStore in categoryOptionFromStore.OrderByDescending(c => c.IsRequired))
+                //    {
+                //        var fromLocal = categoryOptionsFromLocal?.FirstOrDefault(co => co.category_option_id == fromStore.Id);
+                //        matchedCategoryOptions.Add(
+                //            new MatchedCategoryOptionModel
+                //            {
+                //                FromStore = fromStore,
+                //                FromLocal = fromLocal,
+                //                IsSetted = fromLocal != null
+                //            });
+                //    }
+                //    model.CategoryOptions = matchedCategoryOptions;
+                //    model.Options = _localService.GetAllOptions();
+                //    storeCategoryModel.OptionsModel = model;
+                //}
             }
             storeCategoryModel.StoreCategory = storeCategory ?? new StoreCategory { category_id = categoryId, store_id = storeId };
 
@@ -100,24 +100,24 @@ namespace Vivosis.MarketPlace.Web.Controllers
         }
         public IActionResult GetCategoryOptionValues(long storeCategoryAttributeId, int optionId, int categoryOptionId)
         {
-            if(ModelState.IsValid)
-            {
-                var model = new CategoryOptionValueModel();
-                model.CategoryOptionIdFromStore = storeCategoryAttributeId;
-                var optionValues = _localService.GetOptionValues(optionId);
-                var categoryOptionValues = _localService.GetCategoryOptionValues(categoryOptionId)?.ToList();
-                if(optionValues?.Any() ?? false)
-                {
-                    model.MatchedCategoryOptionValues = optionValues.Select(ov => new MatchedCategoryOptionValueModel
-                    {
-                        OptionValue = ov,
-                        CategoryOptionValue = categoryOptionValues?.FirstOrDefault(cav => cav.option_value_id == ov.option_value_id)
-                    });
-                    model.OptionValuesFromStore = _n11Service.GetCategoryOptionValues(storeCategoryAttributeId);
-                    model.LocalCategoryOptionValuesExist = categoryOptionValues?.Any() ?? false;
-                }
-                return Json(new { isEmpty = false, html = Helper.RenderRazorViewToString(this, "_ListCategoryOptionValues", model) });
-            }
+            //if(ModelState.IsValid)
+            //{
+            //    var model = new CategoryOptionValueModel();
+            //    model.CategoryOptionIdFromStore = storeCategoryAttributeId;
+            //    var optionValues = _localService.GetOptionValues(optionId);
+            //    var categoryOptionValues = _localService.GetCategoryOptionValues(categoryOptionId)?.ToList();
+            //    if(optionValues?.Any() ?? false)
+            //    {
+            //        model.MatchedCategoryOptionValues = optionValues.Select(ov => new MatchedCategoryOptionValueModel
+            //        {
+            //            OptionValue = ov,
+            //            CategoryOptionValue = categoryOptionValues?.FirstOrDefault(cav => cav.option_value_id == ov.option_value_id)
+            //        });
+            //        model.OptionValuesFromStore = _n11Service.GetCategoryOptionValues(storeCategoryAttributeId);
+            //        model.LocalCategoryOptionValuesExist = categoryOptionValues?.Any() ?? false;
+            //    }
+            //    return Json(new { isEmpty = false, html = Helper.RenderRazorViewToString(this, "_ListCategoryOptionValues", model) });
+            //}
             return Json(new { isEmpty = true });
         }
         public IActionResult GetCategoryOptions(long categoryCode, int categoryStoreId, string storeName)
@@ -127,29 +127,29 @@ namespace Vivosis.MarketPlace.Web.Controllers
                 var model = new CategoryOptionListModel();
                 model.SelectedStoreName = storeName;
                 var categoryOptionFromStore = _n11Service.GetCategoryOptions(categoryCode);
-                var categoryOptionsFromLocal = _localService.GetStoreCategory(categoryStoreId)?.CategoryOptions;
-                if(categoryOptionFromStore != null && categoryOptionFromStore.Any())
-                {
-                    var matchedCategoryOptions = new List<MatchedCategoryOptionModel>();
-                    var localCategoryOptionExist = false;
-                    foreach(var fromStore in categoryOptionFromStore.OrderByDescending(c => c.IsRequired))
-                    {
-                        var fromLocal = categoryOptionsFromLocal?.FirstOrDefault(co => co.matched_store_option_id == fromStore.Id.ToString());
-                        matchedCategoryOptions.Add(
-                            new MatchedCategoryOptionModel
-                            {
-                                FromStore = fromStore,
-                                FromLocal = fromLocal,
-                                IsSetted = fromLocal != null
-                            });
-                        if(fromLocal != null)
-                            localCategoryOptionExist = true;
-                    }
-                    model.CategoryOptions = matchedCategoryOptions;
-                    model.LocalCategoryOptionsExist = localCategoryOptionExist;
-                    model.Options = _localService.GetAllOptions();
-                    return Json(new { isEmpty = false, html = Helper.RenderRazorViewToString(this, "_ListCategoryOptions", model) });
-                }
+                //var categoryOptionsFromLocal = _localService.GetStoreCategory(categoryStoreId)?.CategoryOptions;
+                //if(categoryOptionFromStore != null && categoryOptionFromStore.Any())
+                //{
+                //    var matchedCategoryOptions = new List<MatchedCategoryOptionModel>();
+                //    var localCategoryOptionExist = false;
+                //    foreach(var fromStore in categoryOptionFromStore.OrderByDescending(c => c.IsRequired))
+                //    {
+                //        var fromLocal = categoryOptionsFromLocal?.FirstOrDefault(co => co.matched_store_option_id == fromStore.Id.ToString());
+                //        matchedCategoryOptions.Add(
+                //            new MatchedCategoryOptionModel
+                //            {
+                //                FromStore = fromStore,
+                //                FromLocal = fromLocal,
+                //                IsSetted = fromLocal != null
+                //            });
+                //        if(fromLocal != null)
+                //            localCategoryOptionExist = true;
+                //    }
+                //    model.CategoryOptions = matchedCategoryOptions;
+                //    model.LocalCategoryOptionsExist = localCategoryOptionExist;
+                //    model.Options = _localService.GetAllOptions();
+                //    return Json(new { isEmpty = false, html = Helper.RenderRazorViewToString(this, "_ListCategoryOptions", model) });
+                //}
             }
             return Json(new { isEmpty = true });
         }
