@@ -13,10 +13,12 @@ namespace Vivosis.MarketPlace.Web.Controllers
     {
         IAccountService _accountService;
         MarketPlaceDbContext _dbContext;
-        public AccountController(IAccountService accountService, MarketPlaceDbContext dbContext)
+        ICommonService _commonService;
+        public AccountController(IAccountService accountService, MarketPlaceDbContext dbContext, ICommonService commonService)
         {
             _accountService = accountService;
             _dbContext = dbContext;
+            _commonService = commonService;
         }
         public IActionResult Index()
         {
@@ -115,7 +117,10 @@ namespace Vivosis.MarketPlace.Web.Controllers
                 {
                     var result = _accountService.AddUser(user, false);
                     if(result.Succeeded)
+                    {
+                        _commonService.SyncDatabase(user.UserName);
                         return RedirectToAction("Index", "Account");
+                    }
                     else
                     {
                         foreach(var error in result.Errors)

@@ -11,5 +11,6 @@ namespace Vivosis.MarketPlace.Service.Abstract
         void SaveShipmentTemplates(IEnumerable<ShipmentTemplate> templates);
         IEnumerable<ShipmentTemplate> GetShipmentTemplate();
         Product GetProductToSendStore(StoreProduct productStore);
+        public void SyncDatabase(string userName);
     }
 }

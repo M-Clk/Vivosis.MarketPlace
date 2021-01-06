@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
@@ -18,13 +19,17 @@ namespace Vivosis.MarketPlace.Service.Concrete
         MySqlConnection _connection;
         SystemUser _user;
         UserManager<SystemUser> _userManager;
-        public CommonService(MarketPlaceDbContext dbContext, IHttpContextAccessor httpContextAccessor, UserManager<SystemUser> userManager)
+        IConfiguration _configuration;
+        public CommonService(MarketPlaceDbContext dbContext, IHttpContextAccessor httpContextAccessor, UserManager<SystemUser> userManager, IConfiguration configuration)
         {
+            if(httpContextAccessor?.HttpContext?.User?.Identity?.Name == null)
+                return;
             _dbContext = dbContext;
             _userManager = userManager;
             _user = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result;
             var connectionString = $"Server={_user.Server}; Database={_user.DbName}; Uid={_user.DbUserName}; Pwd={_user.DbPassword};";
             _connection = new MySqlConnection(connectionString);
+            _configuration = configuration;
         }
 
         void SyncLocalOptions()
@@ -270,5 +275,17 @@ namespace Vivosis.MarketPlace.Service.Concrete
         }
 
         public IEnumerable<ShipmentTemplate> GetShipmentTemplate() => _dbContext.ShipmentTemplates;
+
+        public void SyncDatabase(string userName)
+        {
+            _user = _userManager.FindByNameAsync(userName).Result;
+            var connectionString = $"Server={_user.Server}; Database={_user.DbName}; Uid={_user.DbUserName}; Pwd={_user.DbPassword};";
+            _connection = new MySqlConnection(connectionString);
+            var unformatedConnectionString = _configuration.GetConnectionString("DynamicLocalDatabase");
+            var connectionStringByUser = string.Format(unformatedConnectionString, $"db_{_user.UserName}");
+            var options = new DbContextOptionsBuilder<MarketPlaceDbContext>().UseMySql(connectionStringByUser).Options;
+            _dbContext = new MarketPlaceDbContext(options);
+            SyncDatabase();
+        }
     }
 }
