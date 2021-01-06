@@ -233,8 +233,7 @@ function loadSelectOptionEvents(id) {
 }
 function submitStoreProduct(form) {
     try {
-        if (jQuery('#description').val().length > 150)
-        {
+        if (jQuery('#description').val().length > 150) {
             alert("Aciklama max 150 karakter uzunlugunda olmalidir.");
             return false;
         }
@@ -244,7 +243,7 @@ function submitStoreProduct(form) {
             if (select.value.length > 0)
                 query += jQuery(select).attr('attribute-name') + '==' + select.value + '&&';
         });
-        query = query.slice(0, query.length-1);
+        query = query.slice(0, query.length - 2);
         var data = new FormData(form);
         data.set("AttributesQuery", query);
         jQuery.ajax({
@@ -258,6 +257,10 @@ function submitStoreProduct(form) {
                     jQuery('#form-modal .modal-body').html('');
                     jQuery('#form-modal .modal-title').html('');
                     jQuery('#form-modal').modal('hide');
+                    jQuery('#store-product-price-info-' + res.productId + '-' + res.storeId)
+                        .html(+res.price + ' ' + res.currency+' ')
+                        .removeClass()
+                        .addClass('text-sm-left text-' + res.textStyle);
                 }
                 else alert(res.errorMessage);
             },
@@ -269,6 +272,26 @@ function submitStoreProduct(form) {
     } catch (ex) {
         console.log(ex)
     }
+}
+function deleteProductFromStore(url) {
+    jQuery.ajax(
+        {
+            type: "GET",
+            url: url,
+            success: function (res) {
+                if (!res.isDeleted) {
+                    alert(res.errorMessage);
+                    return;
+                }
+                jQuery('#form-modal .modal-body').html('');
+                jQuery('#form-modal .modal-title').html('');
+                jQuery('#form-modal').modal('hide');
+                jQuery('#store-product-price-info-' + res.productId + '-' + res.storeId)
+                    .html('Gönderilmedi')
+                    .removeClass()
+                    .addClass('text-sm-left text-warning');
+            }
+        });
 }
 
 function submitStoreCategory(form, infoId) {

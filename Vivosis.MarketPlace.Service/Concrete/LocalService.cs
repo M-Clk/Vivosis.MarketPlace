@@ -56,7 +56,7 @@ namespace Vivosis.MarketPlace.Service
         }
         public StoreProduct GetStoreProduct(int storeId, int productId)
         {
-            var storeProduct = _dbContext.StoreProducts.Include(sp=>sp.Product).ThenInclude(p => p.ProductCategories).ThenInclude(pc=>pc.Category).FirstOrDefault(sc => sc.store_id == storeId && sc.product_id == productId);
+            var storeProduct = _dbContext.StoreProducts.Include(sp => sp.Product).ThenInclude(p => p.ProductCategories).ThenInclude(pc => pc.Category).FirstOrDefault(sc => sc.store_id == storeId && sc.product_id == productId);
             if(storeProduct == null)
             {
                 storeProduct = new StoreProduct();
@@ -66,7 +66,13 @@ namespace Vivosis.MarketPlace.Service
             }
             return storeProduct;
         }
+        public StoreProduct GetStoreProduct(int storeProductId) => _dbContext.StoreProducts.FirstOrDefault(sc => sc.store_product_id == storeProductId);
 
+        public bool DeleteStoreProduct(StoreProduct storeProduct)
+        {
+            _dbContext.StoreProducts.Remove(storeProduct);
+            return _dbContext.SaveChanges() > 0;
+        }
         public int UpdateCategories(IEnumerable<Category> categories)
         {
             _dbContext.Categories.UpdateRange(categories);
@@ -130,5 +136,6 @@ namespace Vivosis.MarketPlace.Service
             var categoryToAttributes = _accountDbContext.CategoryToAttributeFromStores.Where(ca => ca.CategoryId.ToString() == category.matched_category_code).Include(ca => ca.Attribute).ThenInclude(a => a.AttributeValues);
             return categoryToAttributes.Select(ca => ca.Attribute);
         }
+
     }
 }

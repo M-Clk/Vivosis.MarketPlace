@@ -21,7 +21,7 @@
             {
                 <button type="submit" class="btn btn-primary ml-2"><i class="fas fa-exchange-alt"></i> Güncelle</button>
                 <button id="change-product-status-button" type="button" onclick="changeProductStatus(@(Model.StoreProduct.product_id), @(Model.StoreProduct.store_id))" class="btn btn-warning ml-2"> <i class="fas fa-@(changeStatusIconStyle)"></i> @changeStatusCommand</button>
-                <button type="button" onclick="deleteProductFromStore(@(Model.StoreProduct.product_id), @(Model.StoreProduct.store_id))" class="btn btn-danger ml-2"><i class="fas fa-trash-alt"></i> Sil</button>
+                <button type="button" onclick="deleteProductFromStore('@(Url.Action("DeleteProductFromStore","Products",new { storeProductId = Model.StoreProduct.store_product_id},Context.Request.Scheme))')" class="btn btn-danger ml-2"><i class="fas fa-trash-alt"></i> Sil</button>
                 <a id="visit-product-button" href="@(Model.StoreProduct.url)" target="_blank" @(browseProductButtonVisibility) class="btn btn-success ml-2"><i class="fas fa-external-link-alt"></i> Ürüne Gözat</a>
             }
             else
@@ -34,7 +34,7 @@
         <div class="row">
             <div class="col-sm-1">
                 <label class="col-form-label">Menşei</label>
-                <input class="form-control" id="checkbox-origin" name="all-checkbox-substract" type="checkbox" @originChecked data-toggle="toggle" data-onstyle="outline-primary" asp-for="origin" data-offstyle="outline-info" data-on="Yerli" data-off="Yabancı" data-size="sm">
+                <input class="form-control" id="checkbox-origin" name="all-checkbox-substract" type="checkbox" @originChecked data-toggle="toggle" data-onstyle="outline-primary" asp-for="StoreProduct.origin" data-offstyle="outline-info" data-on="Yerli" data-off="Yabancı" data-size="sm">
             </div>
             <div class="col-sm-2">
                 <label class="col-form-label">Para Birimi</label>
@@ -108,3 +108,15 @@
         </button>
     </div>
 }
+<script>
+    jQuery('#currency-option').on('changed.bs.select', function () {
+        jQuery('#currency').val(jQuery(this).val());
+    });
+    jQuery('#currency-option').selectpicker('val', '@(Model.StoreProduct.currency??"TL")');
+    jQuery('#checkbox-origin').change(function () {
+        var origin = "Yabancı";
+        if (jQuery(this).prop('checked'))
+            origin = "Yerli";
+        jQuery('#origin').val(origin);
+    });
+</script>

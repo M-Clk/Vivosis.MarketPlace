@@ -219,7 +219,7 @@ namespace Vivosis.MarketPlace.Service.Concrete
             newProductRequest.currencyType = storeProduct.currency;
             newProductRequest.productCondition = "1";//TODO 1 = yeni, 2 = ikinci el anlaminda.
             newProductRequest.preparingDay = "3";
-            newProductRequest.shipmentTemplate = "";//TODO sablon da temin edilecek sekilde guncellencek.
+            newProductRequest.domestic = storeProduct.origin != "Yabancı";
 
             var images = productFromDb.ProductImages.Select(pi => new N11ProductService.ProductImage
             {
@@ -321,7 +321,7 @@ namespace Vivosis.MarketPlace.Service.Concrete
                 return null;
             }
         }
-        public bool DeleteProduct(long productCode)
+        public bool DeleteProduct(long productCode, ref string errorMessage)
         {
             var proxy = new ProductServicePortClient();
             var request = new DeleteProductByIdRequest();
@@ -329,7 +329,12 @@ namespace Vivosis.MarketPlace.Service.Concrete
             request.productId = productCode;
 
             var response = proxy.DeleteProductByIdAsync(request).Result;
-            return response.DeleteProductByIdResponse.result.errorMessage != null;
+            if(response.DeleteProductByIdResponse.result.errorMessage != null)
+            {
+                errorMessage = response.DeleteProductByIdResponse.result.errorMessage;
+                return false;
+            }
+            return true;
         }
         private CategoryFromStore LoadParentCategories(CategoryFromStore category)
         {

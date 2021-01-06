@@ -13,6 +13,8 @@ namespace Vivosis.MarketPlace.Service.Abstract
         StoreCategory GetStoreCategory(int storeCategoryId);
         IEnumerable<CategoryOptionValue> GetCategoryOptionValues(int categoryOptionId);
         StoreProduct GetStoreProduct(int storeId, int productId);
+        StoreProduct GetStoreProduct(int storeProductId);
+        bool DeleteStoreProduct(StoreProduct storeProduct);
         bool AddOrUpdateStoreProduct(StoreProduct storeProduct);
         bool AddOrUpdateStoreCategory(StoreCategory storeCategory);
         int AddProducts(IEnumerable<Product> products);

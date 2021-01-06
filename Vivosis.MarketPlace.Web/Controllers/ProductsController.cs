@@ -66,7 +66,7 @@ namespace Vivosis.MarketPlace.Web.Controllers
             if(storeProduct.Product?.ProductCategories?.Any() ?? false)
             {
                 var category = storeProduct.Product.ProductCategories.First().Category;
-                model.CategoryAttributes = _localService.GetCategoryOptions(category.category_id, storeId).OrderByDescending(co=>co.IsRequired).ToList();
+                model.CategoryAttributes = _localService.GetCategoryOptions(category.category_id, storeId).OrderByDescending(co => co.IsRequired).ToList();
                 model.CategoryName = category.path_name;
             }
             return PartialView("_EditStoreProduct", model);
@@ -99,13 +99,26 @@ namespace Vivosis.MarketPlace.Web.Controllers
                 }
             }
             var errorMessage = "";
-            var result = _n11Service.SendProduct(product, attributePairs, ref errorMessage);
-            if(result != null)
+            var storeProduct = _n11Service.SendProduct(product, attributePairs, ref errorMessage);
+            if(storeProduct != null)
             {
-                result.attribute_query = storeProductModel.AttributesQuery;
-                _localService.AddOrUpdateStoreProduct(result);
+                storeProduct.attribute_query = storeProductModel.AttributesQuery;
+                _localService.AddOrUpdateStoreProduct(storeProduct);
+                var textStyle = storeProduct.sale_price > product.price ? "success" : storeProduct.sale_price < product.price ? "warning" : "info";
+                return Json(new { isSucced = true, productId = storeProduct.product_id, storeId = storeProduct.store_id, price = storeProduct.sale_price, currency= storeProduct.currency??"TL", textStyle = textStyle });
             }
-            return Json(new { isSucced = result != null, errorMessage = errorMessage });
+            return Json(new { isSucced = false, errorMessage = errorMessage });
+        }
+        public IActionResult DeleteProductFromStore(int storeProductId)
+        {
+            var storeProduct = _localService.GetStoreProduct(storeProductId);
+            var errorMessage = "";
+            if(_n11Service.DeleteProduct(long.Parse(storeProduct.matched_product_code), ref errorMessage))
+            {
+                _localService.DeleteStoreProduct(storeProduct);
+                return Json(new { isDeleted = true, productId = storeProduct.product_id, storeId = storeProduct.store_id });
+            }
+            return Json(new { isDeleted = false, errorMessage = errorMessage });
         }
         public IActionResult Options(int productId)
         {
