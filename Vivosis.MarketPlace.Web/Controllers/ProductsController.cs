@@ -65,8 +65,9 @@ namespace Vivosis.MarketPlace.Web.Controllers
             };
             if(storeProduct.Product?.ProductCategories?.Any() ?? false)
             {
-                var categoryId = storeProduct.Product.ProductCategories.First().category_id;
-                model.CategoryAttributes = _localService.GetCategoryOptions(categoryId, storeId).OrderByDescending(co=>co.IsRequired).ToList();
+                var category = storeProduct.Product.ProductCategories.First().Category;
+                model.CategoryAttributes = _localService.GetCategoryOptions(category.category_id, storeId).OrderByDescending(co=>co.IsRequired).ToList();
+                model.CategoryName = category.path_name;
             }
             return PartialView("_EditStoreProduct", model);
         }
@@ -91,9 +92,9 @@ namespace Vivosis.MarketPlace.Web.Controllers
             var attributePairs = new Dictionary<string, string>();
             if(!string.IsNullOrEmpty(storeProductModel.AttributesQuery))
             {
-                foreach(var pair in storeProductModel.AttributesQuery.Split('&'))
+                foreach(var pair in storeProductModel.AttributesQuery.Split("&&"))
                 {
-                    var splitedPair = pair.Split('=');
+                    var splitedPair = pair.Split("==");
                     attributePairs.Add(splitedPair.First(), splitedPair.Last());
                 }
             }

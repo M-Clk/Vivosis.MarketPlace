@@ -4,9 +4,10 @@
     if(Model.StoreProduct.origin == "Yabancı")
         originChecked = "";
     var changeStatusCommand = Model.StoreProduct.is_active ? "Satışa Kapat" : "Satışa Aç";
-    var storeNameWithAdditional = Model.StoreProduct.Store == null ? "" : Model.StoreProduct.Store.name.EndsWith('1') ? Model.StoreProduct.Store.name + "'e " : Model.StoreProduct.Store.name.EndsWith('a') ? Model.StoreProduct.Store.name + "'ya " : Model.StoreProduct.Store.name.EndsWith('i') ? Model.StoreProduct.Store.name + "'ne " : Model.StoreProduct.Store.name.EndsWith('r') || Model.StoreProduct.Store.name.EndsWith('l') ? Model.StoreProduct.Store.name + "'a " : Model.StoreProduct.Store.name + " Mağazasına ";
+    var changeStatusIconStyle = Model.StoreProduct.is_active ? "lock" : "lock-open";
     Model.StoreProduct.description ??= Model.StoreProduct.Product.description;
     Model.StoreProduct.sale_price = Model.StoreProduct.sale_price > 0 ? Model.StoreProduct.sale_price : Model.StoreProduct.Product.price;
+    var browseProductButtonVisibility = Model.StoreProduct.is_active ? "" : "hidden";
 }
 <form asp-action="SendProductToStore" onsubmit="return submitStoreProduct(this)" autocomplete="off">
     <input id="store-id" type="hidden" asp-for="StoreProduct.store_id" />
@@ -18,10 +19,16 @@
         <div class="form-group row">
             @if(Model.StoreProduct.is_sent)
             {
-                <button type="submit" class="btn btn-primary ml-2">Güncelle</button>
-                <button onclick="changeProductStatus(@(Model.StoreProduct.product_id), @(Model.StoreProduct.store_id))" class="btn btn-warning ml-2">@changeStatusCommand</button>
-                <button onclick="deleteProductFromStore(@(Model.StoreProduct.product_id), @(Model.StoreProduct.store_id))" class="btn btn-danger ml-2">Sil</button>
-                <a href="@(Model.StoreProduct.url)" target="_blank" class="btn btn-success ml-2">Ürüne Gözat</a>
+                <button type="submit" class="btn btn-primary ml-2"><i class="fas fa-exchange-alt"></i> Güncelle</button>
+                <button id="change-product-status-button" type="button" onclick="changeProductStatus(@(Model.StoreProduct.product_id), @(Model.StoreProduct.store_id))" class="btn btn-warning ml-2"> <i class="fas fa-@(changeStatusIconStyle)"></i> @changeStatusCommand</button>
+                <button type="button" onclick="deleteProductFromStore(@(Model.StoreProduct.product_id), @(Model.StoreProduct.store_id))" class="btn btn-danger ml-2"><i class="fas fa-trash-alt"></i> Sil</button>
+                <a id="visit-product-button" href="@(Model.StoreProduct.url)" target="_blank" @(browseProductButtonVisibility) class="btn btn-success ml-2"><i class="fas fa-external-link-alt"></i> Ürüne Gözat</a>
+            }
+            else
+            {
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary ml-2"><i class="fas fa-exchange-alt"></i> Gönder</button>
+                </div>
             }
         </div>
         <div class="row">
@@ -47,7 +54,7 @@
             </div>
             <div class="col-sm-2">
                 <label class="col-form-label">Katalog Numarası</label>
-                <input id="sale-price" type="text" asp-for="StoreProduct.catalog_id" class="form-control" style="border-radius: 5px;">
+                <input id="catalog-id" type="text" asp-for="StoreProduct.catalog_id" class="form-control" style="border-radius: 5px;">
             </div>
 
         </div>
@@ -79,22 +86,25 @@
     </div>
     @if(Model.CategoryAttributes?.Any() ?? false)
     {
-        @await Html.PartialAsync("_ListCategoryAttributes", Model.CategoryAttributes);
+        @await Html.PartialAsync("_ListCategoryAttributes", new ListCategoryAttributeModel { Attributes = Model.CategoryAttributes, CategoryName = Model.CategoryName });
     }
     @if(!string.IsNullOrEmpty(Model.AttributesQuery))
     {
-        foreach(var pair in Model.AttributesQuery.Split('&'))
+        foreach(var pair in Model.AttributesQuery.Split("&&"))
         {
-            var splitedPair = pair.Split('=');
+            var splitedPair = pair.Split("==");
             <script>
                 jQuery('select[attribute-name="@Html.Raw(splitedPair.First())"]').selectpicker('val', '@Html.Raw(splitedPair.Last())');
             </script>
         }
     }
-    @if(!Model.StoreProduct.is_sent)
-    {
-        <div class="form-group">
-            <button type="submit" class="btn btn-primary">@(storeNameWithAdditional)Gönder</button>
-        </div>
-    }
 </form>
+@if(!Model.StoreProduct.is_active)
+{
+    <div class="alert alert-warning alert-dismissible fade show ml-2 mr-2" role="alert">
+        <strong>Unutmayın!</strong> Gönderdiğiniz ürünler onaylanmadan yayınlanmaz. Ürünleriniz senkronize edildiğinde ürününüz onaylanmışsa bu sayfada "Gözat" butonunu görebileceksiniz.
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+}

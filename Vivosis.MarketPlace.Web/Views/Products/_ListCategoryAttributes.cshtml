@@ -1,29 +1,29 @@
-﻿@model List<CategoryFromStoreAttribute>
-@if(Model?.Any() ?? false)
+﻿@model ListCategoryAttributeModel
+@if(Model.Attributes?.Any() ?? false)
 {
     <div class="card pb-2">
         <h6 class="card-header">
-            Ürün Seçenekleri
+          @(Model.CategoryName) Kategorisi Mağaza Ürün Seçenekleri
         </h6>
 
-        @for(int i = 0; i < Model.Count; i++)
+        @for(int i = 0; i < Model.Attributes.Count; i++)
         {
             if(i % 4 == 0)
             {
                 @Html.Raw("<div class=\"row justify-content-center m-1\">")
             }
-            var selectStyle = Model[i].IsRequired ? "danger" : "success";
-            var required = Model[i].IsRequired ? "required" : "";
+            var selectStyle = Model.Attributes[i].IsRequired ? "danger" : "success";
+            var required = Model.Attributes[i].IsRequired ? "required" : "";
             <div class="col">
-                <label class="text-@selectStyle">@Model[i].Name</label>
-                <select name="product-attribute" id="store-attribute-value-options-@(Model[i].Id)" attribute-name="@Model[i].Name" class="form-control selectpicker" data-style="btn-outline-@selectStyle" title="Değeri Seçin" @required>
-                    @foreach(var value in Model[i].AttributeValues)
+                <label class="text-@selectStyle">@Model.Attributes[i].Name</label>
+                <select name="product-attribute" id="store-attribute-value-options-@(Model.Attributes[i].Id)" attribute-name="@Model.Attributes[i].Name" class="form-control selectpicker" data-style="btn-outline-@selectStyle" title="Değeri Seçin" @required>
+                    @foreach(var value in Model.Attributes[i].AttributeValues)
                     {
                         <option id="store-attribute-value-@(value.Id)" value="@(value.Name)">@value.Name</option>
                     }
                 </select>
             </div>
-            @if(i % 4 == 3 || i == Model.Count - 1)
+            @if(i % 4 == 3 || i == Model.Attributes.Count - 1)
             {
                 @Html.Raw("</div>")
             }

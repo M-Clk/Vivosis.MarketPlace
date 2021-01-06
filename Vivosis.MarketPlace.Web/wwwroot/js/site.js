@@ -242,7 +242,7 @@ function submitStoreProduct(form) {
         var query = '';
         attributes.each((index, select) => {
             if (select.value.length > 0)
-                query += jQuery(select).attr('attribute-name') + '=' + select.value + '&';
+                query += jQuery(select).attr('attribute-name') + '==' + select.value + '&&';
         });
         query = query.slice(0, query.length-1);
         var data = new FormData(form);

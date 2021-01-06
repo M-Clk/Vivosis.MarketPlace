@@ -44,7 +44,7 @@
                         <p> @product.name</p>
                     </td>
                     <td>
-                        <button onclick="showPopup('@Url.Action("Options","Products",new { productId = product.product_id},Context.Request.Scheme)', 'Varyantlar', optionsAfterOpen)" name="@product.name" title="Seçenekli Ürün" class="btn btn-outline-primary">
+                        <button onclick="showPopup('@Url.Action("Options","Products",new { productId = product.product_id},Context.Request.Scheme)', '@(product.name) - Varyantlar', optionsAfterOpen)" name="@product.name" title="Seçenekli Ürün" class="btn btn-outline-primary">
                             <i class="fa fa-list"></i>
                         </button>
                     </td>
@@ -72,7 +72,7 @@
                                     {
                                         <small class="text-sm-left text-warning">Gönderilmedi</small>
                                     }
-                                    <button onclick="showPopup('@Url.Action("EditStoreProduct","Products",new { productId = product.product_id, storeId = store.store_id },Context.Request.Scheme)', '@store.Store.name Ürün Ayarları', editStoreProductAfterOpen)" class="btn btn-outline-primary">
+                                    <button onclick="showPopup('@Url.Action("EditStoreProduct","Products",new { productId = product.product_id, storeId = store.store_id },Context.Request.Scheme)', '@(product.name) - @store.Store.name Ürün Ayarları', editStoreProductAfterOpen)" class="btn btn-outline-primary">
                                         <i class="fa fa-sm fa-pencil-alt"></i>
                                     </button>
                                 }
